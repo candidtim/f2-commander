@@ -1,0 +1,61 @@
+Screen {
+  
+}
+
+AppFooter {
+  background: black;
+  dock: bottom;
+}
+
+FilePane {
+  background: ansi_bright_blue;
+  border: double ansi_bright_cyan;
+  border-title-align: center;
+  border-subtitle-align: center;
+  height: 100%;
+  width: 50vw;
+}
+
+ListItem .highlighted {
+  background: red;
+}
+
+DataTable {
+  background: ansi_bright_blue;
+}
+/*
+.datatable--even-row {
+  background: ansi_bright_blue;
+}
+.datatable--odd-row {
+  background: ansi_bright_blue;
+}
+*/
+
+.datatable--cursor {
+  background: teal;
+}
+
+.datatable--cursor {
+
+}
+
+.datatable--hover {
+  background: teal;
+}
+
+.datatable--header {
+  background: ansi_bright_blue;
+  color: white;
+}
+
+.datatable--header-cursor {
+  background: ansi_bright_blue;
+  color: white;
+}
+
+.datatable--header-hover {
+  background: ansi_bright_blue;
+  color: white;
+}
+
