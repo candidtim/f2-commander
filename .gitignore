@@ -1,2 +1,7 @@
+# Python
+__pycache__/
+
+# Development Environment
+.pytest_cache/
 .mypy_cache/
-.venv/
+dist/

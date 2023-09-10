@@ -1,3 +1,0 @@
-textual>=0.35.1,<1
-textual-dev>=1.1.0,<2
-humanize>=4.8.0,<5

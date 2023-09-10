@@ -1,0 +1,11 @@
+#!/bin/bash
+
+if [[ -z "$(poetry env list)" ]]; then
+    poetry install --with dev
+fi
+
+poetry run yapf --diff --recursive .
+poetry run isort --check .
+poetry run flake8 .
+poetry run mypy
+poetry run pytest

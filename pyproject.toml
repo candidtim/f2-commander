@@ -1,0 +1,41 @@
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry]
+name = "textual-commander"
+version = "0.1.0"
+description = ""
+authors = ["candidtim <timcandid@gmail.com>"]
+readme = "README.md"
+packages = [{include = "tcmd"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+textual = ">=0.35.1,<1"
+humanize = "^4.8"
+
+[tool.poetry.group.dev]
+optional = true
+
+[tool.poetry.group.dev.dependencies]
+isort = "^5.12"
+flake8 = "^6.1"
+mypy = "^1.5"
+pytest = "^7.4"
+textual-dev = "^1.1"
+yapf = ">=0.40.1,<1"
+
+[tool.poetry.scripts]
+tcmd = "tcmd.main:main"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.yapf]
+based_on_style = "pep8"
+column_limit = 88
+
+[tool.mypy]
+ignore_missing_imports = true
+files = "tcmd,tests"
