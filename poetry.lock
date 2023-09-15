@@ -839,6 +839,21 @@ files = [
 plugins = ["importlib-metadata"]
 
 [[package]]
+name = "pyte"
+version = "0.8.1"
+description = "Simple VTXXX-compatible terminal emulator."
+category = "main"
+optional = false
+python-versions = "*"
+files = [
+    {file = "pyte-0.8.1-py3-none-any.whl", hash = "sha256:d760ea9a7d455d179d9d7a4288fac3d231190b5226715f1fe8c62547bed9b9aa"},
+    {file = "pyte-0.8.1.tar.gz", hash = "sha256:b9bfd1b781759e7572a6e553c010cc93eef58a19d8d1590446d84c19b1b097b0"},
+]
+
+[package.dependencies]
+wcwidth = "*"
+
+[[package]]
 name = "pytest"
 version = "7.4.2"
 description = "pytest: simple powerful testing with Python"
@@ -918,6 +933,22 @@ textual = ">=0.32.0"
 typing-extensions = ">=4.4.0,<5.0.0"
 
 [[package]]
+name = "textual-terminal"
+version = "0.3.0"
+description = "A terminal emulator widget for Textual."
+category = "main"
+optional = false
+python-versions = ">=3.7,<4.0"
+files = [
+    {file = "textual_terminal-0.3.0-py3-none-any.whl", hash = "sha256:f00b22f5a59ef6d60b61453d7a98354647487c00342d4b0324221db18c4a90f1"},
+    {file = "textual_terminal-0.3.0.tar.gz", hash = "sha256:594e7323b74d1e395cf3ce39216cef78cb7c64d01ea71a60ea7b0f9b198e4c87"},
+]
+
+[package.dependencies]
+pyte = ">=0.8.1,<0.9.0"
+textual = ">=0.8.0"
+
+[[package]]
 name = "tomli"
 version = "2.0.1"
 description = "A lil' TOML parser"
@@ -955,6 +986,18 @@ files = [
 
 [package.extras]
 test = ["coverage", "pytest", "pytest-cov"]
+
+[[package]]
+name = "wcwidth"
+version = "0.2.6"
+description = "Measures the displayed width of unicode strings in a terminal"
+category = "main"
+optional = false
+python-versions = "*"
+files = [
+    {file = "wcwidth-0.2.6-py2.py3-none-any.whl", hash = "sha256:795b138f6875577cd91bba52baf9e445cd5118fd32723b460e30a0af30ea230e"},
+    {file = "wcwidth-0.2.6.tar.gz", hash = "sha256:a5220780a404dbe3353789870978e472cfe477761f06ee55077256e509b156d0"},
+]
 
 [[package]]
 name = "yapf"
@@ -1080,4 +1123,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "506a20b19d6ed1aa921c4358b49453c1657be7824362a8f9a35df9abdf6d9528"
+content-hash = "0d620b6da24e311d4c0f63e4f6d9bdb09936046b1f4ef9bb4a5b3be6670c3892"

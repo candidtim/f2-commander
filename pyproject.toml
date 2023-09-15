@@ -13,6 +13,7 @@ packages = [{include = "tcmd"}]
 [tool.poetry.dependencies]
 python = "^3.10"
 textual = ">=0.35.1,<1"
+textual-terminal = ">=0.3.0,<1"
 humanize = "^4.8"
 
 [tool.poetry.group.dev]

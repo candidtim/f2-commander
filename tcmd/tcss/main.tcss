@@ -1,4 +1,23 @@
-#title {
-  height: 100%;
-  content-align: center middle;
+FileList {
+  width: 1fr;
+  height: 1fr;
+  border: $accent double;
+  border-title-align: center;
+  border-title-style: bold;
+}
+
+FileList DataTable {
+  width: 100%;
+}
+
+FileList.focused {
+  border-title-color: $secondary;
+}
+
+FileList .datatable--cursor {
+  background: darkolivegreen;
+}
+
+FileList.focused .datatable--cursor {
+  background: $secondary;
 }
