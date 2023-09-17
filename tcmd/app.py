@@ -8,6 +8,7 @@ from textual.containers import Horizontal
 from textual.reactive import reactive
 from textual.widgets import Footer
 
+from .widgets.copy import CopyScreen
 from .widgets.filelist import FileList
 
 
@@ -70,13 +71,13 @@ class TextualCommander(App):
         raise NotImplementedError(f"cannot view {self.active_filelist.cursor_path}")
 
     def action_copy(self):
+        def on_copy(result: bool):
+            if result:
+                self.inactive_filelist.update_listing()
+
         src = self.active_filelist.cursor_path
         dst = self.inactive_filelist.path
-        if src.is_dir():
-            shutil.copytree(src, dst / src.name)
-        else:
-            shutil.copy2(src, dst)
-        self.inactive_filelist.update_listing()
+        self.push_screen(CopyScreen(src, dst), on_copy)
 
     def action_show_focus(self):
         raise Exception(self.focused)
