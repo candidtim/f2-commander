@@ -47,7 +47,7 @@ def has_hidden_attribute(statinfo: os.stat_result) -> bool:
 
 
 def has_hidden_flag(statinfo: os.stat_result) -> bool:
-    if not hasattr(stat, "UF_HIDDEN"):
+    if not hasattr(stat, "UF_HIDDEN") or not hasattr(statinfo, "st_flags"):
         return False
     return bool(statinfo.st_flags & stat.UF_HIDDEN)
 
