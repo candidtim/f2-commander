@@ -25,7 +25,7 @@ flake8 = "^6.1"
 mypy = "^1.5"
 pytest = "^7.4"
 textual-dev = "^1.1"
-yapf = ">=0.40.1,<1"
+black = "^23.9.1"
 
 [tool.poetry.scripts]
 tcmd = "tcmd.main:main"
@@ -33,9 +33,9 @@ tcmd = "tcmd.main:main"
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 
-[tool.yapf]
-based_on_style = "pep8"
-column_limit = 88
+[tool.black]
+line-length = 88
+target-version = ['py38']
 
 [tool.mypy]
 ignore_missing_imports = true
