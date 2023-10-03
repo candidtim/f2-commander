@@ -23,10 +23,14 @@ class Sortable(Text):
         self.value = value
         super().__init__(*args, **kwargs)
 
-    def __lt__(self, other: "Sortable") -> bool:
+    def __lt__(self, other: object) -> bool:
+        if not isinstance(other, Sortable):
+            return NotImplemented
         return self.value < other.value
 
-    def __eq__(self, other: "Sortable") -> bool:
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, Sortable):
+            return NotImplemented
         return self.value == other.value
 
 
@@ -189,12 +193,12 @@ class FileList(Static):
         ls = list_dir(self.path, include_hidden=self.show_hidden)
         self._update_table(ls, new)
         # remove sort label from the previously sorted column:
-        prev_sort_col = self.table.columns[old.key]
+        prev_sort_col = self.table.columns[old.key]  # type: ignore
         prev_sort_col.label = prev_sort_col.label[:-2]
         # add the new sort label:
-        new_sort_col = self.table.columns[new.key]
+        new_sort_col = self.table.columns[new.key]  # type: ignore
         direction = "⬆" if new.reverse else "⬇"
-        new_sort_col.label = f"{new_sort_col.label} {direction}"
+        new_sort_col.label = f"{new_sort_col.label} {direction}"  # type: ignore
 
     # TODO: refactor all ordering logic, see if DataTable provides better API
     def action_order(self, key: str, reverse: bool):
@@ -208,13 +212,13 @@ class FileList(Static):
     def on_data_table_row_selected(self, event: DataTable.RowSelected):
         self.post_message(
             self.Selected(
-                path=(self.path / event.row_key.value).resolve(),
+                path=(self.path / event.row_key.value).resolve(),  # type: ignore
                 file_list=self,
             )
         )
 
     def on_data_table_row_highlighted(self, event: DataTable.RowHighlighted):
-        self.cursor_path = self.path / event.row_key.value
+        self.cursor_path = self.path / event.row_key.value  # type: ignore
 
     def on_descendant_focus(self):
         self.active = True
@@ -227,8 +231,10 @@ class FileList(Static):
     def on_key(self, event: events.Key) -> None:
         # FIXME: why "cursor_down" and "cursor_up" actions don't work?
         if event.key == "j":
-            self.table.cursor_coordinate = (self.table.cursor_coordinate[0] + 1, 0)
+            new_coord = (self.table.cursor_coordinate[0] + 1, 0)
+            self.table.cursor_coordinate = new_coord  # type: ignore
         elif event.key == "k":
-            self.table.cursor_coordinate = (self.table.cursor_coordinate[0] - 1, 0)
+            new_coord = (self.table.cursor_coordinate[0] - 1, 0)
+            self.table.cursor_coordinate = new_coord  # type: ignore
         elif event.key == "b":
             self.path = self.path.parent
