@@ -12,7 +12,7 @@ packages = [{include = "tcmd"}]
 
 [tool.poetry.dependencies]
 python = "^3.10"
-textual = ">=0.35.1,<1"
+textual = ">=0.38.1,<1"
 textual-terminal = ">=0.3.0,<1"
 humanize = "^4.8"
 
@@ -24,7 +24,7 @@ isort = "^5.12"
 flake8 = "^6.1"
 mypy = "^1.5"
 pytest = "^7.4"
-textual-dev = "^1.1"
+textual-dev = "^1.2"
 black = "^23.9.1"
 
 [tool.poetry.scripts]

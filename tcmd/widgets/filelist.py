@@ -80,11 +80,10 @@ class FileList(Static):
         super().__init__(*args, **kwargs)
 
     def compose(self) -> ComposeResult:
-        self.table: DataTable = DataTable()
+        self.table: DataTable = DataTable(cursor_type="row")
         yield self.table
 
     def on_mount(self) -> None:
-        self.table.cursor_type = "row"
         # " ⬍" in "Name ⬍" will be removed after the initial sort
         self.table.add_column("Name ⬍", key="name")
         self.table.add_column("Size", key="size")
