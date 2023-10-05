@@ -9,6 +9,7 @@ from textual.widgets import Footer
 
 from .widgets.copy import CopyScreen
 from .widgets.filelist import FileList
+from .widgets.view import ViewScreen
 
 
 class TextualCommander(App):
@@ -67,7 +68,9 @@ class TextualCommander(App):
         return self.right if self.left.active else self.left
 
     def action_view(self):
-        raise NotImplementedError(f"cannot view {self.active_filelist.cursor_path}")
+        src = self.active_filelist.cursor_path
+        if src.is_file():
+            self.push_screen(ViewScreen(src))
 
     def action_copy(self):
         def on_copy(result: bool):
