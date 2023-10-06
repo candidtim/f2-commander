@@ -32,7 +32,7 @@ CopyScreen #copy-screen {
     height: 13;
     width: 80%;
     border: $accent panel;
-    background: $surface;
+    background: $surface-lighten-1;
 }
 
 CopyScreen #src {
@@ -42,4 +42,39 @@ CopyScreen #src {
 CopyScreen #buttons {
     width: 100%;
     align: center middle;
+}
+
+CopyScreen Button {
+    margin: 0 2;
+}
+
+/* Delete dialog */
+
+DeleteScreen {
+    align: center middle;
+}
+
+DeleteScreen #delete-screen {
+    height: 10;
+    width: 80%;
+    border: $error panel;
+    background: $surface-lighten-1;
+}
+
+DeleteScreen #src {
+    margin: 1 0 1 1;
+}
+
+DeleteScreen #desc {
+    margin: 1 0 1 1;
+    color: $text-muted;
+}
+
+DeleteScreen #buttons {
+    width: 100%;
+    align: center middle;
+}
+
+DeleteScreen Button {
+    margin: 0 2;
 }

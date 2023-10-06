@@ -8,6 +8,7 @@ from textual.reactive import reactive
 from textual.widgets import Footer
 
 from .widgets.copy import CopyScreen
+from .widgets.delete import DeleteScreen
 from .widgets.filelist import FileList
 from .widgets.view import ViewScreen
 
@@ -17,6 +18,7 @@ class TextualCommander(App):
     BINDINGS = [
         Binding("v", "view", "View"),
         Binding("c", "copy", "Copy"),
+        Binding("d", "delete", "Delete"),
         Binding("q", "quit", "Quit"),
         Binding("h", "toggle_hidden", "Toggle hidden files", show=False),
         Binding("f", "show_focus", "Show focus", show=False),  # FIXME: remove
@@ -80,6 +82,14 @@ class TextualCommander(App):
         src = self.active_filelist.cursor_path
         dst = self.inactive_filelist.path
         self.push_screen(CopyScreen(src, dst), on_copy)
+
+    def action_delete(self):
+        def on_delete(result: bool):
+            if result:
+                self.active_filelist.update_listing()
+
+        path = self.active_filelist.cursor_path
+        self.push_screen(DeleteScreen(path), on_delete)
 
     def action_show_focus(self):
         raise Exception(self.focused)
