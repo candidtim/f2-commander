@@ -15,9 +15,9 @@ from .widgets.view import ViewScreen
 class TextualCommander(App):
     CSS_PATH = "tcss/main.tcss"
     BINDINGS = [
-        Binding("q", "quit", "Quit"),
         Binding("v", "view", "View"),
         Binding("c", "copy", "Copy"),
+        Binding("q", "quit", "Quit"),
         Binding("h", "toggle_hidden", "Toggle hidden files", show=False),
         Binding("f", "show_focus", "Show focus", show=False),  # FIXME: remove
     ]
