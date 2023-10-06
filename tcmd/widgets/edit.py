@@ -16,7 +16,7 @@ class MyTerminal(Terminal):
         self.post_message(self.Stopped())
 
 
-class ViewScreen(Screen):
+class EditScreen(Screen):
     BINDINGS = [("q", "app.pop_screen", "Quit")]
 
     DEFAULT_CSS = """
@@ -32,7 +32,7 @@ class ViewScreen(Screen):
 
     def compose(self) -> ComposeResult:
         yield Header()
-        yield MyTerminal(command=f"less {str(self.src)}", id="term")
+        yield MyTerminal(command=f"nano {str(self.src)}", id="term")
         yield Footer()
 
     def on_mount(self) -> None:

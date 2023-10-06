@@ -9,6 +9,7 @@ from textual.widgets import Footer
 
 from .widgets.copy import CopyScreen
 from .widgets.delete import DeleteScreen
+from .widgets.edit import EditScreen
 from .widgets.filelist import FileList
 from .widgets.view import ViewScreen
 
@@ -17,6 +18,7 @@ class TextualCommander(App):
     CSS_PATH = "tcss/main.tcss"
     BINDINGS = [
         Binding("v", "view", "View"),
+        Binding("e", "edit", "Edit"),
         Binding("c", "copy", "Copy"),
         Binding("d", "delete", "Delete"),
         Binding("q", "quit", "Quit"),
@@ -73,6 +75,11 @@ class TextualCommander(App):
         src = self.active_filelist.cursor_path
         if src.is_file():
             self.push_screen(ViewScreen(src))
+
+    def action_edit(self):
+        src = self.active_filelist.cursor_path
+        if src.is_file():
+            self.push_screen(EditScreen(src))
 
     def action_copy(self):
         def on_copy(result: bool):
