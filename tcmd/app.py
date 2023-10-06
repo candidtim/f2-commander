@@ -23,7 +23,6 @@ class TextualCommander(App):
         Binding("d", "delete", "Delete"),
         Binding("q", "quit", "Quit"),
         Binding("h", "toggle_hidden", "Toggle hidden files", show=False),
-        Binding("f", "show_focus", "Show focus", show=False),  # FIXME: remove
     ]
 
     left_path = reactive(Path.cwd())
@@ -97,6 +96,3 @@ class TextualCommander(App):
 
         path = self.active_filelist.cursor_path
         self.push_screen(DeleteScreen(path), on_delete)
-
-    def action_show_focus(self):
-        raise Exception(self.focused)
