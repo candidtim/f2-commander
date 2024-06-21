@@ -22,6 +22,59 @@ FileList.focused .datatable--cursor {
   background: $secondary;
 }
 
+/* Message dialog */
+
+MessageScreen {
+    align: center middle;
+}
+
+MessageScreen #message-screen {
+    height: 13;
+    width: 50%;
+    border: $accent panel;
+    background: $surface-lighten-1;
+}
+
+MessageScreen #title {
+    text-style: bold;
+    margin: 1 0 1 1;
+}
+
+MessageScreen #message {
+    margin: 1 0 1 1;
+}
+
+MessageScreen #buttons {
+    width: 100%;
+    align: center middle;
+}
+
+/* Copy dialog */
+
+CopyScreen {
+    align: center middle;
+}
+
+CopyScreen #copy-screen {
+    height: 13;
+    width: 80%;
+    border: $accent panel;
+    background: $surface-lighten-1;
+}
+
+CopyScreen #src {
+    margin: 1 0 1 1;
+}
+
+CopyScreen #buttons {
+    width: 100%;
+    align: center middle;
+}
+
+CopyScreen Button {
+    margin: 0 2;
+}
+
 /* Move dialog */
 
 MoveScreen {

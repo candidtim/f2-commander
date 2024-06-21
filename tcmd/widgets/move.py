@@ -12,6 +12,7 @@ from textual.widgets import Button, Input, Label
 class MoveScreen(ModalScreen[bool]):
     BINDINGS = [
         Binding("escape", "dismiss", show=False),
+        Binding("q", "dismiss", show=False),
     ]
 
     def __init__(self, src: Path, dst: Path, *args, **kwargs):

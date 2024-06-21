@@ -8,12 +8,12 @@ from textual.containers import Horizontal
 from textual.reactive import reactive
 from textual.widgets import Footer
 
+from .shell import editor, viewer
 from .widgets.copy import CopyScreen
-from .widgets.move import MoveScreen
 from .widgets.delete import DeleteScreen
 from .widgets.filelist import FileList
-
-from .shell import editor, viewer
+from .widgets.message import MessageScreen
+from .widgets.move import MoveScreen
 
 
 class TextualCommander(App):
@@ -77,9 +77,12 @@ class TextualCommander(App):
         src = self.active_filelist.cursor_path
         if src.is_file():
             with self.app.suspend():
-                editor_cmd = viewer(or_editor=True)
-                completed_process = subprocess.run(editor_cmd + [str(src)])
-                completed_process.check_returncode()  # TODO: handle gracefully
+                viewer_cmd = viewer(or_editor=True)
+                completed_process = subprocess.run(viewer_cmd + [str(src)])
+                exit_code = completed_process.returncode
+                if exit_code != 0:
+                    msg = f"Viewer exited with an error ({exit_code})"
+                    self.push_screen(MessageScreen("warning", msg))
 
     def action_edit(self):
         src = self.active_filelist.cursor_path
@@ -87,7 +90,10 @@ class TextualCommander(App):
             with self.app.suspend():
                 editor_cmd = editor()
                 completed_process = subprocess.run(editor_cmd + [str(src)])
-                completed_process.check_returncode()  # TODO: handle gracefully
+                exit_code = completed_process.returncode
+                if exit_code != 0:
+                    msg = f"Editor exited with an error ({exit_code})"
+                    self.push_screen(MessageScreen("error", msg))
 
     def action_copy(self):
         def on_copy(result: bool):
