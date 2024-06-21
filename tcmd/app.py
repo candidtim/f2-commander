@@ -25,6 +25,7 @@ class TextualCommander(App):
         Binding("c", "copy", "Copy"),
         Binding("m", "move", "Move"),
         Binding("d", "delete", "Delete"),
+        # TODO: mkdir
         Binding("x", "shell", "Shell"),
         # TODO: navigate to path (enter path)
         # TODO: set and navigate to bookmarks
@@ -140,6 +141,8 @@ class TextualCommander(App):
                     shell_cmd,
                     cwd=self.active_filelist.path,
                 )
+            self.active_filelist.update_listing()
+            self.inactive_filelist.update_listing()
             exit_code = completed_process.returncode
             if exit_code != 0:
                 msg = f"Editor exited with an error ({exit_code})"
