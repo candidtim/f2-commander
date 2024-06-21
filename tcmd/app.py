@@ -9,6 +9,7 @@ from textual.reactive import reactive
 from textual.widgets import Footer
 
 from .shell import editor, shell, viewer
+from .widgets.confirm import ConfirmScreen
 from .widgets.copy import CopyScreen
 from .widgets.delete import DeleteScreen
 from .widgets.filelist import FileList
@@ -27,7 +28,7 @@ class TextualCommander(App):
         Binding("x", "shell", "Shell"),
         # TODO: navigate to path (enter path)
         # TODO: set and navigate to bookmarks
-        Binding("q", "quit", "Quit"),
+        Binding("q", "quit_confirm", "Quit"),
         Binding("h", "toggle_hidden", "Toggle hidden files", show=False),
     ]
 
@@ -145,3 +146,10 @@ class TextualCommander(App):
                 self.push_screen(MessageScreen("error", msg))
         else:
             self.push_screen(MessageScreen("error", "No shell found!"))
+
+    def action_quit_confirm(self):
+        def on_confirm(result: bool):
+            if result:
+                self.exit()
+
+        self.push_screen(ConfirmScreen("Quit?", ""), on_confirm)

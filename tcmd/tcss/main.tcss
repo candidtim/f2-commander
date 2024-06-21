@@ -49,6 +49,37 @@ MessageScreen #buttons {
     align: center middle;
 }
 
+/* Confirm dialog */
+
+ConfirmScreen {
+    align: center middle;
+}
+
+ConfirmScreen #confirm-screen {
+    height: 13;
+    width: 50%;
+    border: $accent panel;
+    background: $surface-lighten-1;
+}
+
+ConfirmScreen #title {
+    text-style: bold;
+    margin: 1 0 1 1;
+}
+
+ConfirmScreen #message {
+    margin: 1 0 1 1;
+}
+
+ConfirmScreen #buttons {
+    width: 100%;
+    align: center middle;
+}
+
+ConfirmScreen Button {
+    margin: 0 2;
+}
+
 /* Copy dialog */
 
 CopyScreen {
