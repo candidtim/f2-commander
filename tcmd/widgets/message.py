@@ -19,7 +19,7 @@ class MessageScreen(ModalScreen):
 
     def compose(self) -> ComposeResult:
         yield Vertical(
-            Label(self.title.capitalize(), id="title"),
+            Label(self.title.capitalize(), id="title"),  # type: ignore
             Label(self.msg, id="message"),
             Horizontal(
                 Button("Dismiss", variant="primary", id="ok"),
@@ -29,7 +29,7 @@ class MessageScreen(ModalScreen):
         )
 
     def on_mount(self) -> None:
-        self.title = self.title.capitalize()
+        self.title = self.title.capitalize()  # type: ignore
         self.app.query_one("#ok").focus()
 
     @on(Button.Pressed, "#ok")

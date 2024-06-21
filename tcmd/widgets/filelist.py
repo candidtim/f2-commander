@@ -190,7 +190,7 @@ class FileList(Static):
         if new_path == old_path.parent:
             try:
                 idx = self.table.get_row_index(old_path.name)
-                self.table.cursor_coordinate = (idx, 0)
+                self.table.cursor_coordinate = (idx, 0)  # type: ignore
             except RowDoesNotExist:
                 pass
 
@@ -247,9 +247,9 @@ class FileList(Static):
             new_coord = (self.table.cursor_coordinate[0] - 1, 0)
             self.table.cursor_coordinate = new_coord  # type: ignore
         elif event.key == "g":
-            self.table.cursor_coordinate = (0, 0)
+            self.table.cursor_coordinate = (0, 0)  # type: ignore
         elif event.key == "G":
-            self.table.cursor_coordinate = (self.table.row_count - 1, 0)
+            self.table.cursor_coordinate = (self.table.row_count - 1, 0)  # type: ignore
         elif event.key == "b":
             self.post_message(self.Selected(path=self.path.parent, file_list=self))
         elif event.key == "backspace":

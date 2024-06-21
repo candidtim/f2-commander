@@ -3,7 +3,6 @@ import shlex
 import shutil
 from typing import List
 
-
 # TODO: better lookup (cross-platform) and user configuration
 
 
