@@ -8,7 +8,7 @@ from textual.containers import Horizontal
 from textual.reactive import reactive
 from textual.widgets import Footer
 
-from .shell import editor, viewer
+from .shell import editor, shell, viewer
 from .widgets.copy import CopyScreen
 from .widgets.delete import DeleteScreen
 from .widgets.filelist import FileList
@@ -24,6 +24,7 @@ class TextualCommander(App):
         Binding("c", "copy", "Copy"),
         Binding("m", "move", "Move"),
         Binding("d", "delete", "Delete"),
+        Binding("x", "shell", "Shell"),
         Binding("q", "quit", "Quit"),
         Binding("h", "toggle_hidden", "Toggle hidden files", show=False),
     ]
@@ -76,24 +77,30 @@ class TextualCommander(App):
     def action_view(self):
         src = self.active_filelist.cursor_path
         if src.is_file():
-            with self.app.suspend():
-                viewer_cmd = viewer(or_editor=True)
-                completed_process = subprocess.run(viewer_cmd + [str(src)])
+            viewer_cmd = viewer(or_editor=True)
+            if viewer_cmd is not None:
+                with self.app.suspend():
+                    completed_process = subprocess.run(viewer_cmd + [str(src)])
                 exit_code = completed_process.returncode
                 if exit_code != 0:
                     msg = f"Viewer exited with an error ({exit_code})"
                     self.push_screen(MessageScreen("warning", msg))
+            else:
+                self.push_screen(MessageScreen("error", "No viewer found!"))
 
     def action_edit(self):
         src = self.active_filelist.cursor_path
         if src.is_file():
-            with self.app.suspend():
-                editor_cmd = editor()
-                completed_process = subprocess.run(editor_cmd + [str(src)])
+            editor_cmd = editor()
+            if editor_cmd is not None:
+                with self.app.suspend():
+                    completed_process = subprocess.run(editor_cmd + [str(src)])
                 exit_code = completed_process.returncode
                 if exit_code != 0:
                     msg = f"Editor exited with an error ({exit_code})"
                     self.push_screen(MessageScreen("error", msg))
+            else:
+                self.push_screen(MessageScreen("error", "No editor found!"))
 
     def action_copy(self):
         def on_copy(result: bool):
@@ -121,3 +128,18 @@ class TextualCommander(App):
 
         path = self.active_filelist.cursor_path
         self.push_screen(DeleteScreen(path), on_delete)
+
+    def action_shell(self):
+        shell_cmd = shell()
+        if shell_cmd is not None:
+            with self.app.suspend():
+                completed_process = subprocess.run(
+                    shell_cmd,
+                    cwd=self.active_filelist.path,
+                )
+            exit_code = completed_process.returncode
+            if exit_code != 0:
+                msg = f"Editor exited with an error ({exit_code})"
+                self.push_screen(MessageScreen("error", msg))
+        else:
+            self.push_screen(MessageScreen("error", "No shell found!"))

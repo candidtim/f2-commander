@@ -245,5 +245,7 @@ class FileList(Static):
             self.table.cursor_coordinate = (self.table.row_count - 1, 0)
         elif event.key == "b":
             self.post_message(self.Selected(path=self.path.parent, file_list=self))
+        elif event.key == "backspace":
+            self.post_message(self.Selected(path=self.path.parent, file_list=self))
         elif event.key == "r":
             self.update_listing()
