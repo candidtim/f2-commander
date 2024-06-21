@@ -95,8 +95,7 @@ class FileList(Static):
         if e.is_dir:
             style = "bold"
         elif e.is_executable:
-            # style = "italic"
-            style = ""
+            style = "#ab0000"
         elif e.is_hidden:
             style = "dim"
         elif e.is_link:
