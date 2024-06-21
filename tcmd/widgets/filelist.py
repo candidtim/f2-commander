@@ -11,6 +11,7 @@ from textual.binding import Binding
 from textual.message import Message
 from textual.reactive import reactive
 from textual.widgets import DataTable, Static
+from textual.widgets.data_table import RowDoesNotExist
 
 from tcmd.fs import DirEntry, DirList, list_dir
 
@@ -184,9 +185,13 @@ class FileList(Static):
         self.border_subtitle = (
             f"{total_size_str} in {ls.file_count} files | {ls.dir_count} dirs"
         )
+        # if navigated "up", select previous dir in the list:
         if new_path == old_path.parent:
-            idx = self.table.get_row_index(old_path.name)
-            self.table.cursor_coordinate = (idx, 0)
+            try:
+                idx = self.table.get_row_index(old_path.name)
+                self.table.cursor_coordinate = (idx, 0)
+            except RowDoesNotExist:
+                pass
 
     def watch_show_hidden(self, old: bool, new: bool):
         ls = list_dir(self.path, include_hidden=new)
