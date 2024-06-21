@@ -9,6 +9,7 @@ from textual.reactive import reactive
 from textual.widgets import Footer
 
 from .widgets.copy import CopyScreen
+from .widgets.move import MoveScreen
 from .widgets.delete import DeleteScreen
 from .widgets.filelist import FileList
 
@@ -21,6 +22,7 @@ class TextualCommander(App):
         Binding("v", "view", "View"),
         Binding("e", "edit", "Edit"),
         Binding("c", "copy", "Copy"),
+        Binding("m", "move", "Move"),
         Binding("d", "delete", "Delete"),
         Binding("q", "quit", "Quit"),
         Binding("h", "toggle_hidden", "Toggle hidden files", show=False),
@@ -95,6 +97,16 @@ class TextualCommander(App):
         src = self.active_filelist.cursor_path
         dst = self.inactive_filelist.path
         self.push_screen(CopyScreen(src, dst), on_copy)
+
+    def action_move(self):
+        def on_move(result: bool):
+            if result:
+                self.active_filelist.update_listing()
+                self.inactive_filelist.update_listing()
+
+        src = self.active_filelist.cursor_path
+        dst = self.inactive_filelist.path
+        self.push_screen(MoveScreen(src, dst), on_move)
 
     def action_delete(self):
         def on_delete(result: bool):

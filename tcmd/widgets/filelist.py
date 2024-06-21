@@ -47,13 +47,13 @@ class FileList(Static):
         Binding("s", "order('size', False)", "Order by size (asc)", show=False),
         Binding("S", "order('size', True)", "Order by size (desc)", show=False),
         Binding(
-            "m",
+            "t",
             "order('mtime', False)",
             "Order by last modified time (asc)",
             show=False,
         ),
         Binding(
-            "M",
+            "T",
             "order('mtime', True)",
             "Order by last modified time (desc)",
             show=False,
@@ -171,6 +171,7 @@ class FileList(Static):
         self.table.sort(sort_options.key, reverse=sort_options.reverse)
 
     def update_listing(self):
+        # TODO: preserve cursor position when possible
         ls = list_dir(self.path, include_hidden=self.show_hidden)
         self._update_table(ls, self.sort_options)
 
@@ -244,3 +245,5 @@ class FileList(Static):
             self.table.cursor_coordinate = (self.table.row_count - 1, 0)
         elif event.key == "b":
             self.post_message(self.Selected(path=self.path.parent, file_list=self))
+        elif event.key == "r":
+            self.update_listing()

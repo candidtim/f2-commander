@@ -22,29 +22,29 @@ FileList.focused .datatable--cursor {
   background: $secondary;
 }
 
-/* Copy dialog */
+/* Move dialog */
 
-CopyScreen {
+MoveScreen {
     align: center middle;
 }
 
-CopyScreen #copy-screen {
+MoveScreen #move-screen {
     height: 13;
     width: 80%;
     border: $accent panel;
     background: $surface-lighten-1;
 }
 
-CopyScreen #src {
+MoveScreen #src {
     margin: 1 0 1 1;
 }
 
-CopyScreen #buttons {
+MoveScreen #buttons {
     width: 100%;
     align: center middle;
 }
 
-CopyScreen Button {
+MoveScreen Button {
     margin: 0 2;
 }
 
