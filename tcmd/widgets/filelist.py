@@ -85,6 +85,7 @@ class FileList(Static):
         yield self.table
 
     def on_mount(self) -> None:
+        # TODO: use full width of the parent container
         # " ⬍" in "Name ⬍" will be removed after the initial sort
         self.table.add_column("Name ⬍", key="name")
         self.table.add_column("Size", key="size")
@@ -218,6 +219,7 @@ class FileList(Static):
         self.sort_options = new_sort_options
 
     def on_data_table_row_selected(self, event: DataTable.RowSelected):
+        # TODO: when following links, keep track of actual "previous" dir
         self.post_message(
             self.Selected(
                 path=(self.path / event.row_key.value).resolve(),  # type: ignore

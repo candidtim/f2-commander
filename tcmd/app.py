@@ -25,6 +25,8 @@ class TextualCommander(App):
         Binding("m", "move", "Move"),
         Binding("d", "delete", "Delete"),
         Binding("x", "shell", "Shell"),
+        # TODO: navigate to path (enter path)
+        # TODO: set and navigate to bookmarks
         Binding("q", "quit", "Quit"),
         Binding("h", "toggle_hidden", "Toggle hidden files", show=False),
     ]
