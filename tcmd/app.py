@@ -1,3 +1,4 @@
+import subprocess
 from pathlib import Path
 
 from textual import on
@@ -9,9 +10,9 @@ from textual.widgets import Footer
 
 from .widgets.copy import CopyScreen
 from .widgets.delete import DeleteScreen
-from .widgets.edit import EditScreen
 from .widgets.filelist import FileList
-from .widgets.view import ViewScreen
+
+from .shell import editor, viewer
 
 
 class TextualCommander(App):
@@ -73,12 +74,18 @@ class TextualCommander(App):
     def action_view(self):
         src = self.active_filelist.cursor_path
         if src.is_file():
-            self.push_screen(ViewScreen(src))
+            with self.app.suspend():
+                editor_cmd = viewer(or_editor=True)
+                completed_process = subprocess.run(editor_cmd + [str(src)])
+                completed_process.check_returncode()  # TODO: handle gracefully
 
     def action_edit(self):
         src = self.active_filelist.cursor_path
         if src.is_file():
-            self.push_screen(EditScreen(src))
+            with self.app.suspend():
+                editor_cmd = editor()
+                completed_process = subprocess.run(editor_cmd + [str(src)])
+                completed_process.check_returncode()  # TODO: handle gracefully
 
     def action_copy(self):
         def on_copy(result: bool):

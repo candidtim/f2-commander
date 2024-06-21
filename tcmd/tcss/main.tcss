@@ -15,7 +15,7 @@ FileList.focused {
 }
 
 FileList .datatable--cursor {
-  background: darkolivegreen;
+  background: $primary;
 }
 
 FileList.focused .datatable--cursor {

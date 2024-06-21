@@ -1,7 +1,6 @@
-import os
-import shutil
 from pathlib import Path
 
+from send2trash import send2trash
 from textual import on
 from textual.app import ComposeResult
 from textual.binding import Binding
@@ -22,7 +21,7 @@ class DeleteScreen(ModalScreen[bool]):
     def compose(self) -> ComposeResult:
         yield Vertical(
             Label(f"Delete {self.src.name}?", id="src"),
-            Label("This cannot be undone, recycle bin is not used", id="desc"),
+            Label("Selection will be moved to Trash", id="desc"),
             Horizontal(
                 Button("Delete", variant="error", id="delete"),
                 Button("Cancel", variant="default", id="cancel"),
@@ -45,7 +44,5 @@ class DeleteScreen(ModalScreen[bool]):
         self.dismiss(False)
 
     def _delete(self, src: Path) -> None:
-        if src.is_dir():
-            shutil.rmtree(src)
-        else:
-            os.unlink(src)
+        # TODO: allow delete, instead of moving to Trash
+        send2trash(src)

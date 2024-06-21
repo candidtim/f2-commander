@@ -95,7 +95,8 @@ class FileList(Static):
         if e.is_dir:
             style = "bold"
         elif e.is_executable:
-            style = "italic"
+            # style = "italic"
+            style = ""
         elif e.is_hidden:
             style = "dim"
         elif e.is_link:
@@ -183,6 +184,9 @@ class FileList(Static):
         self.border_subtitle = (
             f"{total_size_str} in {ls.file_count} files | {ls.dir_count} dirs"
         )
+        if new_path == old_path.parent:
+            idx = self.table.get_row_index(old_path.name)
+            self.table.cursor_coordinate = (idx, 0)
 
     def watch_show_hidden(self, old: bool, new: bool):
         ls = list_dir(self.path, include_hidden=new)
@@ -228,12 +232,16 @@ class FileList(Static):
         self.remove_class("focused")
 
     def on_key(self, event: events.Key) -> None:
-        # FIXME: why "cursor_down" and "cursor_up" actions don't work?
+        # FIXME: shouldn't DataTable default bindings do the same?
         if event.key == "j":
             new_coord = (self.table.cursor_coordinate[0] + 1, 0)
             self.table.cursor_coordinate = new_coord  # type: ignore
         elif event.key == "k":
             new_coord = (self.table.cursor_coordinate[0] - 1, 0)
             self.table.cursor_coordinate = new_coord  # type: ignore
+        elif event.key == "g":
+            self.table.cursor_coordinate = (0, 0)
+        elif event.key == "G":
+            self.table.cursor_coordinate = (self.table.row_count - 1, 0)
         elif event.key == "b":
-            self.path = self.path.parent
+            self.post_message(self.Selected(path=self.path.parent, file_list=self))
