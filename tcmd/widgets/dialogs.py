@@ -95,7 +95,7 @@ class InputDialog(ModalScreen[str | None]):
     def __init__(
         self,
         title: str,
-        value: str,
+        value: str = "",
         btn_ok: str = "OK",
         btn_cancel: str = "Cancel",
         style: Style = Style.INFO,
@@ -110,23 +110,24 @@ class InputDialog(ModalScreen[str | None]):
         self.style = style
 
     def compose(self) -> ComposeResult:
+        self.input = Input(self.value, id="value")
         with Vertical(id="dialog", classes=f"large {self.style.value}"):
             yield Label(self.title, id="title")  # type: ignore
-            yield Input(self.value, id="value")
+            yield self.input
             with Horizontal(id="buttons"):
                 yield Button(self.btn_ok, variant="primary", id="ok")
                 yield Button(self.btn_cancel, variant="default", id="cancel")
 
     def on_mount(self) -> None:
-        self.app.query_one("#ok").focus()
+        self.app.query_one("#value").focus()
 
     @on(Input.Submitted, "#value")
     def on_input_submitted(self, event: Input.Submitted) -> None:
-        self.dismiss(self.value)
+        self.dismiss(self.input.value)
 
     @on(Button.Pressed, "#ok")
     def on_copy_pressed(self, event: Button.Pressed) -> None:
-        self.dismiss(self.value)
+        self.dismiss(self.input.value)
 
     @on(Button.Pressed, "#cancel")
     def on_cancel_pressed(self, event: Button.Pressed) -> None:

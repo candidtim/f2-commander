@@ -25,7 +25,6 @@ class TextualCommander(App):
         Binding("c", "copy", "Copy"),
         Binding("m", "move", "Move"),
         Binding("d", "delete", "Delete"),
-        # TODO: mkdir
         Binding("ctrl+n", "mkdir", "New dir"),
         # TODO: allow selecting multiple files (spacebar) before op
         Binding("x", "shell", "Shell"),
@@ -166,7 +165,16 @@ class TextualCommander(App):
         )
 
     def action_mkdir(self):
-        pass
+        def on_mkdir(result: str | None):
+            if result is not None:
+                new_dir_path = self.active_filelist.path / result
+                new_dir_path.mkdir(parents=True, exist_ok=True)
+                self.active_filelist.update_listing()
+
+        self.push_screen(
+            InputDialog("New directory", btn_ok="Create"),
+            on_mkdir,
+        )
 
     def action_shell(self):
         shell_cmd = shell()
