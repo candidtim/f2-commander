@@ -3,6 +3,8 @@
 Textual Commander is an orthodox file manager in a spirit of Midnight Commander
 and the like.
 
+![Textual Commander Demo](img/tcmd.png "Textual Commander")
+
 ## Development environment
 
 This project uses Poetry for dependency management and as a build tool. The
