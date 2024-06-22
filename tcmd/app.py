@@ -1,6 +1,10 @@
+import os
+import shutil
 import subprocess
+from importlib.metadata import version
 from pathlib import Path
 
+from send2trash import send2trash
 from textual import on
 from textual.app import App, ComposeResult
 from textual.binding import Binding
@@ -9,12 +13,8 @@ from textual.reactive import reactive
 from textual.widgets import Footer
 
 from .shell import editor, shell, viewer
-from .widgets.confirm import ConfirmScreen
-from .widgets.copy import CopyScreen
-from .widgets.delete import DeleteScreen
+from .widgets.dialogs import InputDialog, StaticDialog, Style
 from .widgets.filelist import FileList
-from .widgets.message import MessageScreen
-from .widgets.move import MoveScreen
 
 
 class TextualCommander(App):
@@ -26,11 +26,15 @@ class TextualCommander(App):
         Binding("m", "move", "Move"),
         Binding("d", "delete", "Delete"),
         # TODO: mkdir
+        Binding("ctrl+n", "mkdir", "New dir"),
+        # TODO: allow selecting multiple files (spacebar) before op
         Binding("x", "shell", "Shell"),
+        # TODO: navigate the list (quick search by typing)
         # TODO: navigate to path (enter path)
         # TODO: set and navigate to bookmarks
         Binding("q", "quit_confirm", "Quit"),
         Binding("h", "toggle_hidden", "Toggle hidden files", show=False),
+        Binding("?", "about", "About", show=False),
     ]
 
     left_path = reactive(Path.cwd())
@@ -43,7 +47,11 @@ class TextualCommander(App):
         with Horizontal():
             yield self.left
             yield self.right
-        yield Footer()
+        footer = Footer()
+        footer.compact = True
+        footer.ctrl_to_caret = False
+        footer.upper_case_keys = True
+        yield footer
 
     def watch_left_path(self, old_path: Path, new_path: Path):
         self.left.path = new_path
@@ -88,9 +96,9 @@ class TextualCommander(App):
                 exit_code = completed_process.returncode
                 if exit_code != 0:
                     msg = f"Viewer exited with an error ({exit_code})"
-                    self.push_screen(MessageScreen("warning", msg))
+                    self.push_screen(StaticDialog.warning("Warning", msg))
             else:
-                self.push_screen(MessageScreen("error", "No viewer found!"))
+                self.push_screen(StaticDialog.error("Error", "No viewer found!"))
 
     def action_edit(self):
         src = self.active_filelist.cursor_path
@@ -102,36 +110,63 @@ class TextualCommander(App):
                 exit_code = completed_process.returncode
                 if exit_code != 0:
                     msg = f"Editor exited with an error ({exit_code})"
-                    self.push_screen(MessageScreen("error", msg))
+                    self.push_screen(StaticDialog.warning("Error", msg))
             else:
-                self.push_screen(MessageScreen("error", "No editor found!"))
+                self.push_screen(StaticDialog.error("Error", "No editor found!"))
 
     def action_copy(self):
-        def on_copy(result: bool):
-            if result:
-                self.inactive_filelist.update_listing()
-
         src = self.active_filelist.cursor_path
         dst = self.inactive_filelist.path
-        self.push_screen(CopyScreen(src, dst), on_copy)
+
+        def on_copy(result: str | None):
+            if result is not None:
+                if src.is_dir():
+                    shutil.copytree(src, os.path.join(result, src.name))
+                else:
+                    shutil.copy2(src, result)
+                self.inactive_filelist.update_listing()
+
+        self.push_screen(
+            InputDialog(title=f"Copy {src.name} to", value=str(dst), btn_ok="Copy"),
+            on_copy,
+        )
 
     def action_move(self):
-        def on_move(result: bool):
-            if result:
+        src = self.active_filelist.cursor_path
+        dst = self.inactive_filelist.path
+
+        def on_move(result: str | None):
+            if result is not None:
+                shutil.move(src, result)
                 self.active_filelist.update_listing()
                 self.inactive_filelist.update_listing()
 
-        src = self.active_filelist.cursor_path
-        dst = self.inactive_filelist.path
-        self.push_screen(MoveScreen(src, dst), on_move)
+        self.push_screen(
+            InputDialog(title=f"Move {src.name} to", value=str(dst), btn_ok="Move"),
+            on_move,
+        )
 
     def action_delete(self):
+        path = self.active_filelist.cursor_path
+
+        # TODO: allow delete, instead of moving to Trash
         def on_delete(result: bool):
             if result:
+                send2trash(path)
                 self.active_filelist.update_listing()
 
-        path = self.active_filelist.cursor_path
-        self.push_screen(DeleteScreen(path), on_delete)
+        self.push_screen(
+            StaticDialog(
+                title="Delete?",
+                message=f"This will move {path.name} to Trash",
+                btn_ok="Delete",
+                style=Style.DANGER,
+            ),
+            on_delete,
+        )
+
+    def action_mkdir(self):
+        pass
 
     def action_shell(self):
         shell_cmd = shell()
@@ -146,13 +181,17 @@ class TextualCommander(App):
             exit_code = completed_process.returncode
             if exit_code != 0:
                 msg = f"Editor exited with an error ({exit_code})"
-                self.push_screen(MessageScreen("error", msg))
+                self.push_screen(StaticDialog.warning("Error", msg))
         else:
-            self.push_screen(MessageScreen("error", "No shell found!"))
+            self.push_screen(StaticDialog.error("Error", "No shell found!"))
 
     def action_quit_confirm(self):
         def on_confirm(result: bool):
             if result:
                 self.exit()
 
-        self.push_screen(ConfirmScreen("Quit?", ""), on_confirm)
+        self.push_screen(StaticDialog("Quit?"), on_confirm)
+
+    def action_about(self):
+        msg = f"Textual Commander {version('textual-commander')}"
+        self.push_screen(StaticDialog.info("About", msg))

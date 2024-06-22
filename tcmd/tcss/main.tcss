@@ -22,143 +22,59 @@ FileList.focused .datatable--cursor {
   background: $secondary;
 }
 
-/* Message dialog */
 
-MessageScreen {
-    align: center middle;
-}
+/* Dialogs */
 
-MessageScreen #message-screen {
-    height: 13;
+StaticDialog { align: center middle; }
+InputDialog { align: center middle; }
+
+#dialog {
+    height: 11;
     width: 50%;
     border: $accent panel;
     background: $surface-lighten-1;
 }
 
-MessageScreen #title {
-    text-style: bold;
-    margin: 1 0 1 1;
-}
-
-MessageScreen #message {
-    margin: 1 0 1 1;
-}
-
-MessageScreen #buttons {
-    width: 100%;
-    align: center middle;
-}
-
-/* Confirm dialog */
-
-ConfirmScreen {
-    align: center middle;
-}
-
-ConfirmScreen #confirm-screen {
-    height: 13;
-    width: 50%;
-    border: $accent panel;
-    background: $surface-lighten-1;
-}
-
-ConfirmScreen #title {
-    text-style: bold;
-    margin: 1 0 1 1;
-}
-
-ConfirmScreen #message {
-    margin: 1 0 1 1;
-}
-
-ConfirmScreen #buttons {
-    width: 100%;
-    align: center middle;
-}
-
-ConfirmScreen Button {
-    margin: 0 2;
-}
-
-/* Copy dialog */
-
-CopyScreen {
-    align: center middle;
-}
-
-CopyScreen #copy-screen {
+#dialog.large {
     height: 13;
     width: 80%;
+}
+
+#dialog.info {
     border: $accent panel;
-    background: $surface-lighten-1;
 }
 
-CopyScreen #src {
-    margin: 1 0 1 1;
+#dialog.success {
+    border: $success panel;
 }
 
-CopyScreen #buttons {
-    width: 100%;
-    align: center middle;
+#dialog.warning {
+    border: $warning panel;
 }
 
-CopyScreen Button {
-    margin: 0 2;
-}
-
-/* Move dialog */
-
-MoveScreen {
-    align: center middle;
-}
-
-MoveScreen #move-screen {
-    height: 13;
-    width: 80%;
-    border: $accent panel;
-    background: $surface-lighten-1;
-}
-
-MoveScreen #src {
-    margin: 1 0 1 1;
-}
-
-MoveScreen #buttons {
-    width: 100%;
-    align: center middle;
-}
-
-MoveScreen Button {
-    margin: 0 2;
-}
-
-/* Delete dialog */
-
-DeleteScreen {
-    align: center middle;
-}
-
-DeleteScreen #delete-screen {
-    height: 10;
-    width: 80%;
+#dialog.danger{
     border: $error panel;
-    background: $surface-lighten-1;
 }
 
-DeleteScreen #src {
-    margin: 1 0 1 1;
+#dialog #title {
+    text-style: bold;
+    margin: 1 1 1 1;
 }
 
-DeleteScreen #desc {
-    margin: 1 0 1 1;
+#dialog #message {
+    margin: 1 1 1 1;
     color: $text-muted;
 }
 
-DeleteScreen #buttons {
+#dialog #value {
+    margin: 1 0 1 0;
+}
+
+#dialog #buttons {
     width: 100%;
     align: center middle;
 }
 
-DeleteScreen Button {
+#dialog Button {
     margin: 0 2;
 }
