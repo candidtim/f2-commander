@@ -26,7 +26,6 @@ class TextualCommander(App):
         Binding("m", "move", "Move"),
         Binding("d", "delete", "Delete"),
         Binding("ctrl+n", "mkdir", "New dir"),
-        # TODO: allow selecting multiple files (spacebar) before op
         Binding("x", "shell", "Shell"),
         # TODO: navigate the list (quick search by typing)
         # TODO: navigate to path (enter path)
@@ -114,50 +113,75 @@ class TextualCommander(App):
                 self.push_screen(StaticDialog.error("Error", "No editor found!"))
 
     def action_copy(self):
-        src = self.active_filelist.cursor_path
+        sources = self.active_filelist.selected_paths()
         dst = self.inactive_filelist.path
 
         def on_copy(result: str | None):
             if result is not None:
-                if src.is_dir():
-                    shutil.copytree(src, os.path.join(result, src.name))
-                else:
-                    shutil.copy2(src, result)
+                # TODO: show progress dialog
+                # TODO: handle copy errors
+                for src in sources:
+                    if src.is_dir():
+                        shutil.copytree(src, os.path.join(result, src.name))
+                    else:
+                        shutil.copy2(src, result)
+                # FIXME: broken abstraction, at least have a function to reset it?
+                self.active_filelist.selection = set()
+                self.active_filelist.update_listing()
                 self.inactive_filelist.update_listing()
 
+        msg = (
+            f"Copy {sources[0].name} to"
+            if len(sources) == 1
+            else f"Copy {len(sources)} selected entries to"
+        )
         self.push_screen(
-            InputDialog(title=f"Copy {src.name} to", value=str(dst), btn_ok="Copy"),
+            InputDialog(title=msg, value=str(dst), btn_ok="Copy"),
             on_copy,
         )
 
     def action_move(self):
-        src = self.active_filelist.cursor_path
+        sources = self.active_filelist.selected_paths()
         dst = self.inactive_filelist.path
 
         def on_move(result: str | None):
             if result is not None:
-                shutil.move(src, result)
+                for src in sources:
+                    shutil.move(src, result)
+                self.active_filelist.selection = set()
                 self.active_filelist.update_listing()
                 self.inactive_filelist.update_listing()
 
+        msg = (
+            f"Move {sources[0].name} to"
+            if len(sources) == 1
+            else f"Move {len(sources)} selected entries to"
+        )
         self.push_screen(
-            InputDialog(title=f"Move {src.name} to", value=str(dst), btn_ok="Move"),
+            InputDialog(title=msg, value=str(dst), btn_ok="Move"),
             on_move,
         )
 
     def action_delete(self):
-        path = self.active_filelist.cursor_path
+        paths = self.active_filelist.selected_paths()
 
         # TODO: allow delete, instead of moving to Trash
         def on_delete(result: bool):
             if result:
-                send2trash(path)
+                for path in paths:
+                    send2trash(path)
+                self.active_filelist.selection = set()
                 self.active_filelist.update_listing()
 
+        msg = (
+            f"This will move {paths[0].name} to Trash"
+            if len(paths) == 1
+            else f"This will move {len(paths)} selected entries to Trash"
+        )
         self.push_screen(
             StaticDialog(
                 title="Delete?",
-                message=f"This will move {path.name} to Trash",
+                message=msg,
                 btn_ok="Delete",
                 style=Style.DANGER,
             ),
@@ -188,7 +212,7 @@ class TextualCommander(App):
             self.inactive_filelist.update_listing()
             exit_code = completed_process.returncode
             if exit_code != 0:
-                msg = f"Editor exited with an error ({exit_code})"
+                msg = f"Shell exited with an error ({exit_code})"
                 self.push_screen(StaticDialog.warning("Error", msg))
         else:
             self.push_screen(StaticDialog.error("Error", "No shell found!"))

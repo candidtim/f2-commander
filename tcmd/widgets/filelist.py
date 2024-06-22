@@ -74,8 +74,12 @@ class FileList(Static):
     path = reactive(Path.cwd())
     sort_options = reactive(SortOptions("name"))
     show_hidden = reactive(True)
+    # TODO: disallow ".." as current_path
     cursor_path = reactive(Path.cwd())
     active = reactive(False)
+    # TODO: reflect selection in the panel footer (should be reactive then?)
+    # TODO: disallow ".." in selection
+    selection: set[str] = set()
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -91,9 +95,16 @@ class FileList(Static):
         self.table.add_column("Size", key="size")
         self.table.add_column("Modified", key="mtime")
 
+    def selected_paths(self) -> list[Path]:
+        if len(self.selection) > 0:
+            return list([self.path / name for name in self.selection])
+        else:
+            return [self.cursor_path]
+
     def _row_style(self, e: DirEntry) -> str:
         # FIXME: can the Textual CSS or its standard colors be used here?
         style = ""
+
         if e.is_dir:
             style = "bold"
         elif e.is_executable:
@@ -102,6 +113,11 @@ class FileList(Static):
             style = "dim"
         elif e.is_link:
             style = "underline"
+
+        # TODO: also make the selection stand out when under cursor
+        if e.name in self.selection:
+            style += " #fff04d"
+
         return style
 
     def _fmt_name(self, e: DirEntry, style: str, reverse_sort: bool) -> Text:
@@ -173,13 +189,20 @@ class FileList(Static):
         self.table.sort(sort_options.key, reverse=sort_options.reverse)
 
     def update_listing(self):
-        # TODO: preserve cursor position when possible
+        old_cursor_path = self.cursor_path
         ls = list_dir(self.path, include_hidden=self.show_hidden)
         self._update_table(ls, self.sort_options)
+        # if still in the same dir, try to locate the previous cursor position
+        if old_cursor_path.parent == self.path:
+            try:
+                idx = self.table.get_row_index(old_cursor_path.name)
+                self.table.cursor_coordinate = (idx, 0)  # type: ignore
+            except RowDoesNotExist:
+                pass
+        return ls
 
     def watch_path(self, old_path: Path, new_path: Path):
-        ls = list_dir(new_path, include_hidden=self.show_hidden)
-        self._update_table(ls, self.sort_options)
+        ls = self.update_listing()
         # update list border with some information about the directory:
         total_size_str = naturalsize(ls.total_size)
         self.border_title = str(new_path)
@@ -193,14 +216,14 @@ class FileList(Static):
                 self.table.cursor_coordinate = (idx, 0)  # type: ignore
             except RowDoesNotExist:
                 pass
+        # reset selection
+        self.selection = set()
 
     def watch_show_hidden(self, old: bool, new: bool):
-        ls = list_dir(self.path, include_hidden=new)
-        self._update_table(ls, self.sort_options)
+        self.update_listing()
 
     def watch_sort_options(self, old: SortOptions, new: SortOptions):
-        ls = list_dir(self.path, include_hidden=self.show_hidden)
-        self._update_table(ls, new)
+        self.update_listing()
         # remove sort label from the previously sorted column:
         prev_sort_col = self.table.columns[old.key]  # type: ignore
         prev_sort_col.label = prev_sort_col.label[:-2]
@@ -250,9 +273,19 @@ class FileList(Static):
             self.table.cursor_coordinate = (0, 0)  # type: ignore
         elif event.key == "G":
             self.table.cursor_coordinate = (self.table.row_count - 1, 0)  # type: ignore
+        # FIXME: refactor to use actions?
         elif event.key == "b":
             self.post_message(self.Selected(path=self.path.parent, file_list=self))
         elif event.key == "backspace":
             self.post_message(self.Selected(path=self.path.parent, file_list=self))
         elif event.key == "r":
             self.update_listing()
+        elif event.key == "space":
+            key = self.cursor_path.name
+            if key in self.selection:
+                self.selection.remove(key)
+            else:
+                self.selection.add(key)
+            self.update_listing()
+            new_coord = (self.table.cursor_coordinate[0] + 1, 0)
+            self.table.cursor_coordinate = new_coord  # type: ignore
