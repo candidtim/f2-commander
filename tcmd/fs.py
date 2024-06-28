@@ -1,3 +1,4 @@
+import fnmatch
 import os
 import stat
 from dataclasses import dataclass
@@ -67,7 +68,12 @@ def is_executable(statinfo: os.stat_result) -> bool:
     return stat.S_ISREG(mode) and bool(mode & stat.S_IXUSR)
 
 
-def list_dir(path: Path, include_up_dir=True, include_hidden=True) -> DirList:
+def list_dir(
+    path: Path,
+    include_up_dir: bool = True,
+    include_hidden: bool = True,
+    glob_expression: str | None = None,
+) -> DirList:
     if not path.is_dir():
         raise ValueError(f"{path} is not a directory")
 
@@ -83,6 +89,8 @@ def list_dir(path: Path, include_up_dir=True, include_hidden=True) -> DirList:
 
     for child in path.iterdir():
         entry = DirEntry.from_path(child)
+        if glob_expression and not fnmatch.fnmatch(entry.name, glob_expression):
+            continue
         if entry.is_hidden and not include_hidden:
             continue
         entries.append(entry)

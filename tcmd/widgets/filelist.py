@@ -15,6 +15,8 @@ from textual.widgets.data_table import RowDoesNotExist
 
 from tcmd.fs import DirEntry, DirList, list_dir
 
+from .dialogs import InputDialog
+
 
 @functools.total_ordering
 class Sortable(Text):
@@ -59,6 +61,7 @@ class FileList(Static):
             "Order by last modified time (desc)",
             show=False,
         ),
+        Binding("f", "find", "Find files using glob expressions", show=False),
     ]
 
     class Selected(Message):
@@ -77,6 +80,7 @@ class FileList(Static):
     # TODO: disallow ".." as current_path
     cursor_path = reactive(Path.cwd())
     active = reactive(False)
+    glob = reactive(None)
     # TODO: reflect selection in the panel footer (should be reactive then?)
     # TODO: disallow ".." in selection
     selection: set[str] = set()
@@ -85,6 +89,9 @@ class FileList(Static):
         super().__init__(*args, **kwargs)
 
     def compose(self) -> ComposeResult:
+        # TODO: force redraw / recompute dimensions after chaning dir
+        # TODO: cut too long file names and add ...
+        # TODO: also make to short file names appear wider then?
         self.table: DataTable = DataTable(cursor_type="row")
         yield self.table
 
@@ -190,7 +197,9 @@ class FileList(Static):
 
     def update_listing(self):
         old_cursor_path = self.cursor_path
-        ls = list_dir(self.path, include_hidden=self.show_hidden)
+        ls = list_dir(
+            self.path, include_hidden=self.show_hidden, glob_expression=self.glob
+        )
         self._update_table(ls, self.sort_options)
         # if still in the same dir, try to locate the previous cursor position
         if old_cursor_path.parent == self.path:
@@ -199,27 +208,34 @@ class FileList(Static):
                 self.table.cursor_coordinate = (idx, 0)  # type: ignore
             except RowDoesNotExist:
                 pass
-        return ls
-
-    def watch_path(self, old_path: Path, new_path: Path):
-        ls = self.update_listing()
         # update list border with some information about the directory:
         total_size_str = naturalsize(ls.total_size)
-        self.border_title = str(new_path)
-        self.border_subtitle = (
+        self.border_title = str(self.path)
+        subtitle = (
             f"{total_size_str} in {ls.file_count} files | {ls.dir_count} dirs"
         )
-        # if navigated "up", select previous dir in the list:
+        if self.glob is not None:
+            subtitle = f"[red]{self.glob}[/red] | {subtitle}"
+        self.border_subtitle = subtitle
+
+    def reset_selection(self):
+        self.selection = set()
+
+    def watch_path(self, old_path: Path, new_path: Path):
+        self.reset_selection()
+        self.update_listing()
+        # if navigated "up", select source dir in the new list:
         if new_path == old_path.parent:
             try:
                 idx = self.table.get_row_index(old_path.name)
                 self.table.cursor_coordinate = (idx, 0)  # type: ignore
             except RowDoesNotExist:
                 pass
-        # reset selection
-        self.selection = set()
 
     def watch_show_hidden(self, old: bool, new: bool):
+        # TODO: check if there where any hidden files selected and let user choose?
+        if not new:  # if some files will be not shown anymore, better be safe:
+            self.reset_selection()
         self.update_listing()
 
     def watch_sort_options(self, old: SortOptions, new: SortOptions):
@@ -232,6 +248,10 @@ class FileList(Static):
         direction = "⬆" if new.reverse else "⬇"
         new_sort_col.label = f"{new_sort_col.label} {direction}"  # type: ignore
 
+    def watch_glob(self, old: str | None, new: str | None):
+        self.reset_selection()
+        self.update_listing()
+
     # TODO: refactor all ordering logic, see if DataTable provides better API
     def action_order(self, key: str, reverse: bool):
         # if the user chooses the same order again, reverse it:
@@ -240,6 +260,22 @@ class FileList(Static):
         if self.sort_options == new_sort_options:
             new_sort_options = SortOptions(key, not reverse)
         self.sort_options = new_sort_options
+
+    def action_find(self):
+        def on_find(value):
+            if value.strip() == "" or value.strip() == "*":
+                self.glob = None
+            else:
+                self.glob = value
+
+        self.app.push_screen(
+            InputDialog(
+                title="Find files, enter glob expression",
+                value=self.glob or "*",
+                btn_ok="Find",
+            ),
+            on_find,
+        )
 
     def on_data_table_row_selected(self, event: DataTable.RowSelected):
         # TODO: when following links, keep track of actual "previous" dir
@@ -263,6 +299,7 @@ class FileList(Static):
 
     def on_key(self, event: events.Key) -> None:
         # FIXME: shouldn't DataTable default bindings do the same?
+        # TODO: also allow ctrl+d and ctrl+b to scroll by page?
         if event.key == "j":
             new_coord = (self.table.cursor_coordinate[0] + 1, 0)
             self.table.cursor_coordinate = new_coord  # type: ignore
