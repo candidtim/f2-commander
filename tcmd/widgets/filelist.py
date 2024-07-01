@@ -64,6 +64,10 @@ class FileList(Static):
         Binding("f", "find", "Find files using glob expressions", show=False),
     ]
 
+    COLUMN_PADDING = 2  # a column uses this many chars more to render
+    SCROLLBAR_SIZE = 2  # TODO: only apply when showing a vertical scrollbar
+    TIME_FORMAT = "%b %d %H:%M"
+
     class Selected(Message):
         def __init__(self, path: Path, file_list: "FileList"):
             self.path = path
@@ -81,32 +85,53 @@ class FileList(Static):
     cursor_path = reactive(Path.cwd())
     active = reactive(False)
     glob = reactive(None)
-    # TODO: reflect selection in the panel footer (should be reactive then?)
-    # TODO: disallow ".." in selection
     selection: set[str] = set()
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
     def compose(self) -> ComposeResult:
-        # TODO: force redraw / recompute dimensions after chaning dir
-        # TODO: cut too long file names and add ...
-        # TODO: also make to short file names appear wider then?
         self.table: DataTable = DataTable(cursor_type="row")
         yield self.table
 
     def on_mount(self) -> None:
-        # TODO: use full width of the parent container
         # " ⬍" in "Name ⬍" will be removed after the initial sort
         self.table.add_column("Name ⬍", key="name")
         self.table.add_column("Size", key="size")
         self.table.add_column("Modified", key="mtime")
 
+    def on_resize(self):
+        self.update_listing()
+
+    @property
+    def current_path(self):
+        pass
+
     def selected_paths(self) -> list[Path]:
         if len(self.selection) > 0:
             return list([self.path / name for name in self.selection])
-        else:
+        elif self.cursor_path.name != "..":
             return [self.cursor_path]
+        else:
+            # TODO: handle empty result better in app.py
+            return []
+
+    def reset_selection(self):
+        self.selection = set()
+
+    def add_selection(self, name):
+        if name == "..":
+            return
+        self.selection.add(name)
+
+    def remove_selection(self, name):
+        self.selection.remove(name)
+
+    def toggle_selection(self, name):
+        if name in self.selection:
+            self.remove_selection(name)
+        else:
+            self.add_selection(name)
 
     def _row_style(self, e: DirEntry) -> str:
         # FIXME: can the Textual CSS or its standard colors be used here?
@@ -121,9 +146,8 @@ class FileList(Static):
         elif e.is_link:
             style = "underline"
 
-        # TODO: also make the selection stand out when under cursor
         if e.name in self.selection:
-            style += " #fff04d"
+            style += " #fff04d italic"
 
         return style
 
@@ -132,7 +156,37 @@ class FileList(Static):
         if e.name == "..":
             # stick ".." at the top of the list
             sort_key = "\u0000" if not reverse_sort else "\uFFFF"
-        return Sortable(sort_key, e.name, style=style)
+        text = Sortable(sort_key)
+
+        # adjust width
+        name = e.name
+        width_target = self._width_name()
+        if width_target and len(e.name) > width_target:
+            suffix = "..."
+            cut_idx = width_target - len(suffix)
+            text.append(name[:cut_idx] + suffix)
+        elif width_target and len(e.name) <= width_target:
+            pad_size = width_target - len(e.name)
+            text.append(name, style=style)
+            text.append(" " * pad_size)
+        else:
+            # do not add any text if the container width is not known yet
+            # -> assume smallest container size, render on next round
+            pass
+
+        return text
+
+    def _width_name(self):
+        if self.size.width > 0:
+            return (
+                self.size.width
+                - self._width_mtime()
+                - self._width_size()
+                - self.COLUMN_PADDING
+                - self.SCROLLBAR_SIZE
+            )
+        else:
+            return None
 
     def _fmt_size(self, e: DirEntry, style: str, reverse_sort: bool) -> Text:
         sort_key = (e.size, e.name)  # sort by size, then by name
@@ -172,6 +226,10 @@ class FileList(Static):
                 justify="right",
             )
 
+    @functools.cache
+    def _width_size(self):
+        return len(naturalsize(123)) + self.COLUMN_PADDING
+
     def _fmt_mtime(self, e: DirEntry, style: str, reverse_sort: bool) -> Text:
         sort_key = e.mtime
         if e.name == "..":
@@ -179,9 +237,13 @@ class FileList(Static):
             sort_key = -1 if not reverse_sort else 32503680000  # Y3K problem
         return Sortable(
             sort_key,
-            time.strftime("%b %d %H:%M", time.localtime(e.mtime)),
+            time.strftime(self.TIME_FORMAT, time.localtime(e.mtime)),
             style=style,
         )
+
+    @functools.cache
+    def _width_mtime(self):
+        return len(time.strftime(self.TIME_FORMAT)) + self.COLUMN_PADDING
 
     def _update_table(self, ls: DirList, sort_options: SortOptions):
         self.table.clear()
@@ -211,15 +273,10 @@ class FileList(Static):
         # update list border with some information about the directory:
         total_size_str = naturalsize(ls.total_size)
         self.border_title = str(self.path)
-        subtitle = (
-            f"{total_size_str} in {ls.file_count} files | {ls.dir_count} dirs"
-        )
+        subtitle = f"{total_size_str} in {ls.file_count} files | {ls.dir_count} dirs"
         if self.glob is not None:
             subtitle = f"[red]{self.glob}[/red] | {subtitle}"
         self.border_subtitle = subtitle
-
-    def reset_selection(self):
-        self.selection = set()
 
     def watch_path(self, old_path: Path, new_path: Path):
         self.reset_selection()
@@ -299,7 +356,6 @@ class FileList(Static):
 
     def on_key(self, event: events.Key) -> None:
         # FIXME: shouldn't DataTable default bindings do the same?
-        # TODO: also allow ctrl+d and ctrl+b to scroll by page?
         if event.key == "j":
             new_coord = (self.table.cursor_coordinate[0] + 1, 0)
             self.table.cursor_coordinate = new_coord  # type: ignore
@@ -307,22 +363,35 @@ class FileList(Static):
             new_coord = (self.table.cursor_coordinate[0] - 1, 0)
             self.table.cursor_coordinate = new_coord  # type: ignore
         elif event.key == "g":
-            self.table.cursor_coordinate = (0, 0)  # type: ignore
+            self.table.action_scroll_top()
         elif event.key == "G":
-            self.table.cursor_coordinate = (self.table.row_count - 1, 0)  # type: ignore
+            self.table.action_scroll_bottom()
+        # TODO: have u/d scroll half of a page
+        elif event.key in ("ctrl+f", "ctrl+d"):
+            self.table.action_page_down()
+        elif event.key in ("ctrl+b", "ctrl+u"):
+            self.table.action_page_up()
         # FIXME: refactor to use actions?
         elif event.key == "b":
             self.post_message(self.Selected(path=self.path.parent, file_list=self))
         elif event.key == "backspace":
             self.post_message(self.Selected(path=self.path.parent, file_list=self))
-        elif event.key == "r":
+        elif event.key == "R":
             self.update_listing()
         elif event.key == "space":
             key = self.cursor_path.name
-            if key in self.selection:
-                self.selection.remove(key)
-            else:
-                self.selection.add(key)
+            self.toggle_selection(key)
             self.update_listing()
             new_coord = (self.table.cursor_coordinate[0] + 1, 0)
             self.table.cursor_coordinate = new_coord  # type: ignore
+        elif event.key == "minus":
+            self.reset_selection()
+            self.update_listing()
+        elif event.key == "plus":
+            for key in self.table.rows:
+                self.add_selection(key.value)
+            self.update_listing()
+        elif event.key == "asterisk":
+            for key in self.table.rows:
+                self.toggle_selection(key.value)
+            self.update_listing()
