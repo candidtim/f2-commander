@@ -1,4 +1,5 @@
 import os
+import platform
 import shlex
 import shutil
 from typing import List
@@ -43,3 +44,18 @@ def shell() -> List[str] | None:
             return [cmd]
 
     return None
+
+
+def native_open() -> List[str] | None:
+    """Returns a generic 'file opener' relevant for the current OS, or None if none
+    is known for the use OS."""
+
+    match platform.system():
+        case "Linux":
+            return ["xdg-open"]
+        case "Darwin":
+            return ["open"]
+        case "Windows":
+            return ["start"]
+        case _:
+            return None

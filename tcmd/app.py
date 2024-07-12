@@ -12,7 +12,7 @@ from textual.containers import Horizontal
 from textual.reactive import reactive
 from textual.widgets import Footer
 
-from .shell import editor, shell, viewer
+from .shell import editor, shell, viewer, native_open
 from .widgets.dialogs import InputDialog, StaticDialog, Style
 from .widgets.filelist import FileList
 
@@ -32,6 +32,7 @@ class TextualCommander(App):
         # TODO: set and navigate to bookmarks
         Binding("q", "quit_confirm", "Quit"),
         Binding("h", "toggle_hidden", "Toggle hidden files", show=False),
+        Binding("A", "toggle_dark", "Appearance toggle", show=False),
         Binding("?", "about", "About", show=False),
     ]
 
@@ -61,11 +62,21 @@ class TextualCommander(App):
     def on_left_selected(self, event: FileList.Selected):
         if event.path.is_dir():
             self.left_path = event.path
+        elif event.path.is_file():
+            self.open_native(event.path)
 
     @on(FileList.Selected, "#right")
     def on_right_selected(self, event: FileList.Selected):
         if event.path.is_dir():
             self.right_path = event.path
+        elif event.path.is_file():
+            self.open_native(event.path)
+
+    def open_native(self, path):
+        open_cmd = native_open()
+        if open_cmd is not None:
+            with self.app.suspend():
+                subprocess.run(open_cmd + [str(path)])
 
     def action_toggle_hidden(self):
         self.show_hidden = not self.show_hidden
@@ -141,6 +152,10 @@ class TextualCommander(App):
         )
 
     def action_move(self):
+        # TODO: handle errors during move (also copy and delete), like destination
+        #       already exists, etc.
+        #       (even if delteing, file could have been moved since it was listed)
+
         sources = self.active_filelist.selected_paths()
         dst = self.inactive_filelist.path
 
@@ -151,6 +166,9 @@ class TextualCommander(App):
                 self.active_filelist.selection = set()
                 self.active_filelist.update_listing()
                 self.inactive_filelist.update_listing()
+                # TODO: select nearest entry (next or prev) after delete
+                #       (i.e. avoid cursor jumping to the top after move)
+                #       same after delete
 
         msg = (
             f"Move {sources[0].name} to"
