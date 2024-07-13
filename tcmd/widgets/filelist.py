@@ -349,6 +349,7 @@ class FileList(Static):
 
     def on_data_table_row_highlighted(self, event: DataTable.RowHighlighted):
         self.cursor_path = self.path / event.row_key.value  # type: ignore
+        self.post_message(self.Selected(path=self.cursor_path, file_list=self))
 
     def on_descendant_focus(self):
         self.active = True

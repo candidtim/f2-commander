@@ -4,6 +4,7 @@ import subprocess
 from importlib.metadata import version
 
 from send2trash import send2trash
+from textual import on
 from textual.app import App, ComposeResult
 from textual.binding import Binding
 from textual.containers import Horizontal
@@ -86,8 +87,15 @@ class TextualCommander(App):
     def inactive_filelist(self) -> FileList:
         return self.right if self.left.active else self.left
 
-    def action_set_right_panel(self):
-        raise NotImplementedError()
+    @on(FileList.Selected, "#left")
+    def on_left_selected(self, event: FileList.Selected):
+        if hasattr(self.right, "on_other_panel_selected"):
+            self.right.on_other_panel_selected(event.path)
+
+    @on(FileList.Selected, "#right")
+    def on_right_selected(self, event: FileList.Selected):
+        if hasattr(self.left, "on_other_panel_selected"):
+            self.left.on_other_panel_selected(event.path)
 
     def action_view(self):
         src = self.active_filelist.cursor_path
