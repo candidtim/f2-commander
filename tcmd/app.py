@@ -11,7 +11,7 @@ from textual.reactive import reactive
 from textual.widgets import Footer
 
 from .shell import editor, shell, viewer
-from .widgets.dialogs import InputDialog, SelectDialog, StaticDialog, Style
+from .widgets.dialogs import InputDialog, StaticDialog, Style
 from .widgets.filelist import FileList
 from .widgets.panel import Panel
 
@@ -20,8 +20,12 @@ class TextualCommander(App):
     CSS_PATH = "tcss/main.tcss"
     BINDINGS = [
         # TODO: menubar component
-        Binding("r", "set_right_panel", "Right", show=False),
-        Binding("l", "set_left_panel", "Left", show=False),
+        Binding(
+            "ctrl+e", "change_left_panel", "Change the left panel to...", show=False
+        ),
+        Binding(
+            "ctrl+r", "change_right_panel", "Change the right panel to...", show=False
+        ),
         Binding("v", "view", "View"),
         Binding("e", "edit", "Edit"),
         Binding("c", "copy", "Copy"),
@@ -38,11 +42,12 @@ class TextualCommander(App):
         Binding("?", "about", "About", show=False),
     ]
 
+    # TODO: restore "show hidden" in a FileList panel when switching to it
     show_hidden = reactive(False)
 
     def compose(self) -> ComposeResult:
-        self.panel_left = Panel(panel_id="left")
-        self.panel_right = Panel(panel_id="right")
+        self.panel_left = Panel(panel_id="left", display_name="left")
+        self.panel_right = Panel(panel_id="right", display_name="right")
         with Horizontal():
             yield self.panel_left
             yield self.panel_right
@@ -59,6 +64,12 @@ class TextualCommander(App):
         self.left.show_hidden = new
         self.right.show_hidden = new
 
+    def action_change_left_panel(self):
+        self.panel_left.action_change_panel()
+
+    def action_change_right_panel(self):
+        self.panel_right.action_change_panel()
+
     @property
     def left(self):
         return self.query_one("#left")
@@ -74,22 +85,6 @@ class TextualCommander(App):
     @property
     def inactive_filelist(self) -> FileList:
         return self.right if self.left.active else self.left
-
-    def action_set_left_panel(self):
-        def on_select(value: str):
-            self.panel_left.panel_type = value
-
-        options = [("Files", "file_list"), ("Preview", "preview")]
-        self.push_screen(
-            SelectDialog(
-                title="Change left panel to:",
-                options=options,
-                value=self.panel_left.panel_type,
-                allow_blank=False,
-                prompt="Select the left panel",
-            ),
-            on_select,
-        )
 
     def action_set_right_panel(self):
         raise NotImplementedError()
