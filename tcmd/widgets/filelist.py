@@ -1,4 +1,5 @@
 import functools
+import subprocess
 import time
 from dataclasses import dataclass
 from pathlib import Path
@@ -15,6 +16,7 @@ from textual.widgets.data_table import RowDoesNotExist
 
 from tcmd.fs import DirEntry, DirList, list_dir
 
+from ..shell import native_open
 from .dialogs import InputDialog
 
 
@@ -86,9 +88,6 @@ class FileList(Static):
     active = reactive(False)
     glob = reactive(None)
     selection: set[str] = set()
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
 
     def compose(self) -> ComposeResult:
         self.table: DataTable = DataTable(cursor_type="row")
@@ -335,13 +334,18 @@ class FileList(Static):
         )
 
     def on_data_table_row_selected(self, event: DataTable.RowSelected):
-        # TODO: when following links, keep track of actual "previous" dir
-        self.post_message(
-            self.Selected(
-                path=(self.path / event.row_key.value).resolve(),  # type: ignore
-                file_list=self,
-            )
-        )
+        selected_path = (self.path / event.row_key.value).resolve()
+        if selected_path.is_dir():
+            # TODO: when following links, keep track of actual "previous" dir
+            self.path = selected_path
+        else:
+            self.open_native(selected_path)
+
+    def open_native(self, path):
+        open_cmd = native_open()
+        if open_cmd is not None:
+            with self.app.suspend():
+                subprocess.run(open_cmd + [str(path)])
 
     def on_data_table_row_highlighted(self, event: DataTable.RowHighlighted):
         self.cursor_path = self.path / event.row_key.value  # type: ignore
@@ -373,9 +377,9 @@ class FileList(Static):
             self.table.action_page_up()
         # FIXME: refactor to use actions?
         elif event.key == "b":
-            self.post_message(self.Selected(path=self.path.parent, file_list=self))
+            self.path = self.path.parent
         elif event.key == "backspace":
-            self.post_message(self.Selected(path=self.path.parent, file_list=self))
+            self.path = self.path.parent
         elif event.key == "R":
             self.update_listing()
         elif event.key == "space":

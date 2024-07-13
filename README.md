@@ -26,3 +26,8 @@ See `./check` for more commands.
 To run the application from source code:
 
     poetry run tcmd
+
+To run the application with dev tools:
+
+    poetry run textual console [-v -x SYSTEM -x EVENT -x DEBUG -x INFO]  # run first!
+    poetry run textual run --dev tcmd.app:TextualCommander

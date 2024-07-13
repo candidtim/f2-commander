@@ -2,24 +2,26 @@ import os
 import shutil
 import subprocess
 from importlib.metadata import version
-from pathlib import Path
 
 from send2trash import send2trash
-from textual import on
 from textual.app import App, ComposeResult
 from textual.binding import Binding
 from textual.containers import Horizontal
 from textual.reactive import reactive
 from textual.widgets import Footer
 
-from .shell import editor, shell, viewer, native_open
-from .widgets.dialogs import InputDialog, StaticDialog, Style
+from .shell import editor, shell, viewer
+from .widgets.dialogs import InputDialog, SelectDialog, StaticDialog, Style
 from .widgets.filelist import FileList
+from .widgets.preview import Preview
 
 
 class TextualCommander(App):
     CSS_PATH = "tcss/main.tcss"
     BINDINGS = [
+        # TODO: menubar component
+        Binding("r", "set_right_panel", "Right", show=False),
+        Binding("l", "set_left_panel", "Left", show=False),
         Binding("v", "view", "View"),
         Binding("e", "edit", "Edit"),
         Binding("c", "copy", "Copy"),
@@ -36,47 +38,25 @@ class TextualCommander(App):
         Binding("?", "about", "About", show=False),
     ]
 
-    left_path = reactive(Path.cwd())
-    right_path = reactive(Path.home())
+    PANEL_TYPES = {
+        "file_list": FileList,
+        "preview": Preview,
+    }
+
+    left_panel = reactive("file_list", recompose=True)
+    right_panel = reactive("file_list", recompose=True)
+
     show_hidden = reactive(False)
 
     def compose(self) -> ComposeResult:
-        self.left = FileList(id="left")
-        self.right = FileList(id="right")
         with Horizontal():
-            yield self.left
-            yield self.right
+            yield self.PANEL_TYPES[self.left_panel](id="left")
+            yield self.PANEL_TYPES[self.right_panel](id="right")
         footer = Footer()
         footer.compact = True
         footer.ctrl_to_caret = False
         footer.upper_case_keys = True
         yield footer
-
-    def watch_left_path(self, old_path: Path, new_path: Path):
-        self.left.path = new_path
-
-    def watch_right_path(self, old_path: Path, new_path: Path):
-        self.right.path = new_path
-
-    @on(FileList.Selected, "#left")
-    def on_left_selected(self, event: FileList.Selected):
-        if event.path.is_dir():
-            self.left_path = event.path
-        elif event.path.is_file():
-            self.open_native(event.path)
-
-    @on(FileList.Selected, "#right")
-    def on_right_selected(self, event: FileList.Selected):
-        if event.path.is_dir():
-            self.right_path = event.path
-        elif event.path.is_file():
-            self.open_native(event.path)
-
-    def open_native(self, path):
-        open_cmd = native_open()
-        if open_cmd is not None:
-            with self.app.suspend():
-                subprocess.run(open_cmd + [str(path)])
 
     def action_toggle_hidden(self):
         self.show_hidden = not self.show_hidden
@@ -86,14 +66,39 @@ class TextualCommander(App):
         self.right.show_hidden = new
 
     @property
+    def left(self):
+        return self.query_one("#left")
+
+    @property
+    def right(self):
+        return self.query_one("#right")
+
+    @property
     def active_filelist(self) -> FileList:
-        assert self.left.active or self.right.active
         return self.left if self.left.active else self.right
 
     @property
     def inactive_filelist(self) -> FileList:
-        assert self.left.active or self.right.active
         return self.right if self.left.active else self.left
+
+    def action_set_left_panel(self):
+        def on_select(value: str):
+            self.left_panel = value
+
+        options = [("Files", "file_list"), ("Preview", "preview")]
+        self.push_screen(
+            SelectDialog(
+                title="Change left panel to:",
+                options=options,
+                value=self.left_panel,
+                allow_blank=False,
+                prompt="Select the left panel",
+            ),
+            on_select,
+        )
+
+    def action_set_right_panel(self):
+        raise NotImplementedError()
 
     def action_view(self):
         src = self.active_filelist.cursor_path

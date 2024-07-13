@@ -5,7 +5,7 @@ from textual.app import ComposeResult
 from textual.binding import Binding
 from textual.containers import Horizontal, Vertical
 from textual.screen import ModalScreen
-from textual.widgets import Button, Input, Label
+from textual.widgets import Button, Input, Label, Select, Static
 
 # TODO: "do not ask me again" feature for confirmations
 
@@ -126,9 +126,38 @@ class InputDialog(ModalScreen[str | None]):
         self.dismiss(self.input.value)
 
     @on(Button.Pressed, "#ok")
-    def on_copy_pressed(self, event: Button.Pressed) -> None:
+    def on_ok_pressed(self, event: Button.Pressed) -> None:
         self.dismiss(self.input.value)
 
     @on(Button.Pressed, "#cancel")
     def on_cancel_pressed(self, event: Button.Pressed) -> None:
         self.dismiss(None)
+
+
+class SelectDialog(ModalScreen):
+    BINDINGS = [
+        Binding("escape", "dismiss", show=False),
+        Binding("backspace", "dismiss", show=False),
+        Binding("q", "dismiss", show=False),
+    ]
+
+    def __init__(self, title, options, value, **kwargs):
+        super().__init__()
+        self.title = title
+        self.initial_value = value  # see on_select_changed
+        self.select = Select(options, id="select", value=value, **kwargs)
+
+    def compose(self) -> ComposeResult:
+        with Vertical(id="dialog", classes="small"):
+            yield Label(self.title, id="title")  # type: ignore
+            yield self.select
+
+    @on(Select.Changed)
+    def on_select_changed(self, event: Select.Changed) -> None:
+        # workaround for https://github.com/Textualize/textual/issues/4391
+        if event.value == self.initial_value:
+            return
+        self.dismiss(event.value)
+
+    def action_dismiss(self):
+        self.dismiss(self.select.value)

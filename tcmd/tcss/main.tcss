@@ -1,3 +1,12 @@
+/* TODO: wrapper for panels (?) */
+Preview {
+  width: 1fr;
+  height: 1fr;
+  border: $accent double;
+  border-title-align: center;
+  border-title-style: bold;
+}
+
 FileList {
   width: 1fr;
   height: 1fr;
@@ -27,12 +36,18 @@ FileList.focused .datatable--cursor {
 
 StaticDialog { align: center middle; }
 InputDialog { align: center middle; }
+SelectDialog {  align: center middle; }
 
 #dialog {
     height: 11;
     width: 50%;
     border: $accent panel;
     background: $surface-lighten-1;
+}
+
+#dialog.small {
+    height: 9;
+    width: 30%;
 }
 
 #dialog.large {
@@ -68,6 +83,11 @@ InputDialog { align: center middle; }
 
 #dialog #value {
     margin: 1 0 1 0;
+}
+
+#dialog #select {
+    align: center middle;
+    margin: 1 1 1 1;
 }
 
 #dialog #buttons {
