@@ -13,7 +13,7 @@ from textual.widgets import Footer
 from .shell import editor, shell, viewer
 from .widgets.dialogs import InputDialog, SelectDialog, StaticDialog, Style
 from .widgets.filelist import FileList
-from .widgets.preview import Preview
+from .widgets.panel import Panel
 
 
 class TextualCommander(App):
@@ -38,20 +38,14 @@ class TextualCommander(App):
         Binding("?", "about", "About", show=False),
     ]
 
-    PANEL_TYPES = {
-        "file_list": FileList,
-        "preview": Preview,
-    }
-
-    left_panel = reactive("file_list", recompose=True)
-    right_panel = reactive("file_list", recompose=True)
-
     show_hidden = reactive(False)
 
     def compose(self) -> ComposeResult:
+        self.panel_left = Panel(panel_id="left")
+        self.panel_right = Panel(panel_id="right")
         with Horizontal():
-            yield self.PANEL_TYPES[self.left_panel](id="left")
-            yield self.PANEL_TYPES[self.right_panel](id="right")
+            yield self.panel_left
+            yield self.panel_right
         footer = Footer()
         footer.compact = True
         footer.ctrl_to_caret = False
@@ -83,14 +77,14 @@ class TextualCommander(App):
 
     def action_set_left_panel(self):
         def on_select(value: str):
-            self.left_panel = value
+            self.panel_left.panel_type = value
 
         options = [("Files", "file_list"), ("Preview", "preview")]
         self.push_screen(
             SelectDialog(
                 title="Change left panel to:",
                 options=options,
-                value=self.left_panel,
+                value=self.panel_left.panel_type,
                 allow_blank=False,
                 prompt="Select the left panel",
             ),

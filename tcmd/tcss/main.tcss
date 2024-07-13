@@ -1,13 +1,4 @@
-/* TODO: wrapper for panels (?) */
-Preview {
-  width: 1fr;
-  height: 1fr;
-  border: $accent double;
-  border-title-align: center;
-  border-title-style: bold;
-}
-
-FileList {
+Panel {
   width: 1fr;
   height: 1fr;
   border: $accent double;
