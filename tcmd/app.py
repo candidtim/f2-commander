@@ -41,6 +41,7 @@ class TextualCommander(App):
         Binding("h", "toggle_hidden", "Toggle hidden files", show=False),
         Binding("A", "toggle_dark", "Appearance toggle", show=False),
         Binding("?", "about", "About", show=False),
+        # TODO: action to open the same path in the other pane
     ]
 
     # TODO: restore "show hidden" in a FileList panel when switching to it

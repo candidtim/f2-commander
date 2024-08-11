@@ -26,6 +26,7 @@ class StaticDialog(ModalScreen[bool]):
         Binding("escape", "dismiss", show=False),
         Binding("backspace", "dismiss", show=False),
         Binding("q", "dismiss", show=False),
+        # TODO: allow "y" to confirm (for OK action) ?
     ]
 
     def __init__(

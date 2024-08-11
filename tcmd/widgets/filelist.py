@@ -64,6 +64,7 @@ class FileList(Static):
             show=False,
         ),
         Binding("f", "find", "Find files using glob expressions", show=False),
+        # TODO: feature to list dirs first
     ]
 
     COLUMN_PADDING = 2  # a column uses this many chars more to render
@@ -77,7 +78,7 @@ class FileList(Static):
             super().__init__()
 
         @property
-        def control(self) -> "FileList":
+        def contol(self) -> "FileList":
             return self.file_list
 
     path = reactive(Path.cwd())
