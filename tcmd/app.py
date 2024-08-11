@@ -88,15 +88,11 @@ class TextualCommander(App):
     def inactive_filelist(self) -> FileList:
         return self.right if self.left.active else self.left
 
-    @on(FileList.Selected, "#left")
+    @on(FileList.Selected)
     def on_left_selected(self, event: FileList.Selected):
-        if hasattr(self.right, "on_other_panel_selected"):
-            self.right.on_other_panel_selected(event.path)
-
-    @on(FileList.Selected, "#right")
-    def on_right_selected(self, event: FileList.Selected):
-        if hasattr(self.left, "on_other_panel_selected"):
-            self.left.on_other_panel_selected(event.path)
+        for c in (self.left, self.right):
+            if hasattr(c, "on_other_panel_selected"):
+                c.on_other_panel_selected(event.path)
 
     def action_view(self):
         src = self.active_filelist.cursor_path
