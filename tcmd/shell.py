@@ -4,8 +4,6 @@ import shlex
 import shutil
 from typing import List
 
-# TODO: better lookup (cross-platform) and user configuration
-
 
 def editor() -> List[str] | None:
     """Try to find an editor. Returns a command as a splitted list of arguments,

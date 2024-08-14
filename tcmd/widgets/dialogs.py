@@ -7,8 +7,6 @@ from textual.containers import Horizontal, Vertical
 from textual.screen import ModalScreen
 from textual.widgets import Button, Input, Label, Select
 
-# TODO: "do not ask me again" feature for confirmations
-
 
 class Style(Enum):
     """Basic dialog styles"""
@@ -26,7 +24,6 @@ class StaticDialog(ModalScreen[bool]):
         Binding("escape", "dismiss", show=False),
         Binding("backspace", "dismiss", show=False),
         Binding("q", "dismiss", show=False),
-        # TODO: allow "y" to confirm (for OK action) ?
     ]
 
     def __init__(

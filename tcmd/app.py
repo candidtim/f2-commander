@@ -20,7 +20,6 @@ from .widgets.panel import Panel
 class TextualCommander(App):
     CSS_PATH = "tcss/main.tcss"
     BINDINGS = [
-        # TODO: menubar component
         Binding(
             "ctrl+e", "change_left_panel", "Change the left panel to...", show=False
         ),
@@ -34,17 +33,12 @@ class TextualCommander(App):
         Binding("d", "delete", "Delete"),
         Binding("ctrl+n", "mkdir", "New dir"),
         Binding("x", "shell", "Shell"),
-        # TODO: navigate the list (quick search by typing)
-        # TODO: navigate to path (enter path)
-        # TODO: set and navigate to bookmarks
         Binding("q", "quit_confirm", "Quit"),
         Binding("h", "toggle_hidden", "Toggle hidden files", show=False),
         Binding("A", "toggle_dark", "Appearance toggle", show=False),
         Binding("?", "about", "About", show=False),
-        # TODO: action to open the same path in the other pane
     ]
 
-    # TODO: restore "show hidden" in a FileList panel when switching to it
     show_hidden = reactive(False)
 
     def compose(self) -> ComposeResult:
@@ -128,8 +122,6 @@ class TextualCommander(App):
 
         def on_copy(result: str | None):
             if result is not None:
-                # TODO: show progress dialog
-                # TODO: handle copy errors
                 for src in sources:
                     if src.is_dir():
                         shutil.copytree(src, os.path.join(result, src.name))
@@ -151,10 +143,6 @@ class TextualCommander(App):
         )
 
     def action_move(self):
-        # TODO: handle errors during move (also copy and delete), like destination
-        #       already exists, etc.
-        #       (even if delteing, file could have been moved since it was listed)
-
         sources = self.active_filelist.selected_paths()
         dst = self.inactive_filelist.path
 
@@ -165,9 +153,6 @@ class TextualCommander(App):
                 self.active_filelist.selection = set()
                 self.active_filelist.update_listing()
                 self.inactive_filelist.update_listing()
-                # TODO: select nearest entry (next or prev) after delete
-                #       (i.e. avoid cursor jumping to the top after move)
-                #       same after delete
 
         msg = (
             f"Move {sources[0].name} to"
@@ -182,7 +167,6 @@ class TextualCommander(App):
     def action_delete(self):
         paths = self.active_filelist.selected_paths()
 
-        # TODO: allow delete, instead of moving to Trash
         def on_delete(result: bool):
             if result:
                 for path in paths:

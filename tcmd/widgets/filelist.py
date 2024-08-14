@@ -64,11 +64,10 @@ class FileList(Static):
             show=False,
         ),
         Binding("f", "find", "Find files using glob expressions", show=False),
-        # TODO: feature to list dirs first
     ]
 
     COLUMN_PADDING = 2  # a column uses this many chars more to render
-    SCROLLBAR_SIZE = 2  # TODO: only apply when showing a vertical scrollbar
+    SCROLLBAR_SIZE = 2
     TIME_FORMAT = "%b %d %H:%M"
 
     class Selected(Message):
@@ -84,7 +83,6 @@ class FileList(Static):
     path = reactive(Path.cwd())
     sort_options = reactive(SortOptions("name"))
     show_hidden = reactive(True)
-    # TODO: disallow ".." as current_path
     cursor_path = reactive(Path.cwd())
     active = reactive(False)
     glob = reactive(None)
@@ -113,8 +111,7 @@ class FileList(Static):
         elif self.cursor_path.name != "..":
             return [self.cursor_path]
         else:
-            # TODO: handle empty result better in app.py
-            return []
+            return []  # FIXME: should be None
 
     def reset_selection(self):
         self.selection = set()
@@ -134,7 +131,7 @@ class FileList(Static):
             self.add_selection(name)
 
     def _row_style(self, e: DirEntry) -> str:
-        # FIXME: can the Textual CSS or its standard colors be used here?
+        # FIXME: use CSS instead
         style = ""
 
         if e.is_dir:
@@ -290,7 +287,6 @@ class FileList(Static):
                 pass
 
     def watch_show_hidden(self, old: bool, new: bool):
-        # TODO: check if there where any hidden files selected and let user choose?
         if not new:  # if some files will be not shown anymore, better be safe:
             self.reset_selection()
         self.update_listing()
@@ -309,7 +305,7 @@ class FileList(Static):
         self.reset_selection()
         self.update_listing()
 
-    # TODO: refactor all ordering logic, see if DataTable provides better API
+    # FIXME: refactor (simplify) ordering logic; see if DataTable provides better API
     def action_order(self, key: str, reverse: bool):
         # if the user chooses the same order again, reverse it:
         # (e.g., pressing `n` twice will reverse the order the second time)
@@ -337,7 +333,6 @@ class FileList(Static):
     def on_data_table_row_selected(self, event: DataTable.RowSelected):
         selected_path = (self.path / event.row_key.value).resolve()
         if selected_path.is_dir():
-            # TODO: when following links, keep track of actual "previous" dir
             self.path = selected_path
         else:
             self.open_native(selected_path)
@@ -361,7 +356,8 @@ class FileList(Static):
         self.remove_class("focused")
 
     def on_key(self, event: events.Key) -> None:
-        # FIXME: shouldn't DataTable default bindings do the same?
+        # FIXME: refactor to use actions?
+        # FIXME: shouldn't j/k work out of the box with DataTable?
         if event.key == "j":
             new_coord = (self.table.cursor_coordinate[0] + 1, 0)
             self.table.cursor_coordinate = new_coord  # type: ignore
@@ -372,12 +368,10 @@ class FileList(Static):
             self.table.action_scroll_top()
         elif event.key == "G":
             self.table.action_scroll_bottom()
-        # TODO: have u/d scroll half of a page
         elif event.key in ("ctrl+f", "ctrl+d"):
             self.table.action_page_down()
         elif event.key in ("ctrl+b", "ctrl+u"):
             self.table.action_page_up()
-        # FIXME: refactor to use actions?
         elif event.key == "b":
             self.path = self.path.parent
         elif event.key == "backspace":
