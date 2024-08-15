@@ -118,6 +118,10 @@ Features:
    - [ ] ZIP (read, create, update)
    - [ ] ... and more ...
 
+ - Documentation
+   - [ ] Buit-in help
+   - [ ] User manual
+
  - Windows support. You are probably better off with WSL, but some day, maybe...
    - [ ] Test all features in Windows
    - [ ] Then, maybe plan fixes
@@ -135,8 +139,6 @@ User experience and app behavior:
      - [ ] ... on the nearest entry after delete or move
 
 Known bugs to fix:
-
- - File list footer (subtitles) are not visible
 
  - Restore the "show hidden files" state when switching back to the file list
    after having used a different panel type.

@@ -282,11 +282,11 @@ class FileList(Static):
                 pass
         # update list border with some information about the directory:
         total_size_str = naturalsize(ls.total_size)
-        self.border_title = str(self.path)
+        self.parent.border_title = str(self.path)
         subtitle = f"{total_size_str} in {ls.file_count} files | {ls.dir_count} dirs"
         if self.glob is not None:
             subtitle = f"[red]{self.glob}[/red] | {subtitle}"
-        self.border_subtitle = subtitle
+        self.parent.border_subtitle = subtitle
 
     def watch_path(self, old_path: Path, new_path: Path):
         self.reset_selection()
