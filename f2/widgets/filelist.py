@@ -14,7 +14,7 @@ from textual.reactive import reactive
 from textual.widgets import DataTable, Static
 from textual.widgets.data_table import RowDoesNotExist
 
-from tcmd.fs import DirEntry, DirList, list_dir
+from f2.fs import DirEntry, DirList, list_dir
 
 from ..shell import native_open
 from .dialogs import InputDialog

@@ -1,9 +1,21 @@
-# Textual Commander
+# F2 Commander
 
-Textual Commander is an orthodox file manager in a spirit of Midnight Commander
-and the like.
+F2 Commander is an orthodox file manager for the modern world.
 
-![Textual Commander Demo](img/tcmd.png "Textual Commander")
+![F2 Commander Demo](img/f2.png "F2 Commander")
+
+## Status
+
+In development. Basic features work, but consider it unstable to be safe.
+
+See the complete feature list below.
+
+## Installation
+
+Installation from source only, until considered stable.
+
+    poetry build
+    pipx install [--force] dist/f2_commander-0.1.0.tar.gz
 
 ## Development environment
 
@@ -23,19 +35,19 @@ To run all code quality controls and linters:
 
 To run the application from source code:
 
-    poetry run tcmd
+    poetry run f2
 
 To run the application with dev tools:
 
     poetry run textual console [-v -x SYSTEM -x EVENT -x DEBUG -x INFO]  # run first!
-    poetry run textual run --dev tcmd.app:TextualCommander
+    poetry run textual run --dev f2.app:F2Commander
 
 ## Roadmap
 
-Textual Commander mission is to bring the experience of an orthodox file
+F2 Commander mission is to bring the experience of an orthodox file
 manager into the world of modern computing.
 
-Textual Commander main principles are:
+F2 Commander main principles are:
 
  - "file system" can be anything that contains files, blobs, etc.
  - focus on the **tasks** for file manipulation
@@ -130,8 +142,8 @@ Known bugs to fix:
    but also the errors should be handled (e.g., destination can be deleted
    during copy, network connection dropped, etc.)
 
- - ".." path is allowed for selection and can be copied, moved, etc.; handle ".." and
-   empty selections better
+ - ".." path is allowed for selection and can be copied, moved, etc.; handle
+   ".." and empty selections better
 
  - Empty selections
 
@@ -139,10 +151,12 @@ Known bugs to fix:
    changed in the file list.
 
  - Default viewer, editor, shell and "open" programs are mostly MacOS-specific,
-   choices are too rigid. Make sure deafults work on clean MacOS and Linux installs.
+   choices are too rigid. Make sure deafults work on clean MacOS and Linux
+   installs.
 
  - File list has an unnecessary 2-column (2 characater wide) gap even when no
-   vertical scroll bar is present (2 characters are reserved for the scroll bar)
+   vertical scroll bar is present (2 characters are reserved for the scroll
+   bar)
 
  - Ctrl+U / Ctrl+D should scroll half a page (not en entire page)
 

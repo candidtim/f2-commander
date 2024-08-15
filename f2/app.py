@@ -17,7 +17,7 @@ from .widgets.filelist import FileList
 from .widgets.panel import Panel
 
 
-class TextualCommander(App):
+class F2Commander(App):
     CSS_PATH = "tcss/main.tcss"
     BINDINGS = [
         Binding(
@@ -226,5 +226,5 @@ class TextualCommander(App):
         self.push_screen(StaticDialog("Quit?"), on_confirm)
 
     def action_about(self):
-        msg = f"Textual Commander {version('textual-commander')}"
+        msg = f"F2 Commander {version('f2-commander')}"
         self.push_screen(StaticDialog.info("About", msg))
