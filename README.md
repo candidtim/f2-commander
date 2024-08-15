@@ -6,9 +6,9 @@ F2 Commander is an orthodox file manager for the modern world.
 
 ## Status
 
-In development. Basic features work, but consider it unstable to be safe.
-
-See the complete feature list below.
+In development. Basic features work, but consider unstable. May contain
+undocumented features (work in progress), known and unknown bugs. See the
+complete feature list and known bug list below.
 
 ## Installation
 
