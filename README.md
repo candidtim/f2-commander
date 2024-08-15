@@ -89,6 +89,7 @@ Features:
    - [ ] "Same location" and "Swap panels" actions
    - [ ] CWD follows user selection
    - [ ] Detect external changes and update file listging when possible
+   - [x] Open current location in the OS default file manager
 
  - File and directory manipulation
    - [x] Basic operations like copy, move, move to trash, etc.
@@ -98,6 +99,7 @@ Features:
      - [ ] Option to delete files (as opposed to moving to trash)
    - [x] View and edit files using user default viewer and editor
    - [x] "Open" files with a default associated program (e.g., view PDF, etc.)
+   - [ ] Run programs (run executable files)
    - [x] Create a new directory
    - [ ] Create a new file
    - [x] "Show/hide hidden files" toggle
@@ -133,6 +135,8 @@ User experience and app behavior:
      - [ ] ... on the nearest entry after delete or move
 
 Known bugs to fix:
+
+ - File list footer (subtitles) are not visible
 
  - Restore the "show hidden files" state when switching back to the file list
    after having used a different panel type.

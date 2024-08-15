@@ -4,6 +4,7 @@
 #
 # Copyright (c) 2024 Timur Rubeko
 
+import os
 import functools
 import subprocess
 import time
@@ -70,6 +71,12 @@ class FileList(Static):
             show=False,
         ),
         Binding("f", "find", "Find files using glob expressions", show=False),
+        Binding(
+            "o",
+            "open_in_os_file_manager",
+            "Open the current locaiton in the OS default file manager",
+            show=False,
+        ),
     ]
 
     COLUMN_PADDING = 2  # a column uses this many chars more to render
@@ -341,14 +348,24 @@ class FileList(Static):
         selected_path = (self.path / entry_name).resolve()
         if selected_path.is_dir():
             self.path = selected_path
-        else:
-            self.open_native(selected_path)
 
-    def open_native(self, path):
+    def action_open(self):
+        if self.cursor_path.is_dir():
+            pass  # already handled by on_data_table_row_selected
+        elif self.cursor_path.is_file() and os.access(self.cursor_path, os.X_OK):
+            # TODO: ask to confirm to run, let chose mode (on a side or in a shell)
+            pass
+        else:
+            open_cmd = native_open()
+            if open_cmd is not None:
+                with self.app.suspend():
+                    subprocess.run(open_cmd + [str(self.cursor_path)])
+
+    def action_open_in_os_file_manager(self):
         open_cmd = native_open()
         if open_cmd is not None:
             with self.app.suspend():
-                subprocess.run(open_cmd + [str(path)])
+                subprocess.run(open_cmd + [str(self.path)])
 
     def on_data_table_row_highlighted(self, event: DataTable.RowHighlighted):
         self.cursor_path = self.path / event.row_key.value  # type: ignore
@@ -385,6 +402,8 @@ class FileList(Static):
             self.path = self.path.parent
         elif event.key == "R":
             self.update_listing()
+        elif event.key == "enter":
+            self.action_open()
         elif event.key == "space":
             self.toggle_selection(self.cursor_path.name)
             self.update_listing()
