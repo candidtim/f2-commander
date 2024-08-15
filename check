@@ -1,9 +1,9 @@
 #!/bin/bash
-
 if [[ -z "$(poetry env list)" ]]; then
     poetry install --with dev
 fi
 
+set -x
 poetry run black --check .
 poetry run isort --check .
 poetry run flake8 .

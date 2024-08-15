@@ -6,7 +6,7 @@ from textual.widgets import Static
 
 
 class Preview(Static):
-    preview_path = reactive(None, recompose=True)
+    preview_path = reactive(Path.cwd(), recompose=True)
 
     def compose(self) -> ComposeResult:
         content = ""

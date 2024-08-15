@@ -331,7 +331,8 @@ class FileList(Static):
         )
 
     def on_data_table_row_selected(self, event: DataTable.RowSelected):
-        selected_path = (self.path / event.row_key.value).resolve()
+        entry_name: str = event.row_key.value  # type: ignore
+        selected_path = (self.path / entry_name).resolve()
         if selected_path.is_dir():
             self.path = selected_path
         else:
@@ -379,8 +380,7 @@ class FileList(Static):
         elif event.key == "R":
             self.update_listing()
         elif event.key == "space":
-            key = self.cursor_path.name
-            self.toggle_selection(key)
+            self.toggle_selection(self.cursor_path.name)
             self.update_listing()
             new_coord = (self.table.cursor_coordinate[0] + 1, 0)
             self.table.cursor_coordinate = new_coord  # type: ignore

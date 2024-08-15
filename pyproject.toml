@@ -35,7 +35,7 @@ testpaths = ["tests"]
 
 [tool.black]
 line-length = 88
-target-version = ['py38']
+target-version = ['py310']
 
 [tool.mypy]
 ignore_missing_imports = true

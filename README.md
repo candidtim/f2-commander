@@ -12,16 +12,14 @@ configuration is conventional, use as usual:
 
     poetry install --with dev
 
-It also uses YAPF, flake8, isort, mypy and pytest. An IDE or an LSP should pick
-up their configuration, or they can be executed with poetry. For example:
+It also uses black, flake8, isort, mypy and pytest. An IDE or an LSP should
+pick up their configuration, or they can be executed with poetry. For example:
 
     poetry run pytest
 
 To run all code quality controls and linters:
 
     ./check
-
-See `./check` for more commands.
 
 To run the application from source code:
 
@@ -62,6 +60,7 @@ Features:
    - [ ] Open configuration. User-defined overrides from a config file.
    - [ ] UI for most common configuration options
      - [ ] Options for user-defined viewer, editor, shell, and default file actions
+     - [ ] Enable/disable CWD following the user selection
 
  - Navigation
    - [x] Basic file and directory info: entry names, human-readable size,
@@ -76,6 +75,7 @@ Features:
    - [ ] Navigate to path (enter path, with auto-completion)
    - [ ] Bookmarks (set and navigate to the bookmarks)
    - [ ] "Same location" and "Swap panels" actions
+   - [ ] CWD follows user selection
    - [ ] Detect external changes and update file listging when possible
 
  - File and directory manipulation
@@ -104,8 +104,7 @@ Features:
    - [ ] ZIP (read, create, update)
    - [ ] ... and more ...
 
- - Windows support
-   You are probably better off with WSL, but some day, maybe ...
+ - Windows support. You are probably better off with WSL, but some day, maybe...
    - [ ] Test all features in Windows
    - [ ] Then, maybe plan fixes
 
