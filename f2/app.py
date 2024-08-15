@@ -10,13 +10,14 @@ import subprocess
 from importlib.metadata import version
 
 from send2trash import send2trash
-from textual import on
+from textual import on, work
 from textual.app import App, ComposeResult
 from textual.binding import Binding
 from textual.containers import Horizontal
 from textual.reactive import reactive
 from textual.widgets import Footer
 
+from .config import set_user_has_accepted_license, user_has_accepted_license
 from .shell import editor, shell, viewer
 from .widgets.dialogs import InputDialog, StaticDialog, Style
 from .widgets.filelist import FileList
@@ -80,6 +81,7 @@ class F2Commander(App):
     def right(self):
         return self.query_one("#right")
 
+    # FIXME: left/right are not necessarily FileList; make Optional and handle None
     @property
     def active_filelist(self) -> FileList:
         return self.left if self.left.active else self.right
@@ -88,9 +90,14 @@ class F2Commander(App):
     def inactive_filelist(self) -> FileList:
         return self.right if self.left.active else self.left
 
+    @work
+    async def on_mount(self, event):
+        if not user_has_accepted_license():
+            self.action_about()
+
     @on(FileList.Selected)
-    def on_left_selected(self, event: FileList.Selected):
-        for c in (self.left, self.right):
+    def on_file_selected(self, event: FileList.Selected):
+        for c in self.query("Panel > *"):
             if hasattr(c, "on_other_panel_selected"):
                 c.on_other_panel_selected(event.path)
 
@@ -220,7 +227,7 @@ class F2Commander(App):
             exit_code = completed_process.returncode
             if exit_code != 0:
                 msg = f"Shell exited with an error ({exit_code})"
-                self.push_screen(StaticDialog.warning("Error", msg))
+                self.push_screen(StaticDialog.warning("Warning", msg))
         else:
             self.push_screen(StaticDialog.error("Error", "No shell found!"))
 
@@ -232,9 +239,13 @@ class F2Commander(App):
         self.push_screen(StaticDialog("Quit?"), on_confirm)
 
     def action_about(self):
+        def on_dismiss(result):
+            set_user_has_accepted_license()
+
+        title = f"F2 Commander {version('f2-commander')}"
         msg = (
-            f"F2 Commander {version('f2-commander')}\n"
+            'This application is provided "as is", without warranty of any kind.\n'
             "This application is licensed under the Mozilla Public License, v. 2.0.\n"
-            "You can find a copy of the license at https://mozilla.org/MPL/2.0/."
+            "You can find a copy of the license at https://mozilla.org/MPL/2.0/"
         )
-        self.push_screen(StaticDialog.info("About", msg, classes="large"))
+        self.push_screen(StaticDialog.info(title, msg, classes="large"), on_dismiss)

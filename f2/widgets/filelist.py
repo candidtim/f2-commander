@@ -88,7 +88,7 @@ class FileList(Static):
 
     path = reactive(Path.cwd())
     sort_options = reactive(SortOptions("name"))
-    show_hidden = reactive(True)
+    show_hidden = reactive(False)
     cursor_path = reactive(Path.cwd())
     active = reactive(False)
     glob = reactive(None)

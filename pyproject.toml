@@ -16,6 +16,7 @@ python = "^3.10"
 textual = ">=0.72,<1"
 humanize = "^4.9"
 send2trash = "^1.8.3"
+platformdirs = "^4.2.2"
 
 [tool.poetry.group.dev]
 optional = true
