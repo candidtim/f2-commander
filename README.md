@@ -161,3 +161,5 @@ Known bugs to fix:
  - Ctrl+U / Ctrl+D should scroll half a page (not en entire page)
 
  - Selection is always cleared if "Hidden files" toggle is changed
+
+ - Application failure when user shell exits with an error

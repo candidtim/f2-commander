@@ -1,3 +1,9 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+#
+# Copyright (c) 2024 Timur Rubeko
+
 from enum import Enum
 
 from textual import on
@@ -33,6 +39,7 @@ class StaticDialog(ModalScreen[bool]):
         btn_ok: str | None = "OK",
         btn_cancel: str | None = "Cancel",
         style: Style = Style.INFO,
+        classes: str = "",
         *args,
         **kwargs,
     ):
@@ -43,9 +50,11 @@ class StaticDialog(ModalScreen[bool]):
         self.btn_ok = btn_ok
         self.btn_cancel = btn_cancel
         self.style = style
+        self.classes = classes
 
     def compose(self) -> ComposeResult:
-        with Vertical(id="dialog", classes=f"{self.style.value}"):
+        user_classes = " ".join(self.classes)
+        with Vertical(id="dialog", classes=f"{self.style.value} {user_classes}"):
             yield Label(self.title, id="title")  # type: ignore
             if self.message is not None:
                 yield Label(self.message, id="message")

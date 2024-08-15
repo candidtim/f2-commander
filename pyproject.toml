@@ -5,8 +5,9 @@ build-backend = "poetry.core.masonry.api"
 [tool.poetry]
 name = "f2-commander"
 version = "0.1.0"
-description = ""
-authors = ["candidtim <timcandid@gmail.com>"]
+description = "F2 Commander is an orthodox file manager for the modern world."
+license = "MPL-2.0"
+authors = ["Timur Rubeko <timcandid@gmail.com>"]
 readme = "README.md"
 packages = [{include = "f2"}]
 

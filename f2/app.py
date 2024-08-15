@@ -1,3 +1,9 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+#
+# Copyright (c) 2024 Timur Rubeko
+
 import os
 import shutil
 import subprocess
@@ -226,5 +232,9 @@ class F2Commander(App):
         self.push_screen(StaticDialog("Quit?"), on_confirm)
 
     def action_about(self):
-        msg = f"F2 Commander {version('f2-commander')}"
-        self.push_screen(StaticDialog.info("About", msg))
+        msg = (
+            f"F2 Commander {version('f2-commander')}\n"
+            "This application is licensed under the Mozilla Public License, v. 2.0.\n"
+            "You can find a copy of the license at https://mozilla.org/MPL/2.0/."
+        )
+        self.push_screen(StaticDialog.info("About", msg, classes="large"))
