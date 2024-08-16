@@ -94,7 +94,7 @@ Features:
    - [ ] Quick search: navigate file list by typing in the file names
    - [ ] Navigate to path (enter path, with auto-completion)
    - [ ] Bookmarks (set and navigate to the bookmarks)
-   - [ ] "Same location" and "Swap panels" actions
+   - [.] "Same location" and "Swap panels" actions
    - [ ] CWD follows user selection
    - [ ] Detect external changes and update file listing when possible
    - [x] Open current location in the OS default file manager

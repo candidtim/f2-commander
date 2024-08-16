@@ -65,6 +65,12 @@ class F2Commander(App):
     CSS_PATH = "tcss/main.tcss"
     BINDINGS_AND_COMMANDS = [
         Command(
+            "same_location",
+            "Same location in other panel",
+            "Open the same location in the other (inactive) panel",
+            "ctrl+s",
+        ),
+        Command(
             "change_left_panel",
             "Left panel",
             "Change the left panel type",
@@ -134,6 +140,9 @@ class F2Commander(App):
     def watch_show_hidden(self, old: bool, new: bool):
         self.left.show_hidden = new
         self.right.show_hidden = new
+
+    def action_same_location(self):
+        self.inactive_filelist.path = self.active_filelist.path
 
     def action_change_left_panel(self):
         self.panel_left.action_change_panel()
