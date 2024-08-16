@@ -15,7 +15,7 @@ from .filelist import FileList
 from .help import Help
 from .preview import Preview
 
-PanelType = namedtuple("PanelType", ["display_name", "id", "impl_class"])
+PanelType = namedtuple("PanelType", ["type_name", "type_id", "impl_class"])
 
 PANEL_TYPES = [
     PanelType("Files", "file_list", FileList),
@@ -23,20 +23,19 @@ PANEL_TYPES = [
     PanelType("Help", "help", Help),
 ]
 
-PANEL_CLASSES = {t.id: t.impl_class for t in PANEL_TYPES}
-PANEL_OPTIONS = [(t.display_name, t.id) for t in PANEL_TYPES]
+PANEL_CLASSES = {t.type_id: t.impl_class for t in PANEL_TYPES}
+PANEL_OPTIONS = [(t.type_name, t.type_id) for t in PANEL_TYPES]
 
 
 class Panel(Static):
     panel_type = reactive("file_list", recompose=True)
 
-    def __init__(self, panel_id, display_name, *args, **kwargs):
+    def __init__(self, display_name, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.panel_id = panel_id
         self.display_name = display_name
 
     def compose(self) -> ComposeResult:
-        yield PANEL_CLASSES[self.panel_type](id=self.panel_id)
+        yield PANEL_CLASSES[self.panel_type]()
 
     def action_change_panel(self):
         def on_select(value: str):

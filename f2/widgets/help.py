@@ -26,6 +26,7 @@ HELP = """
 
  - `Tab`: switch focus between the left and right panels
  - `Ctrl+p`: open the command palette
+ - `Ctrl+w`: swap the panels
  - `Ctrl+s`: open the same location in the other panel
  - `Ctrl+e`: change the type of the panel on the *left*
  - `Ctrl+r`: change the type of the panel on the *right*

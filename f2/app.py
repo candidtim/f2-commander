@@ -48,7 +48,7 @@ class F2AppCommands(Provider):
                 yield Hit(
                     score,
                     matcher.highlight(cmd.name),
-                    getattr(node, f"action_{cmd.action}"),
+                    getattr(node, f"action_{cmd.action}"),  # FIXME: use run_action
                     help=self._fmt_help(cmd),
                 )
 
@@ -56,7 +56,7 @@ class F2AppCommands(Provider):
         for node, cmd in self.all_commands:
             yield DiscoveryHit(
                 cmd.name,
-                getattr(node, f"action_{cmd.action}"),
+                getattr(node, f"action_{cmd.action}"),  # FIXME: use run_action
                 help=self._fmt_help(cmd),
             )
 
@@ -64,6 +64,12 @@ class F2AppCommands(Provider):
 class F2Commander(App):
     CSS_PATH = "tcss/main.tcss"
     BINDINGS_AND_COMMANDS = [
+        Command(
+            "swap_panels",
+            "Swap panels",
+            "Swap left and right panels",
+            "ctrl+w",
+        ),
         Command(
             "same_location",
             "Same location in other panel",
@@ -121,11 +127,13 @@ class F2Commander(App):
     COMMANDS = {F2AppCommands}
 
     show_hidden = reactive(False)
+    swapped = reactive(False)
 
     def compose(self) -> ComposeResult:
-        self.panel_left = Panel(panel_id="left", display_name="left")
-        self.panel_right = Panel(panel_id="right", display_name="right")
-        with Horizontal():
+        self.panels_container = Horizontal()
+        self.panel_left = Panel("left", id="left")
+        self.panel_right = Panel("right", id="right")
+        with self.panels_container:
             yield self.panel_left
             yield self.panel_right
         footer = Footer()
@@ -141,6 +149,15 @@ class F2Commander(App):
         self.left.show_hidden = new
         self.right.show_hidden = new
 
+    def action_swap_panels(self):
+        self.swapped = not self.swapped
+
+    def watch_swapped(self, old: bool, new: bool):
+        if new:
+            self.panels_container.move_child(self.panel_left, after=self.panel_right)
+        else:
+            self.panels_container.move_child(self.panel_left, before=self.panel_right)
+
     def action_same_location(self):
         self.inactive_filelist.path = self.active_filelist.path
 
@@ -152,11 +169,11 @@ class F2Commander(App):
 
     @property
     def left(self):
-        return self.query_one("#left")
+        return self.query_one("#left > *")
 
     @property
     def right(self):
-        return self.query_one("#right")
+        return self.query_one("#right > *")
 
     # FIXME: left/right are not necessarily FileList; make Optional and handle None
     @property
