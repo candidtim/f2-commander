@@ -13,10 +13,12 @@ from send2trash import send2trash
 from textual import on, work
 from textual.app import App, ComposeResult
 from textual.binding import Binding
+from textual.command import DiscoveryHit, Hit, Provider
 from textual.containers import Horizontal
 from textual.reactive import reactive
 from textual.widgets import Footer
 
+from .commands import Command
 from .config import set_user_has_accepted_license, user_has_accepted_license
 from .shell import editor, shell, viewer
 from .widgets.dialogs import InputDialog, StaticDialog, Style
@@ -24,15 +26,77 @@ from .widgets.filelist import FileList
 from .widgets.panel import Panel
 
 
+class F2AppCommands(Provider):
+    @property
+    def all_commands(self):
+        app_commands = [(self.app, cmd) for cmd in self.app.BINDINGS_AND_COMMANDS]
+        flist = self.app.active_filelist
+        flist_commands = [(flist, cmd) for cmd in flist.BINDINGS_AND_COMMANDS]
+        return app_commands + flist_commands
+
+    def _fmt_help(self, cmd):
+        if cmd.binding_key is not None:
+            return f"[{cmd.binding_key}]\n{cmd.description}\n"
+        else:
+            return f"{cmd.description}\n"
+
+    async def search(self, query: str):
+        matcher = self.matcher(query)
+        for node, cmd in self.all_commands:
+            score = matcher.match(cmd.name)
+            if score > 0:
+                yield Hit(
+                    score,
+                    matcher.highlight(cmd.name),
+                    getattr(node, f"action_{cmd.action}"),
+                    help=self._fmt_help(cmd),
+                )
+
+    async def discover(self):
+        for node, cmd in self.all_commands:
+            yield DiscoveryHit(
+                cmd.name,
+                getattr(node, f"action_{cmd.action}"),
+                help=self._fmt_help(cmd),
+            )
+
+
 class F2Commander(App):
     CSS_PATH = "tcss/main.tcss"
+    BINDINGS_AND_COMMANDS = [
+        Command(
+            "change_left_panel",
+            "Left panel",
+            "Change the left panel type",
+            "ctrl+e",
+        ),
+        Command(
+            "change_right_panel",
+            "Right panel",
+            "Change the right panel type",
+            "ctrl+r",
+        ),
+        Command(
+            "toggle_hidden",
+            "Togghle hidden",
+            "Show or hide hidden files",
+            "h",
+        ),
+        Command(
+            "toggle_dark",
+            "Toggle theme",
+            "Switch between dark and light themes",
+            None,
+        ),
+        Command(
+            "about",
+            "About",
+            "Information about this software",
+            None,
+        ),
+    ]
     BINDINGS = [
-        Binding(
-            "ctrl+e", "change_left_panel", "Change the left panel to...", show=False
-        ),
-        Binding(
-            "ctrl+r", "change_right_panel", "Change the right panel to...", show=False
-        ),
+        Binding("?", "help", "Help"),
         Binding("v", "view", "View"),
         Binding("e", "edit", "Edit"),
         Binding("c", "copy", "Copy"),
@@ -40,11 +104,15 @@ class F2Commander(App):
         Binding("d", "delete", "Delete"),
         Binding("ctrl+n", "mkdir", "New dir"),
         Binding("x", "shell", "Shell"),
+        # FIXME: following exists only for discoverability, remove when textual does it
+        Binding("ctrl+\\", "do_nothing", "Command Palette"),
         Binding("q", "quit_confirm", "Quit"),
-        Binding("h", "toggle_hidden", "Toggle hidden files", show=False),
-        Binding("A", "toggle_dark", "Appearance toggle", show=False),
-        Binding("?", "about", "About", show=False),
+    ] + [
+        Binding(cmd.binding_key, cmd.action, cmd.description, show=False)
+        for cmd in BINDINGS_AND_COMMANDS
+        if cmd.binding_key is not None
     ]
+    COMMANDS = {F2AppCommands}
 
     show_hidden = reactive(False)
 
@@ -249,3 +317,9 @@ class F2Commander(App):
             "You can find a copy of the license at https://mozilla.org/MPL/2.0/"
         )
         self.push_screen(StaticDialog.info(title, msg, classes="large"), on_dismiss)
+
+    def action_help(self):
+        self.panel_right.panel_type = "help"
+
+    def action_do_nothing(self):
+        pass

@@ -12,6 +12,7 @@ from textual.widgets import Static
 
 from .dialogs import SelectDialog
 from .filelist import FileList
+from .help import Help
 from .preview import Preview
 
 PanelType = namedtuple("PanelType", ["display_name", "id", "impl_class"])
@@ -19,6 +20,7 @@ PanelType = namedtuple("PanelType", ["display_name", "id", "impl_class"])
 PANEL_TYPES = [
     PanelType("Files", "file_list", FileList),
     PanelType("Preview", "preview", Preview),
+    PanelType("Help", "help", Help),
 ]
 
 PANEL_CLASSES = {t.id: t.impl_class for t in PANEL_TYPES}

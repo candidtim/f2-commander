@@ -4,8 +4,8 @@
 #
 # Copyright (c) 2024 Timur Rubeko
 
-import os
 import functools
+import os
 import subprocess
 import time
 from dataclasses import dataclass
@@ -23,6 +23,7 @@ from textual.widgets.data_table import RowDoesNotExist
 
 from f2.fs import DirEntry, DirList, list_dir
 
+from ..commands import Command
 from ..shell import native_open
 from .dialogs import InputDialog
 
@@ -53,30 +54,60 @@ class SortOptions:
 
 
 class FileList(Static):
-    BINDINGS = [
-        Binding("n", "order('name', False)", "Order by name (asc)", show=False),
-        Binding("N", "order('name', True)", "Order by name (desc)", show=False),
-        Binding("s", "order('size', False)", "Order by size (asc)", show=False),
-        Binding("S", "order('size', True)", "Order by size (desc)", show=False),
-        Binding(
+    BINDINGS_AND_COMMANDS = [
+        Command(
+            "order_by_name_asc",
+            "Order by name, asc",
+            "Order entries by name, from A to Z",
+            "n",
+        ),
+        Command(
+            "order_by_name_desc",
+            "Order by name, desc",
+            "Order entries by name, from Z to A",
+            "N",
+        ),
+        Command(
+            "order_by_size_asc",
+            "Order by size, asc",
+            "Order entries by size, smallest first",
+            "s",
+        ),
+        Command(
+            "order_by_size_desc",
+            "Order by size, desc",
+            "Order entries by size, largest first",
+            "S",
+        ),
+        Command(
+            "order_by_mtime_asc",
+            "Order by mtime, asc",
+            "Order entries by last modification time, oldest first",
             "t",
-            "order('mtime', False)",
-            "Order by last modified time (asc)",
-            show=False,
         ),
-        Binding(
+        Command(
+            "order_by_mtime_desc",
+            "Order by mtime, desc",
+            "Order entries by last modification time, newest first",
             "T",
-            "order('mtime', True)",
-            "Order by last modified time (desc)",
-            show=False,
         ),
-        Binding("f", "find", "Find files using glob expressions", show=False),
-        Binding(
-            "o",
+        Command(
+            "find",
+            "Find / filter with glob",
+            "Filter files to show only those matching a glob",
+            "f",
+        ),
+        Command(
             "open_in_os_file_manager",
-            "Open the current locaiton in the OS default file manager",
-            show=False,
+            "Open in OS file manager",
+            "Open current location in the default OS file manager",
+            "o",
         ),
+    ]
+    BINDINGS = [
+        Binding(cmd.binding_key, cmd.action, cmd.description, show=False)
+        for cmd in BINDINGS_AND_COMMANDS
+        if cmd.binding_key is not None
     ]
 
     COLUMN_PADDING = 2  # a column uses this many chars more to render
@@ -290,6 +321,7 @@ class FileList(Static):
 
     def watch_path(self, old_path: Path, new_path: Path):
         self.reset_selection()
+        self.glob = None
         self.update_listing()
         # if navigated "up", select source dir in the new list:
         if new_path == old_path.parent:
@@ -317,6 +349,24 @@ class FileList(Static):
     def watch_glob(self, old: str | None, new: str | None):
         self.reset_selection()
         self.update_listing()
+
+    def action_order_by_name_asc(self):
+        self.action_order("name", False)
+
+    def action_order_by_name_desc(self):
+        self.action_order("name", True)
+
+    def action_order_by_size_asc(self):
+        self.action_order("size", False)
+
+    def action_order_by_size_desc(self):
+        self.action_order("size", True)
+
+    def action_order_by_mtime_asc(self):
+        self.action_order("mtime", False)
+
+    def action_order_by_mtime_desc(self):
+        self.action_order("mtime", True)
 
     # FIXME: refactor (simplify) ordering logic; see if DataTable provides better API
     def action_order(self, key: str, reverse: bool):

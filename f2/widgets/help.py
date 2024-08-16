@@ -1,0 +1,89 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+#
+# Copyright (c) 2024 Timur Rubeko
+
+
+from importlib.metadata import version
+
+from textual.app import ComposeResult
+from textual.reactive import reactive
+from textual.widgets import MarkdownViewer, Static
+
+
+# FIXME: big potion of this message needs to be in sink
+#        with the bindings -> generate it automatically
+
+
+HEADER = f"# F2 Commander {version('f2-commander')}"
+
+LICENSE_INFO = """
+## License
+
+This application is provided "as is", without warranty of any kind.
+This application is licensed under the Mozilla Public License, v. 2.0.
+You can find a copy of the license at https://mozilla.org/MPL/2.0/
+"""
+
+HELP = HEADER + """
+
+> Presse any key to close this panel
+
+## Usage
+
+### Interface
+
+ - `Tab`: switch focus between the left and right panels
+ - `Ctrl+p`: open the command palette
+ - `Ctrl+e`: change the type of the panel on the *left*
+ - `Ctrl+r`: change the type of the panel on the *right*
+ - `?`: show this help
+ - `q`: quit the application
+ - Keys shown in the footer execute the indicated actions
+
+### Navigation
+
+ - `j`/`k` and `up`/`down`: navigate the list up and down one entry at a time
+ - `g`: navigate to the *top* of the list
+ - `G`: navigate to the *bottom* of the list
+ - `Ctrl+f`/`Ctrl+b`, `Ctrl+d`/`Ctrl+u`, `Page Up`/`Page Down`: paginate the list
+ - `Enter`: enter the directory or run the default program associated with a
+    file type under cursor
+ - `b`/`Backspace` or `Enter` on the `..` entry: navigate up in a directory tree
+ - `R`: refresh the file listing
+ - `o`: open the current location in the deafult OS file manager
+
+### Controlling the displayed items
+
+ - `h`: show/hide hidden files
+ - `n`/`N`: order the entries by name
+ - `s`/`S`: order the entries by size
+ - `t`/`T`: order the entries by last modification time
+ - `f`: filter the displayed entries with a glob expression
+
+### Selection
+
+ - `Space`: select/unselect an entry under the cursor
+ - `-`: clear selection
+ - `+`: select all displayed entries
+ - `*`: invert selection
+
+### Shell
+
+ - `x` starts (forks) a subprocess with a new shell in the current location.
+   Quit the shell to return back to the F2 Commander (e.g., `Ctrl+d` or type and
+   execute `exit`).
+
+""" + LICENSE_INFO
+
+
+class Help(Static):
+    def compose(self) -> ComposeResult:
+        self.parent.border_title = "Help"
+        self.parent.border_subtitle = None
+        yield MarkdownViewer(HELP, show_table_of_contents=False)
+
+    def on_key(self, event) -> None:
+        event.stop()
+        self.parent.panel_type = "file_list"

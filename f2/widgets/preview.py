@@ -23,3 +23,7 @@ class Preview(Static):
     # FIXME: push_message (in)directy to the "other" panel?
     def on_other_panel_selected(self, path: Path):
         self.preview_path = path
+
+    def watch_preview_path(self, old: Path, new: Path):
+        self.parent.border_title = str(new)
+        self.parent.border_subtitle = None

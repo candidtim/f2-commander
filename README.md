@@ -6,9 +6,8 @@ F2 Commander is an orthodox file manager for the modern world.
 
 ## Status
 
-In development. Basic features work, but consider unstable. May contain
-undocumented features (work in progress), known and unknown bugs. See the
-complete feature list and known bug list below.
+In development. Basic features work, but consider unstable. May contain known
+and unknown bugs. See the complete feature list and known bug list below.
 
 ## Installation
 
@@ -16,6 +15,11 @@ Installation from source only, until considered stable.
 
     poetry build
     pipx install [--force] dist/f2_commander-0.1.0.tar.gz
+
+## Usage
+
+Hit `?` to see the built-in help.
+Hit `q` to quit.
 
 ## Development environment
 
@@ -57,24 +61,28 @@ F2 Commander main principles are:
 Features:
 
  - User Interface
+
    - [x] Two-panel interface
    - [x] Classic footer with common user actions
      - [ ] Contextual footer (changes actions based on context)
      - [ ] Configurable key bindings. "Modern" and "Retro" bindings out of the box.
    - [ ] Menubar
-   - [ ] Command Palette
+   - [x] Command Palette
    - [ ] File Info panel
    - [ ] Preview panel
    - [x] Drop to shell (command line) temporarily
    - [ ] Theming. "Modern" and "Retro" themes out of the box.
 
  - Configuration
+
    - [ ] Open configuration. User-defined overrides from a config file.
    - [ ] UI for most common configuration options
      - [ ] Options for user-defined viewer, editor, shell, and default file actions
      - [ ] Enable/disable CWD following the user selection
+     - [ ] Enable/disable case sensitivity when ordering by name
 
  - Navigation
+
    - [x] Basic file and directory info: entry names, human-readable size,
          last modification time, show and follow symlinks, etc.
    - [x] Vim-like (up/down j/k g/G ctrl+f/d/b/u) navigation
@@ -88,10 +96,11 @@ Features:
    - [ ] Bookmarks (set and navigate to the bookmarks)
    - [ ] "Same location" and "Swap panels" actions
    - [ ] CWD follows user selection
-   - [ ] Detect external changes and update file listging when possible
+   - [ ] Detect external changes and update file listing when possible
    - [x] Open current location in the OS default file manager
 
  - File and directory manipulation
+
    - [x] Basic operations like copy, move, move to trash, etc.
      - [x] Confirmation dialogs and user inputs (destination path, etc.)
      - [x] Multiple file selection
@@ -107,6 +116,7 @@ Features:
    - [ ] Compute directory size on selection
 
  - "File systems" support
+
    - [x] "Local" OS file system
    - [ ] AWS S3
    - [ ] GCP GCS
@@ -115,26 +125,31 @@ Features:
    - [ ] ... show must go on ...
 
  - Archival and compression support
+
    - [ ] ZIP (read, create, update)
    - [ ] ... and more ...
 
  - Documentation
-   - [ ] Buit-in help
+
+   - [x] Built-in help
    - [ ] User manual
 
  - Windows support. You are probably better off with WSL, but some day, maybe...
+
    - [ ] Test all features in Windows
    - [ ] Then, maybe plan fixes
 
 User experience and app behavior:
 
  - Dialogs
+
    - [ ] "Do not ask me again" option in "safe" dialogs (e.g., "Quit" dialog)
    - [ ] Allow "Enter" and "y" keys in "safe" dialogs for confirmation
 
  - Navigation
+
    - [ ] Consistent cursor positioning
-     - [x] ... on the source directory when navagating "up"
+     - [x] ... on the source directory when navigating "up"
      - [ ] ... on the source link when navigating back from symlink
      - [ ] ... on the nearest entry after delete or move
 
@@ -153,17 +168,30 @@ Known bugs to fix:
 
  - Empty selections
 
- - File info and preview panels show nothing on start unless a slection is
+ - File info and preview panels show nothing on start unless a selection is
    changed in the file list.
 
  - Default viewer, editor, shell and "open" programs are mostly MacOS-specific,
-   choices are too rigid. Make sure deafults work on clean MacOS and Linux
+   choices are too rigid. Make sure defaults work on clean MacOS and Linux
    installs.
 
- - File list has an unnecessary 2-column (2 characater wide) gap even when no
+ - File list has an unnecessary 2-column (2 character wide) gap even when no
    vertical scroll bar is present (2 characters are reserved for the scroll
    bar)
 
  - Ctrl+U / Ctrl+D should scroll half a page (not en entire page)
 
  - Selection is always cleared if "Hidden files" toggle is changed
+
+## About the name
+
+"F2" is a loose interpretation of "a **F**ile manager with **2** side-by-side
+panels", and "Commander" is an homage to the old-school orthodox file managers.
+
+## Contributions
+
+Bug reports, feature requests and pull requests are welcome.
+
+## License
+
+Mozilla Public License, v. 2.0.
