@@ -56,37 +56,37 @@ class SortOptions:
 class FileList(Static):
     BINDINGS_AND_COMMANDS = [
         Command(
-            "order_by_name_asc",
+            "order('name', False)",
             "Order by name, asc",
             "Order entries by name, from A to Z",
             "n",
         ),
         Command(
-            "order_by_name_desc",
+            "order('name', True)",
             "Order by name, desc",
             "Order entries by name, from Z to A",
             "N",
         ),
         Command(
-            "order_by_size_asc",
+            "order('size', False)",
             "Order by size, asc",
             "Order entries by size, smallest first",
             "s",
         ),
         Command(
-            "order_by_size_desc",
+            "order('size', True)",
             "Order by size, desc",
             "Order entries by size, largest first",
             "S",
         ),
         Command(
-            "order_by_mtime_asc",
+            "order('mtime', False)",
             "Order by mtime, asc",
             "Order entries by last modification time, oldest first",
             "t",
         ),
         Command(
-            "order_by_mtime_desc",
+            "order('mtime', True)",
             "Order by mtime, desc",
             "Order entries by last modification time, newest first",
             "T",
@@ -349,24 +349,6 @@ class FileList(Static):
     def watch_glob(self, old: str | None, new: str | None):
         self.reset_selection()
         self.update_listing()
-
-    def action_order_by_name_asc(self):
-        self.action_order("name", False)
-
-    def action_order_by_name_desc(self):
-        self.action_order("name", True)
-
-    def action_order_by_size_asc(self):
-        self.action_order("size", False)
-
-    def action_order_by_size_desc(self):
-        self.action_order("size", True)
-
-    def action_order_by_mtime_asc(self):
-        self.action_order("mtime", False)
-
-    def action_order_by_mtime_desc(self):
-        self.action_order("mtime", True)
 
     # FIXME: refactor (simplify) ordering logic; see if DataTable provides better API
     def action_order(self, key: str, reverse: bool):

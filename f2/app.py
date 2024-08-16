@@ -7,6 +7,7 @@
 import os
 import shutil
 import subprocess
+from functools import partial
 from importlib.metadata import version
 
 from send2trash import send2trash
@@ -48,7 +49,7 @@ class F2AppCommands(Provider):
                 yield Hit(
                     score,
                     matcher.highlight(cmd.name),
-                    getattr(node, f"action_{cmd.action}"),  # FIXME: use run_action
+                    partial(node.run_action, cmd.action),
                     help=self._fmt_help(cmd),
                 )
 
@@ -56,7 +57,7 @@ class F2AppCommands(Provider):
         for node, cmd in self.all_commands:
             yield DiscoveryHit(
                 cmd.name,
-                getattr(node, f"action_{cmd.action}"),  # FIXME: use run_action
+                partial(node.run_action, cmd.action),
                 help=self._fmt_help(cmd),
             )
 
@@ -162,6 +163,8 @@ class F2Commander(App):
         self.inactive_filelist.path = self.active_filelist.path
 
     def action_change_left_panel(self):
+        # TODO: after swap this "right"
+        # FIXME: there is no left/right at all? Panel A and panel B instead?
         self.panel_left.action_change_panel()
 
     def action_change_right_panel(self):
