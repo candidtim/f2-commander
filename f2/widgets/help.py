@@ -11,23 +11,13 @@ from textual.app import ComposeResult
 from textual.reactive import reactive
 from textual.widgets import MarkdownViewer, Static
 
-
 # FIXME: big potion of this message needs to be in sink
 #        with the bindings -> generate it automatically
 
 
 HEADER = f"# F2 Commander {version('f2-commander')}"
 
-LICENSE_INFO = """
-## License
-
-This application is provided "as is", without warranty of any kind.
-This application is licensed under the Mozilla Public License, v. 2.0.
-You can find a copy of the license at https://mozilla.org/MPL/2.0/
-"""
-
-HELP = HEADER + """
-
+HELP = """
 > Presse any key to close this panel
 
 ## Usage
@@ -75,14 +65,19 @@ HELP = HEADER + """
    Quit the shell to return back to the F2 Commander (e.g., `Ctrl+d` or type and
    execute `exit`).
 
-""" + LICENSE_INFO
+## License
+
+This application is provided "as is", without warranty of any kind.
+This application is licensed under the Mozilla Public License, v. 2.0.
+You can find a copy of the license at https://mozilla.org/MPL/2.0/
+"""
 
 
 class Help(Static):
     def compose(self) -> ComposeResult:
         self.parent.border_title = "Help"
         self.parent.border_subtitle = None
-        yield MarkdownViewer(HELP, show_table_of_contents=False)
+        yield MarkdownViewer(HEADER + HELP, show_table_of_contents=False)
 
     def on_key(self, event) -> None:
         event.stop()
