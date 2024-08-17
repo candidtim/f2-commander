@@ -80,6 +80,7 @@ Features:
      - [ ] Options for user-defined viewer, editor, shell, and default file actions
      - [ ] Enable/disable CWD following the user selection
      - [ ] Enable/disable case sensitivity when ordering by name
+     - [ ] List dirs first toggle
 
  - Navigation
 
@@ -90,7 +91,8 @@ Features:
    - [x] Order entries by name, size, time (last modification time)
    - [x] Filter entries with glob
    - [x] Directory summary in the file listing footer
-   - [ ] "List dirs first/inline" toggle
+   - [x] "List dirs first/inline" toggle
+   - [x] Ordering by name case sensitivity on/off
    - [ ] Quick search: navigate file list by typing in the file names
    - [ ] Navigate to path (enter path, with auto-completion)
    - [ ] Bookmarks (set and navigate to the bookmarks)
@@ -152,6 +154,7 @@ User experience and app behavior:
      - [x] ... on the source directory when navigating "up"
      - [ ] ... on the source link when navigating back from symlink
      - [ ] ... on the nearest entry after delete or move
+   - [ ] Clicking on list headers changes ordering in according columns
 
 Known bugs to fix:
 
@@ -165,8 +168,6 @@ Known bugs to fix:
 
  - ".." path is allowed for selection and can be copied, moved, etc.; handle
    ".." and empty selections better
-
- - Empty selections
 
  - File info and preview panels show nothing on start unless a selection is
    changed in the file list.

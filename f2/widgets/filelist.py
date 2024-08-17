@@ -10,6 +10,7 @@ import subprocess
 import time
 from dataclasses import dataclass
 from pathlib import Path
+from typing import Tuple
 
 from humanize import naturalsize
 from rich.text import Text
@@ -28,23 +29,15 @@ from ..shell import native_open
 from .dialogs import InputDialog
 
 
-@functools.total_ordering
-class Sortable(Text):
-    """Like rich.text.Text, but with ordering based on a raw value"""
+class TextAndValue(Text):
+    """Like `rich.text.Text`, but also holds a given `value`"""
 
-    def __init__(self, value, *args, **kwargs):
+    def __init__(self, value, text):
         self.value = value
-        super().__init__(*args, **kwargs)
+        self.text = text
 
-    def __lt__(self, other: object) -> bool:
-        if not isinstance(other, Sortable):
-            return NotImplemented
-        return self.value < other.value
-
-    def __eq__(self, other: object) -> bool:
-        if not isinstance(other, Sortable):
-            return NotImplemented
-        return self.value == other.value
+    def __getattr__(self, attr):
+        return getattr(self.text, attr)
 
 
 @dataclass
@@ -127,6 +120,8 @@ class FileList(Static):
     path = reactive(Path.cwd())
     sort_options = reactive(SortOptions("name"))
     show_hidden = reactive(False)
+    dirs_first = reactive(False)
+    order_case_sensitive = reactive(False)
     cursor_path = reactive(Path.cwd())
     active = reactive(False)
     glob = reactive(None)
@@ -174,6 +169,10 @@ class FileList(Static):
         else:
             self.add_selection(name)
 
+    #
+    # FORMATTING:
+    #
+
     def _row_style(self, e: DirEntry) -> str:
         # FIXME: use CSS instead
         style = ""
@@ -192,28 +191,27 @@ class FileList(Static):
 
         return style
 
-    def _fmt_name(self, e: DirEntry, style: str, reverse_sort: bool) -> Text:
-        sort_key = e.name
-        if e.name == "..":
-            # stick ".." at the top of the list
-            sort_key = "\u0000" if not reverse_sort else "\uFFFF"
-        text = Sortable(sort_key)
+    def _fmt_name(self, e: DirEntry, style: str) -> Text:
+        text = Text()
 
-        # adjust width
-        name = e.name
         width_target = self._width_name()
-        if width_target and len(e.name) > width_target:
+        if not width_target:
+            # container width is not known yet => assume smallest size, let the
+            # container render once, then render the text on the next round
+            return text
+
+        # adjust width: cut long names
+        if len(e.name) > width_target:
             suffix = "..."
             cut_idx = width_target - len(suffix)
-            text.append(name[:cut_idx] + suffix)
-        elif width_target and len(e.name) <= width_target:
-            pad_size = width_target - len(e.name)
-            text.append(name, style=style)
-            text.append(" " * pad_size)
+            text.append(e.name[:cut_idx] + suffix, style=style)
+
+        # FIXME: remove if textual supports full-width data tables
+        # adjust width: pad short names to span the column
         else:
-            # do not add any text if the container width is not known yet
-            # -> assume smallest container size, render on next round
-            pass
+            pad_size = width_target - len(e.name)
+            text.append(e.name, style=style)
+            text.append(" " * pad_size)  # FIXME: the only reason to pass style as arg
 
         return text
 
@@ -229,55 +227,22 @@ class FileList(Static):
         else:
             return None
 
-    def _fmt_size(self, e: DirEntry, style: str, reverse_sort: bool) -> Text:
-        sort_key = (e.size, e.name)  # sort by size, then by name
+    def _fmt_size(self, e: DirEntry, style: str) -> Text:
         if e.name == "..":
-            # stick ".." at the top of the list
-            # 2 ^ 64 is a max file size in zfs
-            sort_key = (-100 if not reverse_sort else 2**64 + 100, e.name)
-            return Sortable(
-                sort_key,
-                "-- UP⇧ --",
-                style=style,
-                justify="center",
-            )
+            return Text("-- UP⇧ --", style=style, justify="center")
         elif e.is_dir:
-            # show dirs and links at the top of the list
-            sort_key = (-50 if not reverse_sort else 2**64 + 50, e.name)
-            return Sortable(
-                sort_key,
-                "-- DIR --",
-                style=style,
-                justify="center",
-            )
+            return Text("-- DIR --", style=style, justify="center")
         elif e.is_link:
-            # show dirs and links at the top of the list
-            sort_key = (-50 if not reverse_sort else 2**64 + 50, e.name)
-            return Sortable(
-                sort_key,
-                "-- LNK --",
-                style=style,
-                justify="center",
-            )
+            return Text("-- LNK --", style=style, justify="center")
         else:
-            return Sortable(
-                (e.size, e.name),  # files after dirs and links
-                naturalsize(e.size),
-                style=style,
-                justify="right",
-            )
+            return Text(naturalsize(e.size), style=style, justify="right")
 
     @functools.cache
     def _width_size(self):
         return len(naturalsize(123)) + self.COLUMN_PADDING
 
-    def _fmt_mtime(self, e: DirEntry, style: str, reverse_sort: bool) -> Text:
-        sort_key = e.mtime
-        if e.name == "..":
-            # stick ".." at the top of the list
-            sort_key = -1 if not reverse_sort else 32503680000  # Y3K problem
-        return Sortable(
-            sort_key,
+    def _fmt_mtime(self, e: DirEntry, style: str) -> Text:
+        return Text(
             time.strftime(self.TIME_FORMAT, time.localtime(e.mtime)),
             style=style,
         )
@@ -286,24 +251,91 @@ class FileList(Static):
     def _width_mtime(self):
         return len(time.strftime(self.TIME_FORMAT)) + self.COLUMN_PADDING
 
-    def _update_table(self, ls: DirList, sort_options: SortOptions):
+    #
+    # END OF FORMATTING
+    #
+    # ORDERING:
+    #
+
+    def sort_key(self, name_and_value):
+        sort_key_fn = {
+            "name": self.sort_key_by_name,
+            "size": self.sort_key_by_size,
+            "mtime": self.sort_key_by_mtime,
+        }[self.sort_options.key]
+        entry: DirEntry = name_and_value.value
+        return sort_key_fn(entry)
+
+    def sort_key_by_name(self, e: DirEntry) -> str:
+        # stick ".." at the top of the list, regardless of the order (asc/desc)
+        if e.name == "..":
+            return "\u0000" if not self.sort_options.reverse else "\uFFFF"
+
+        # dirs first, if asked for
+        prefix = ""
+        if self.dirs_first and e.is_dir:
+            prefix = "\u0001" if not self.sort_options.reverse else "\uFFFE"
+
+        # handle case sensetivity
+        name = e.name
+        if not self.order_case_sensitive:
+            name = name.lower() + name  # keeping original name for stable ordering
+
+        return prefix + name
+
+    def sort_key_by_size(self, e: DirEntry) -> Tuple[int, str | None]:
+        max_file_size = 2**64  # maximum file size in zfs, and probably on the planet
+        # stick ".." at the top of the list, regardless of the order (asc/desc)
+        if e.name == "..":
+            size_key = -1 if not self.sort_options.reverse else max_file_size + 1
+            return (size_key, None)
+
+        size_key = e.size
+        # when ordering by size, dirs are always first
+        if e.is_dir or e.is_link:
+            size_key = 0 if not self.sort_options.reverse else max_file_size
+
+        return (size_key, self.sort_key_by_name(e))  # add name for stable ordering
+
+    def sort_key_by_mtime(self, e: DirEntry) -> Tuple[float, str | None]:
+        y3k = 32_503_680_000  # this program has Y3K issues
+        # stick ".." at the top of the list, regardless of the order (asc/desc)
+        if e.name == "..":
+            key = -1 if not self.sort_options.reverse else 2 * y3k
+            return (key, None)
+
+        mtime_key = e.mtime
+        if self.dirs_first:
+            if not self.sort_options.reverse and not e.is_dir:
+                mtime_key = e.mtime + y3k
+            elif self.sort_options.reverse and e.is_dir:
+                mtime_key = e.mtime + y3k
+
+        return (mtime_key, self.sort_key_by_name(e))  # add name for stable ordering
+
+    #
+    # END OF ORDERING
+    #
+
+    def _update_table(self, ls: DirList):
         self.table.clear()
         for child in ls.entries:
             style = self._row_style(child)
             self.table.add_row(
-                self._fmt_name(child, style, sort_options.reverse),
-                self._fmt_size(child, style, sort_options.reverse),
-                self._fmt_mtime(child, style, sort_options.reverse),
+                # name column also holds original values:
+                TextAndValue(child, self._fmt_name(child, style)),
+                self._fmt_size(child, style),
+                self._fmt_mtime(child, style),
                 key=child.name,
             )
-        self.table.sort(sort_options.key, reverse=sort_options.reverse)
+        self.table.sort("name", key=self.sort_key, reverse=self.sort_options.reverse)
 
     def update_listing(self):
         old_cursor_path = self.cursor_path
         ls = list_dir(
             self.path, include_hidden=self.show_hidden, glob_expression=self.glob
         )
-        self._update_table(ls, self.sort_options)
+        self._update_table(ls)
         # if still in the same dir, try to locate the previous cursor position
         if old_cursor_path.parent == self.path:
             try:
@@ -334,6 +366,12 @@ class FileList(Static):
     def watch_show_hidden(self, old: bool, new: bool):
         if not new:  # if some files will be not shown anymore, better be safe:
             self.reset_selection()
+        self.update_listing()
+
+    def watch_dirs_first(self, old: bool, new: bool):
+        self.update_listing()
+
+    def watch_order_case_sensitive(self, old: bool, new: bool):
         self.update_listing()
 
     def watch_sort_options(self, old: SortOptions, new: SortOptions):

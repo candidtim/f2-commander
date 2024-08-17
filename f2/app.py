@@ -96,6 +96,18 @@ class F2Commander(App):
             "h",
         ),
         Command(
+            "toggle_dirs_first",
+            "Toggle dirs first",
+            "Show directories first or ordered among files",
+            None,
+        ),
+        Command(
+            "toggle_order_case_sensitive",
+            "Toggle case sensitive name order",
+            "Whether name ordering is case sensitive or not",
+            None,
+        ),
+        Command(
             "toggle_dark",
             "Toggle theme",
             "Switch between dark and light themes",
@@ -128,6 +140,8 @@ class F2Commander(App):
     COMMANDS = {F2AppCommands}
 
     show_hidden = reactive(False)
+    dirs_first = reactive(False)
+    order_case_sensitive = reactive(False)
     swapped = reactive(False)
 
     def compose(self) -> ComposeResult:
@@ -149,6 +163,22 @@ class F2Commander(App):
     def watch_show_hidden(self, old: bool, new: bool):
         self.left.show_hidden = new
         self.right.show_hidden = new
+
+    def action_toggle_dirs_first(self):
+        self.dirs_first = not self.dirs_first
+
+    # TODO: save default value to user options, restore on start
+    def watch_dirs_first(self, old: bool, new: bool):
+        self.left.dirs_first = new
+        self.right.dirs_first = new
+
+    def action_toggle_order_case_sensitive(self):
+        self.order_case_sensitive = not self.order_case_sensitive
+
+    # TODO: save default value to user options, restore on start
+    def watch_order_case_sensitive(self, old: bool, new: bool):
+        self.left.order_case_sensitive = new
+        self.right.order_case_sensitive = new
 
     def action_swap_panels(self):
         self.swapped = not self.swapped

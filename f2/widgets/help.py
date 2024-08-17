@@ -67,6 +67,13 @@ HELP = """
    Quit the shell to return back to the F2 Commander (e.g., `Ctrl+d` or type and
    execute `exit`).
 
+### Options
+
+These toggles can be found in Command Palette:
+
+ - Show directories first, on/off
+ - Case-sensitive name ordering, on/off
+
 ## License
 
 This application is provided "as is", without warranty of any kind.
