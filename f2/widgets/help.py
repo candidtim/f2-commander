@@ -8,7 +8,7 @@
 from importlib.metadata import version
 
 from textual.app import ComposeResult
-from textual.reactive import reactive
+from textual.widget import Widget
 from textual.widgets import MarkdownViewer, Static
 
 # FIXME: big potion of this message needs to be in sink
@@ -77,10 +77,11 @@ You can find a copy of the license at https://mozilla.org/MPL/2.0/
 
 class Help(Static):
     def compose(self) -> ComposeResult:
-        self.parent.border_title = "Help"
-        self.parent.border_subtitle = None
+        parent: Widget = self.parent  # type: ignore
+        parent.border_title = "Help"
+        parent.border_subtitle = None
         yield MarkdownViewer(HEADER + HELP, show_table_of_contents=False)
 
     def on_key(self, event) -> None:
         event.stop()
-        self.parent.panel_type = "file_list"
+        self.parent.panel_type = "file_list"  # type: ignore

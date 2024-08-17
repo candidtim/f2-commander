@@ -8,6 +8,7 @@ from pathlib import Path
 
 from textual.app import ComposeResult
 from textual.reactive import reactive
+from textual.widget import Widget
 from textual.widgets import Static
 
 
@@ -25,5 +26,6 @@ class Preview(Static):
         self.preview_path = path
 
     def watch_preview_path(self, old: Path, new: Path):
-        self.parent.border_title = str(new)
-        self.parent.border_subtitle = None
+        parent: Widget = self.parent  # type: ignore
+        parent.border_title = str(new)
+        parent.border_subtitle = None

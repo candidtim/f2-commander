@@ -124,7 +124,7 @@ class F2Commander(App):
         Binding(cmd.binding_key, cmd.action, cmd.description, show=False)
         for cmd in BINDINGS_AND_COMMANDS
         if cmd.binding_key is not None
-    ]
+    ]  # type: ignore
     COMMANDS = {F2AppCommands}
 
     show_hidden = reactive(False)
