@@ -19,7 +19,7 @@ PanelType = namedtuple("PanelType", ["type_name", "type_id", "impl_class"])
 
 PANEL_TYPES = [
     PanelType("Files", "file_list", FileList),
-    PanelType("Preview", "preview", Preview),
+    # PanelType("Preview", "preview", Preview),
     PanelType("Help", "help", Help),
 ]
 
