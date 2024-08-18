@@ -10,6 +10,7 @@ from importlib.metadata import version
 from textual.app import ComposeResult
 from textual.widget import Widget
 from textual.widgets import MarkdownViewer, Static
+
 from ..config import user_config_path
 
 # FIXME: big potion of this message needs to be in sink

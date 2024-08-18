@@ -25,9 +25,9 @@ from textual.widgets.data_table import RowDoesNotExist
 from f2.fs import DirEntry, DirList, list_dir
 
 from ..commands import Command
+from ..config import config_root
 from ..shell import native_open
 from .dialogs import InputDialog
-from ..config import config_root
 
 
 class TextAndValue(Text):
@@ -101,7 +101,7 @@ class FileList(Static):
             "navigate_to_config",
             "Show the configuration directory",
             "Open the user's configuration directory in the file list",
-            "ctrl+g"
+            "ctrl+g",
         ),
     ]
     BINDINGS = [

@@ -20,7 +20,7 @@ from textual.reactive import reactive
 from textual.widgets import Footer
 
 from .commands import Command
-from .config import set_user_has_accepted_license, user_has_accepted_license, config
+from .config import config, set_user_has_accepted_license, user_has_accepted_license
 from .shell import editor, shell, viewer
 from .widgets.dialogs import InputDialog, StaticDialog, Style
 from .widgets.filelist import FileList

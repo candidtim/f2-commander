@@ -40,6 +40,9 @@ testpaths = ["tests"]
 line-length = 88
 target-version = ['py310']
 
+[tool.isort]
+line_length = 88
+
 [tool.mypy]
 ignore_missing_imports = true
 files = "f2,tests"
