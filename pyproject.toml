@@ -17,6 +17,7 @@ textual = ">=0.76,<1"
 humanize = "^4.10"
 send2trash = "^1.8.3"
 platformdirs = "^4.2.2"
+python-dotenv = "^1.0.1"
 
 [tool.poetry.group.dev]
 optional = true

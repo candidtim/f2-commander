@@ -27,6 +27,7 @@ from f2.fs import DirEntry, DirList, list_dir
 from ..commands import Command
 from ..shell import native_open
 from .dialogs import InputDialog
+from ..config import config_root
 
 
 class TextAndValue(Text):
@@ -95,6 +96,12 @@ class FileList(Static):
             "Open in OS file manager",
             "Open current location in the default OS file manager",
             "o",
+        ),
+        Command(
+            "navigate_to_config",
+            "Show the configuration directory",
+            "Open the user's configuration directory in the file list",
+            "ctrl+g"
         ),
     ]
     BINDINGS = [
@@ -436,6 +443,9 @@ class FileList(Static):
         if open_cmd is not None:
             with self.app.suspend():
                 subprocess.run(open_cmd + [str(self.path)])
+
+    def action_navigate_to_config(self):
+        self.path = config_root()
 
     def on_data_table_row_highlighted(self, event: DataTable.RowHighlighted):
         self.cursor_path = self.path / event.row_key.value  # type: ignore

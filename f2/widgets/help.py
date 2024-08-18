@@ -10,14 +10,15 @@ from importlib.metadata import version
 from textual.app import ComposeResult
 from textual.widget import Widget
 from textual.widgets import MarkdownViewer, Static
+from ..config import user_config_path
 
 # FIXME: big potion of this message needs to be in sink
 #        with the bindings -> generate it automatically
 
 
-HEADER = f"# F2 Commander {version('f2-commander')}"
+HELP = f"""
+# F2 Commander {version('f2-commander')}
 
-HELP = """
 > Presse any key to close this panel
 
 ## Usage
@@ -74,6 +75,23 @@ These toggles can be found in Command Palette:
  - Show directories first, on/off
  - Case-sensitive name ordering, on/off
 
+## Configuration
+
+Your configuration file is:
+
+    {str(user_config_path())}
+
+Use `Ctrl+g` to navigate to it.
+
+Configuration file is a simple list of key-value pairs, similar to how variables are
+declared in Bash. The syntax is that of `.env` files and is described in more details
+in https://saurabh-kumar.com/python-dotenv/#file-format . Allowed values are Python
+primitives: strings, numbers and boolean `True` or `False` (capitalized). Values can be
+quoted.
+
+The application may too write to the configuration file (e.g., when you change the
+settings within the application itself), but will attempt to preserve its formatting.
+
 ## License
 
 This application is provided "as is", without warranty of any kind.
@@ -87,7 +105,7 @@ class Help(Static):
         parent: Widget = self.parent  # type: ignore
         parent.border_title = "Help"
         parent.border_subtitle = None
-        yield MarkdownViewer(HEADER + HELP, show_table_of_contents=False)
+        yield MarkdownViewer(HELP, show_table_of_contents=False)
 
     def on_key(self, event) -> None:
         event.stop()

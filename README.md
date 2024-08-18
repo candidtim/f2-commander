@@ -68,19 +68,19 @@ Features:
      - [ ] Configurable key bindings. "Modern" and "Retro" bindings out of the box.
    - [ ] Menubar
    - [x] Command Palette
-   - [ ] File Info panel
-   - [ ] Preview panel
+   - [ ] File Info / Preview panel
    - [x] Drop to shell (command line) temporarily
    - [ ] Theming. "Modern" and "Retro" themes out of the box.
 
  - Configuration
 
-   - [ ] Open configuration. User-defined overrides from a config file.
+   - [x] User configuration file
    - [ ] UI for most common configuration options
      - [ ] Options for user-defined viewer, editor, shell, and default file actions
      - [ ] Enable/disable CWD following the user selection
      - [ ] Enable/disable case sensitivity when ordering by name
      - [ ] List dirs first toggle
+     - [ ] Starting directory for each pane (cwd, home, fixed path, or last location)
 
  - Navigation
 
@@ -150,6 +150,7 @@ User experience and app behavior:
 
  - Navigation
 
+   - [x] Save user's choises between restarts (hidden files toggle, dirs first, etc.)
    - [ ] Consistent cursor positioning
      - [x] ... on the source directory when navigating "up"
      - [ ] ... on the source link when navigating back from symlink

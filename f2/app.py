@@ -20,7 +20,7 @@ from textual.reactive import reactive
 from textual.widgets import Footer
 
 from .commands import Command
-from .config import set_user_has_accepted_license, user_has_accepted_license
+from .config import set_user_has_accepted_license, user_has_accepted_license, config
 from .shell import editor, shell, viewer
 from .widgets.dialogs import InputDialog, StaticDialog, Style
 from .widgets.filelist import FileList
@@ -139,9 +139,9 @@ class F2Commander(App):
     ]  # type: ignore
     COMMANDS = {F2AppCommands}
 
-    show_hidden = reactive(False)
-    dirs_first = reactive(False)
-    order_case_sensitive = reactive(False)
+    show_hidden = reactive(config.show_hidden)
+    dirs_first = reactive(config.dirs_first)
+    order_case_sensitive = reactive(config.order_case_sensitive)
     swapped = reactive(False)
 
     def compose(self) -> ComposeResult:
@@ -163,6 +163,7 @@ class F2Commander(App):
     def watch_show_hidden(self, old: bool, new: bool):
         self.left.show_hidden = new
         self.right.show_hidden = new
+        config.show_hidden = new
 
     def action_toggle_dirs_first(self):
         self.dirs_first = not self.dirs_first
@@ -171,6 +172,7 @@ class F2Commander(App):
     def watch_dirs_first(self, old: bool, new: bool):
         self.left.dirs_first = new
         self.right.dirs_first = new
+        config.dirs_first = new
 
     def action_toggle_order_case_sensitive(self):
         self.order_case_sensitive = not self.order_case_sensitive
@@ -179,6 +181,7 @@ class F2Commander(App):
     def watch_order_case_sensitive(self, old: bool, new: bool):
         self.left.order_case_sensitive = new
         self.right.order_case_sensitive = new
+        config.order_case_sensitive = new
 
     def action_swap_panels(self):
         self.swapped = not self.swapped
