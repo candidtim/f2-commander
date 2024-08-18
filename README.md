@@ -6,45 +6,27 @@ F2 Commander is an orthodox file manager for the modern world.
 
 ## Status
 
-In development. Basic features work, but consider unstable. May contain known
-and unknown bugs. See the complete feature list and known bug list below.
+F2 Commander is usable, with a core set of features implemented. While it is
+functional, development is ongoing. See the "Roadmap" below for a complete
+feature list and their status. This is a personal project with all its
+implications. See the "About" section below for more information. Users are
+encouraged to contribute and report issues.
 
 ## Installation
 
-Installation from source only, until considered stable.
+From source:
 
     poetry build
     pipx install [--force] dist/f2_commander-0.1.0.tar.gz
 
+This software is designed to work in Linux and MacOS. It should also work in
+WSL (Windows Subsystem for Linux).
+
 ## Usage
 
-Hit `?` to see the built-in help.
-Hit `q` to quit.
-
-## Development environment
-
-This project uses Poetry for dependency management and as a build tool. The
-configuration is conventional, use as usual:
-
-    poetry install --with dev
-
-It also uses black, flake8, isort, mypy and pytest. An IDE or an LSP should
-pick up their configuration, or they can be executed with poetry. For example:
-
-    poetry run pytest
-
-To run all code quality controls and linters:
-
-    ./check
-
-To run the application from source code:
-
-    poetry run f2
-
-To run the application with dev tools:
-
-    poetry run textual console [-v -x SYSTEM -x EVENT -x DEBUG -x INFO]  # run first!
-    poetry run textual run --dev f2.app:F2Commander
+ - Start by running `f2` in your terminal emulator
+ - Hit `?` to see the built-in help
+ - Hit `q` to quit
 
 ## Roadmap
 
@@ -57,6 +39,7 @@ F2 Commander main principles are:
  - focus on the **tasks** for file manipulation
  - discoverability of file systems (making file systems easy to navigate)
  - discoverability of the tool itself (making it easy and evident to use)
+ - the software should be easy to adapt, shape and extend
 
 Features:
 
@@ -185,15 +168,52 @@ Known bugs to fix:
 
  - Selection is always cleared if "Hidden files" toggle is changed
 
-## About the name
+## Development environment
+
+This project uses Poetry for dependency management and as a build tool. The
+configuration is conventional, use as usual:
+
+    poetry install --with dev
+
+It also uses black, flake8, isort, mypy and pytest. An IDE or an LSP should
+pick up their configuration, or they can be executed with poetry. For example:
+
+    poetry run pytest
+
+To run all code quality controls and linters:
+
+    ./check
+
+To run the application from source code:
+
+    poetry run f2
+
+To run the application with dev tools:
+
+    poetry run textual console [-v -x SYSTEM -x EVENT -x DEBUG -x INFO]  # this first!
+    poetry run textual run --dev f2.app:F2Commander
+
+## About
 
 "F2" is a loose interpretation of "a **F**ile manager with **2** side-by-side
 panels", and "Commander" is an homage to the old-school orthodox file managers.
+
+"F2 Commander" is a personal project that has grown into a full-fledged file
+manager and is now open-sourced. Being a personal project means that: a) my
+intent is to follow the "Roadmap" outlined above, but development and bug fixing
+may be irregularly-paced and priorities may shift; b) the intent is to keep it
+stable, yet future versions may include backward-incompatible changes where that
+would seem practical to do.
 
 ## Contributions
 
 Bug reports, feature requests and pull requests are welcome.
 
+If you plan to contirbute to the source code, see the "Development environment"
+above, and make sure to run the linters.
+
 ## License
+
+This application is provided "as is", without warranty of any kind.
 
 Mozilla Public License, v. 2.0.
