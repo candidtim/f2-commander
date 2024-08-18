@@ -14,6 +14,10 @@ encouraged to contribute and report issues.
 
 ## Installation
 
+From PyPI:
+
+    pipx install f2-commander
+
 From source:
 
     poetry build

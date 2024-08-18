@@ -10,6 +10,22 @@ license = "MPL-2.0"
 authors = ["Timur Rubeko <timcandid@gmail.com>"]
 readme = "README.md"
 packages = [{include = "f2"}]
+homepage = "https://github.com/candidtim/f2-commander"
+repository = "https://github.com/candidtim/f2-commander"
+keywords = ["file", "manager", "commander"]
+classifiers = [
+    "License :: OSI Approved :: Mozilla Public License 2.0 (MPL 2.0)",
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: End Users/Desktop",
+    "Programming Language :: Python :: 3",
+    "Operating System :: MacOS",
+    "Operating System :: POSIX :: Linux",
+    "Environment :: Console",
+    "Topic :: Desktop Environment :: File Managers",
+]
+
+[tool.poetry.urls]
+"Bug Tracker" = "https://github.com/candidtim/f2-commander/issues"
 
 [tool.poetry.dependencies]
 python = "^3.10"
