@@ -476,8 +476,6 @@ class FileList(Static):
             self.table.action_page_down()
         elif event.key in ("ctrl+b", "ctrl+u"):
             self.table.action_page_up()
-        elif event.key == "b":
-            self.path = self.path.parent
         elif event.key == "backspace":
             self.path = self.path.parent
         elif event.key == "R":

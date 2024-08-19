@@ -8,13 +8,13 @@ import ast
 from pathlib import Path
 
 import dotenv
-from platformdirs import user_config_dir
+import platformdirs
 
 
 def config_root() -> Path:
     """Path to the directory that hosts all configuration files"""
 
-    root_dir = Path(user_config_dir("f2commander"))
+    root_dir = platformdirs.user_config_path("f2commander")
     if not root_dir.exists():
         root_dir.mkdir()
     return root_dir
@@ -55,6 +55,16 @@ class Config:
     dirs_first = InstantConfigAttr(True)
     order_case_sensitive = InstantConfigAttr(True)
     show_hidden = InstantConfigAttr(False)
+    bookmarks = InstantConfigAttr(
+        [
+            str(Path.home()),
+            platformdirs.user_documents_dir(),
+            platformdirs.user_downloads_dir(),
+            platformdirs.user_pictures_dir(),
+            platformdirs.user_videos_dir(),
+            platformdirs.user_music_dir(),
+        ]
+    )
 
 
 config = Config()

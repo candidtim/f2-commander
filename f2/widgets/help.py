@@ -27,7 +27,7 @@ HELP = f"""
 ### Interface
 
  - `Tab`: switch focus between the left and right panels
- - `Ctrl+p`: open the command palette
+ - `Ctrl+\\`: open the command palette
  - `Ctrl+w`: swap the panels
  - `Ctrl+s`: open the same location in the other panel
  - `Ctrl+e`: change the type of the panel on the *left*
@@ -44,7 +44,8 @@ HELP = f"""
  - `Ctrl+f`/`Ctrl+b`, `Ctrl+d`/`Ctrl+u`, `Page Up`/`Page Down`: paginate the list
  - `Enter`: enter the directory or run the default program associated with a
     file type under cursor
- - `b`/`Backspace` or `Enter` on the `..` entry: navigate up in a directory tree
+ - `Backspace` or `Enter` on the `..` entry: navigate up in a directory tree
+ - `b`: go to a bookmarked location
  - `R`: refresh the file listing
  - `o`: open the current location in the deafult OS file manager
 
@@ -87,11 +88,27 @@ Use `Ctrl+g` to navigate to it.
 Configuration file is a simple list of key-value pairs, similar to how variables are
 declared in Bash. The syntax is that of `.env` files and is described in more details
 in https://saurabh-kumar.com/python-dotenv/#file-format . Allowed values are Python
-primitives: strings, numbers and boolean `True` or `False` (capitalized). Values can be
-quoted.
+primitives: strings, numbers, boolean `True` or `False` (capitalized) and lists of
+these values. Values can be quoted.
 
 The application may too write to the configuration file (e.g., when you change the
 settings within the application itself), but will attempt to preserve its formatting.
+
+### Bookmarks
+
+Bookmarks can be defined under the `bookmarks` key as a list of paths. Every path and
+the value itself must be quoted. For example:
+
+    bookmarks = "[
+      '~',
+      '~/Documents',
+      '~/Downloads',
+      '~/Pictures',
+      '~/Videos',
+      '~/Music',
+    ]"
+
+By default, bookmarks are set to the typical desktop locations, similar to the example.
 
 ## License
 

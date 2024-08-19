@@ -9,6 +9,7 @@ import shutil
 import subprocess
 from functools import partial
 from importlib.metadata import version
+from pathlib import Path
 
 from send2trash import send2trash
 from textual import on, work
@@ -22,6 +23,7 @@ from textual.widgets import Footer
 from .commands import Command
 from .config import config, set_user_has_accepted_license, user_has_accepted_license
 from .shell import editor, shell, viewer
+from .widgets.bookmarks import GoToBookmarkDialog
 from .widgets.dialogs import InputDialog, StaticDialog, Style
 from .widgets.filelist import FileList
 from .widgets.panel import Panel
@@ -88,6 +90,12 @@ class F2Commander(App):
             "Right panel",
             "Change the right panel type",
             "ctrl+r",
+        ),
+        Command(
+            "go_to_bookmark",
+            "Go to a bookmark",
+            "Navigate to a bookmarked location",
+            "b",
         ),
         Command(
             "toggle_hidden",
@@ -361,6 +369,13 @@ class F2Commander(App):
         else:
             self.push_screen(StaticDialog.error("Error", "No shell found!"))
 
+    def action_go_to_bookmark(self):
+        def on_select(path: Path | None):
+            if path is not None:
+                self.active_filelist.path = path
+
+        self.app.push_screen(GoToBookmarkDialog(), on_select)
+
     def action_quit_confirm(self):
         def on_confirm(result: bool):
             if result:
@@ -378,7 +393,7 @@ class F2Commander(App):
             "This application is licensed under the Mozilla Public License, v. 2.0.\n"
             "You can find a copy of the license at https://mozilla.org/MPL/2.0/"
         )
-        self.push_screen(StaticDialog.info(title, msg, classes="large"), on_dismiss)
+        self.push_screen(StaticDialog.info(title, msg), on_dismiss)
 
     def action_help(self):
         self.panel_right.panel_type = "help"

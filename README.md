@@ -62,6 +62,7 @@ Features:
  - Configuration
 
    - [x] User configuration file
+   - [ ] Action to edit config file and reload after a confirmation
    - [ ] UI for most common configuration options
      - [ ] Options for user-defined viewer, editor, shell, and default file actions
      - [ ] Enable/disable CWD following the user selection
@@ -82,7 +83,9 @@ Features:
    - [x] Ordering by name case sensitivity on/off
    - [ ] Quick search: navigate file list by typing in the file names
    - [ ] Navigate to path (enter path, with auto-completion)
-   - [ ] Bookmarks (set and navigate to the bookmarks)
+   - [x] Configurable bookmarks. Predefined bookmarks to typical desktop directories
+         like Downloads, Documents, etc.
+   - [ ] "Show the Trash" and "Empty the Trash" actions
    - [x] "Same location" and "Swap panels" actions
    - [ ] CWD follows user selection
    - [ ] Detect external changes and update file listing when possible
@@ -146,6 +149,8 @@ User experience and app behavior:
 
 Known bugs to fix:
 
+ - "Dirs first": soft links to dirs should be considered as dirs themselves
+
  - Restore the "show hidden files" state when switching back to the file list
    after having used a different panel type.
 
@@ -171,6 +176,8 @@ Known bugs to fix:
  - Ctrl+U / Ctrl+D should scroll half a page (not en entire page)
 
  - Selection is always cleared if "Hidden files" toggle is changed
+
+ - Configuration is not validated, incorrect configuration may break the app
 
 ## Development environment
 

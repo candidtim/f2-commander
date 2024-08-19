@@ -33,24 +33,22 @@ FileList.focused .datatable--cursor {
 
 /* Dialogs */
 
-StaticDialog { align: center middle; }
-InputDialog { align: center middle; }
-SelectDialog {  align: center middle; }
+ModalScreen {
+    align: center middle;
+}
 
 #dialog {
-    height: 11;
     width: 50%;
+    height: auto;
     border: $accent panel;
     background: $surface-lighten-1;
 }
 
 #dialog.small {
-    height: 9;
     width: 30%;
 }
 
 #dialog.large {
-    height: 13;
     width: 80%;
 }
 
@@ -80,6 +78,10 @@ SelectDialog {  align: center middle; }
     color: $text-muted;
 }
 
+#dialog #options {
+    margin: 0 0 1 1;
+}
+
 #dialog #value {
     margin: 1 0 1 0;
 }
@@ -91,7 +93,8 @@ SelectDialog {  align: center middle; }
 
 #dialog #buttons {
     width: 100%;
-    align: center middle;
+    height: 3;
+    align: center bottom;
 }
 
 #dialog Button {
