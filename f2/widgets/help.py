@@ -46,6 +46,7 @@ HELP = f"""
     file type under cursor
  - `Backspace` or `Enter` on the `..` entry: navigate up in a directory tree
  - `b`: go to a bookmarked location
+ - `Ctrl+g`: enter a path to jump to
  - `R`: refresh the file listing
  - `o`: open the current location in the deafult OS file manager
 
@@ -83,7 +84,7 @@ Your configuration file is:
 
     {str(user_config_path())}
 
-Use `Ctrl+g` to navigate to it.
+You can use "Navigate to config" command from the Command Palette.
 
 Configuration file is a simple list of key-value pairs, similar to how variables are
 declared in Bash. The syntax is that of `.env` files and is described in more details

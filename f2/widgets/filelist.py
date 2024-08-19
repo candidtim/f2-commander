@@ -101,7 +101,7 @@ class FileList(Static):
             "navigate_to_config",
             "Show the configuration directory",
             "Open the user's configuration directory in the file list",
-            "ctrl+g",
+            None,
         ),
     ]
     BINDINGS = [

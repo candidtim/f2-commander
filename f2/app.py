@@ -98,6 +98,12 @@ class F2Commander(App):
             "b",
         ),
         Command(
+            "go_to_path",
+            "Enter path",
+            "Enter a path to jump to it",
+            "ctrl+g",
+        ),
+        Command(
             "toggle_hidden",
             "Togghle hidden",
             "Show or hide hidden files",
@@ -375,6 +381,24 @@ class F2Commander(App):
                 self.active_filelist.path = path
 
         self.app.push_screen(GoToBookmarkDialog(), on_select)
+
+    def action_go_to_path(self):
+        def on_enter(result: str | None):
+            if result is not None:
+                path = Path(result)
+                if path.is_dir():
+                    self.active_filelist.path = path
+                else:
+                    self.push_screen(
+                        StaticDialog.info("Nope...", f"{result} is not a directory")
+                    )
+
+        self.push_screen(
+            InputDialog(
+                "Jump to...", value=str(self.active_filelist.path), btn_ok="Go"
+            ),
+            on_enter,
+        )
 
     def action_quit_confirm(self):
         def on_confirm(result: bool):

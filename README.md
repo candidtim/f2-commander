@@ -146,6 +146,7 @@ User experience and app behavior:
      - [ ] ... on the source link when navigating back from symlink
      - [ ] ... on the nearest entry after delete or move
    - [ ] Clicking on list headers changes ordering in according columns
+   - [ ] Autocompete in the "Jump to path" input
 
 Known bugs to fix:
 
