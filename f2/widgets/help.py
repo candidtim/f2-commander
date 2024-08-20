@@ -30,8 +30,6 @@ HELP = f"""
  - `Ctrl+\\`: open the command palette
  - `Ctrl+w`: swap the panels
  - `Ctrl+s`: open the same location in the other panel
- - `Ctrl+e`: change the type of the panel on the *left*
- - `Ctrl+r`: change the type of the panel on the *right*
  - `?`: show this help
  - `q`: quit the application
  - Keys shown in the footer execute the indicated actions
@@ -71,6 +69,17 @@ HELP = f"""
  - `x` starts (forks) a subprocess with a new shell in the current location.
    Quit the shell to return back to the F2 Commander (e.g., `Ctrl+d` or type and
    execute `exit`).
+
+### Panels
+
+F2 Commander comes with these panel types:
+
+ - Files: default panel type, for file system discovery and manipulation
+ - Preview: shows exceprts of the text files selected in the (Files) other panel
+ - Help: also invoked with `?` binding, a user manual
+
+Use `Ctrl+e` and `Ctrl+r` to change the type of the panel on the left and right
+respectively.
 
 ### Options
 

@@ -110,7 +110,7 @@ class FileList(Static):
             None,
         ),
     ]
-    BINDINGS = [
+    BINDINGS = [  # type: ignore
         Binding("j", "cursor_down", show=False),
         Binding("k", "cursor_up", show=False),
     ] + [

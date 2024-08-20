@@ -55,7 +55,8 @@ Features:
      - [ ] Configurable key bindings. "Modern" and "Retro" bindings out of the box.
    - [ ] Menubar
    - [x] Command Palette
-   - [ ] File Info / Preview panel
+   - [x] Preview panel
+   - [ ] File Info panel
    - [x] Drop to shell (command line) temporarily
    - [ ] Theming. "Modern" and "Retro" themes out of the box.
 
@@ -165,7 +166,7 @@ Known bugs to fix:
  - ".." path is allowed for selection and can be copied, moved, etc.; handle
    ".." and empty selections better
 
- - File info and preview panels show nothing on start unless a selection is
+ - File info and preview panels show current dir on start and until a selection is
    changed in the file list.
 
  - Default viewer, editor, shell and "open" programs are mostly MacOS-specific,

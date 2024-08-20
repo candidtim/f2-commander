@@ -9,6 +9,7 @@ import os
 import stat
 from dataclasses import dataclass
 from pathlib import Path
+from typing import Iterator
 
 
 @dataclass
@@ -112,3 +113,17 @@ def list_dir(
         total_size=total_size,
         entries=entries,
     )
+
+
+def breadth_first_walk(path: Path, include_hidden: bool = True) -> Iterator[Path]:
+    dirs_to_walk = [path]
+    while dirs_to_walk:
+        next_dirs_to_walk = []
+        for d in dirs_to_walk:
+            for p in sorted(d.iterdir()):
+                if is_hidden(p, p.lstat()) and not include_hidden:
+                    continue
+                if p.is_dir():
+                    next_dirs_to_walk.append(p)
+                yield p
+        dirs_to_walk = next_dirs_to_walk
