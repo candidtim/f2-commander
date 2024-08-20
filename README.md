@@ -82,7 +82,7 @@ Features:
    - [x] "List dirs first/inline" toggle
    - [x] Ordering by name case sensitivity on/off
    - [ ] Quick search: navigate file list by typing in the file names
-   - [ ] Navigate to path (enter path, with auto-completion)
+   - [x] Navigate to path (enter path, with auto-completion)
    - [x] Configurable bookmarks. Predefined bookmarks to typical desktop directories
          like Downloads, Documents, etc.
    - [ ] "Show the Trash" and "Empty the Trash" actions
@@ -96,6 +96,8 @@ Features:
    - [x] Basic operations like copy, move, move to trash, etc.
      - [x] Confirmation dialogs and user inputs (destination path, etc.)
      - [x] Multiple file selection
+           - [x] With spacebar
+           - [x] Shift+j/k(up/down) selection
      - [ ] Progress bar for long operations
      - [ ] Option to delete files (as opposed to moving to trash)
    - [x] View and edit files using user default viewer and editor
@@ -105,7 +107,7 @@ Features:
    - [ ] Create a new file
    - [x] "Show/hide hidden files" toggle
    - [ ] Create and modify symlinks, show broken, and other symlink tasks
-   - [ ] Compute directory size on selection
+   - [x] Compute directory size on Ctrl+Space
 
  - "File systems" support
 

@@ -57,10 +57,11 @@ HELP = f"""
  - `s`/`S`: order the entries by size
  - `t`/`T`: order the entries by last modification time
  - `f`: filter the displayed entries with a glob expression
+ - `Ctrl+Space`: calculate the size of the directory under cursor
 
 ### Selection
 
- - `Space`: select/unselect an entry under the cursor
+ - `Space`/`Shift`+navigation: select/unselect an entry under the cursor
  - `-`: clear selection
  - `+`: select all displayed entries
  - `*`: invert selection

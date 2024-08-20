@@ -14,7 +14,7 @@ from typing import Tuple
 
 from humanize import naturalsize
 from rich.text import Text
-from textual import events
+from textual import events, work
 from textual.app import ComposeResult
 from textual.binding import Binding
 from textual.message import Message
@@ -98,6 +98,12 @@ class FileList(Static):
             "o",
         ),
         Command(
+            "calc_dir_size",
+            "Calculate directory size",
+            "Calculate the size of the directory tree",
+            "ctrl+@",  # FIXME: is it same as ctrl+space really?
+        ),
+        Command(
             "navigate_to_config",
             "Show the configuration directory",
             "Open the user's configuration directory in the file list",
@@ -105,6 +111,9 @@ class FileList(Static):
         ),
     ]
     BINDINGS = [
+        Binding("j", "cursor_down", show=False),
+        Binding("k", "cursor_up", show=False),
+    ] + [
         Binding(cmd.binding_key, cmd.action, cmd.description, show=False)
         for cmd in BINDINGS_AND_COMMANDS
         if cmd.binding_key is not None
@@ -427,6 +436,9 @@ class FileList(Static):
             self.path = selected_path
 
     def action_open(self):
+        # "open" is handled separately from "table.row_selected" to distinguish
+        # between "enter" and mouse click (avoid navigation and running
+        # apps on mouse clickd)
         if self.cursor_path.is_dir():
             pass  # already handled by on_data_table_row_selected
         elif self.cursor_path.is_file() and os.access(self.cursor_path, os.X_OK):
@@ -447,6 +459,35 @@ class FileList(Static):
     def action_navigate_to_config(self):
         self.path = config_root()
 
+    @work
+    async def action_calc_dir_size(self):
+        path = self.cursor_path  # hold on to the requsted path
+        self.action_cursor_down()  # and move the cursor
+        if not path.is_dir():
+            return
+
+        # FIXME: reuse self._row_style
+        style = "bold"
+        if self.cursor_path.name in self.selection:
+            style += " #fff04d italic"
+
+        # show a placeholder and move the cursor at once:
+        placeholder = Text("...", style=style, justify="right")
+        self.table.update_cell(self.cursor_path.name, "size", placeholder)
+
+        # then, calculate and show the size (can be slow):
+        size = sum(f.stat().st_size for f in self.cursor_path.rglob("*") if f.is_file())
+        size_text = Text(naturalsize(size), style=style, justify="right")
+        self.table.update_cell(self.cursor_path.name, "size", size_text)
+
+    def action_cursor_down(self):
+        new_coord = (self.table.cursor_coordinate[0] + 1, 0)
+        self.table.cursor_coordinate = new_coord  # type: ignore
+
+    def action_cursor_up(self):
+        new_coord = (self.table.cursor_coordinate[0] - 1, 0)
+        self.table.cursor_coordinate = new_coord  # type: ignore
+
     def on_data_table_row_highlighted(self, event: DataTable.RowHighlighted):
         self.cursor_path = self.path / event.row_key.value  # type: ignore
         self.post_message(self.Selected(path=self.cursor_path, file_list=self))
@@ -461,14 +502,7 @@ class FileList(Static):
 
     def on_key(self, event: events.Key) -> None:
         # FIXME: refactor to use actions?
-        # FIXME: shouldn't j/k work out of the box with DataTable?
-        if event.key == "j":
-            new_coord = (self.table.cursor_coordinate[0] + 1, 0)
-            self.table.cursor_coordinate = new_coord  # type: ignore
-        elif event.key == "k":
-            new_coord = (self.table.cursor_coordinate[0] - 1, 0)
-            self.table.cursor_coordinate = new_coord  # type: ignore
-        elif event.key == "g":
+        if event.key == "g":
             self.table.action_scroll_top()
         elif event.key == "G":
             self.table.action_scroll_bottom()
@@ -482,11 +516,14 @@ class FileList(Static):
             self.update_listing()
         elif event.key == "enter":
             self.action_open()
-        elif event.key == "space":
+        elif event.key in ("space", "J", "shift+down"):
             self.toggle_selection(self.cursor_path.name)
             self.update_listing()
-            new_coord = (self.table.cursor_coordinate[0] + 1, 0)
-            self.table.cursor_coordinate = new_coord  # type: ignore
+            self.action_cursor_down()
+        elif event.key in ("K", "shift+up"):
+            self.toggle_selection(self.cursor_path.name)
+            self.update_listing()
+            self.action_cursor_up()
         elif event.key == "minus":
             self.reset_selection()
             self.update_listing()
