@@ -1,0 +1,345 @@
+<!doctype html>
+
+
+
+
+<html
+    dir="ltr"
+    lang="en"
+    class="  theme-light "
+>
+    <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#ffffff">
+    <link rel="stylesheet" href="/f2-commander/assets/css/app.css">
+    <link
+        rel="shortcut icon"
+        type="image/png"
+        
+            href="/f2-commander/favicon.png"
+        
+    >
+    <script defer src="https://unpkg.com/alpinejs@3.9.0/dist/cdn.min.js"></script>
+    <script
+        src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.5/dist/js.cookie.min.js"
+    ></script>
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+        integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
+        crossorigin="anonymous"
+        referrerpolicy="no-referrer"
+    >
+    
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma-social@1/bin/bulma-social.min.css">
+    
+    <!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>F2 Commander | An orthodox file manager for the modern world</title>
+<meta name="generator" content="Jekyll v4.3.4" />
+<meta property="og:title" content="F2 Commander" />
+<meta property="og:locale" content="en" />
+<meta name="description" content="F2 Commander is an orthodox file manager for the modern world" />
+<meta property="og:description" content="F2 Commander is an orthodox file manager for the modern world" />
+<link rel="canonical" href="/f2-commander/" />
+<meta property="og:url" content="/f2-commander/" />
+<meta property="og:site_name" content="F2 Commander" />
+<meta property="og:image" content="/f2-commander/img/f2.png" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta property="twitter:image" content="/f2-commander/img/f2.png" />
+<meta property="twitter:title" content="F2 Commander" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebSite","description":"F2 Commander is an orthodox file manager for the modern world","headline":"F2 Commander","image":"/f2-commander/img/f2.png","name":"F2 Commander","url":"/f2-commander/"}</script>
+<!-- End Jekyll SEO tag -->
+
+    <!-- head scripts -->
+</head>
+
+    <body>
+        
+        <nav
+    class="navbar is-primary "
+    x-data="{ openNav: false }"
+>
+    <div class="container">
+        <div class="navbar-brand">
+            <a href="/f2-commander/" class="navbar-item">
+                F2 Commander
+            </a>
+            <a
+                role="button"
+                class="navbar-burger burger"
+                aria-label="menu"
+                aria-expanded="false"
+                data-target="navMenu"
+                :class="{ 'is-active': openNav }"
+                x-on:click="openNav = !openNav"
+            >
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+            </a>
+        </div>
+        <div class="navbar-menu" id="navMenu" :class="{ 'is-active': openNav }">
+            <div class="navbar-start">
+                <a href="/f2-commander/" class="navbar-item is-active">Home</a>
+                
+                    
+                        
+                            <a
+                                href="/f2-commander/docs/install"
+                                class="navbar-item "
+                            >Documentation</a>
+                        
+                    
+                        
+                            <a
+                                href="/f2-commander/screenshots"
+                                class="navbar-item "
+                            >Screenshots</a>
+                        
+                    
+                        
+                            <a
+                                href="https://github.com/candidtim/f2-commander"
+                                class="navbar-item "
+                            >Source code on GitHub</a>
+                        
+                    
+                        
+                            <a
+                                href="/f2-commander/docs/install"
+                                class="navbar-item "
+                            >💾 INSTALL</a>
+                        
+                    
+                
+            </div>
+
+            <div class="navbar-end">
+                
+            </div>
+        </div>
+    </div>
+</nav>
+
+        
+            <section
+    class="hero  is-fullwidth  is-bold is-primary"
+    
+>
+    <div class="hero-body ">
+        <div class="container">
+            <h1 class="title is-2">F2 Commander</h1>
+            <p class="subtitle is-3">An orthodox file manager for the modern world</p>
+            
+        </div>
+    </div>
+</section>
+
+        
+        
+    
+    <section class="hero  is-fullwidth  is-light">
+        <div class="hero-body">
+            <div class="container">
+                <div class="columns is-multiline is-centered">
+                    
+                        <div class="column is-4 has-text-centered">
+                            
+                            <p class="title is-5">Classic user experience</p>
+                            <p class="subtitle is-5">for a modern OS</p>
+
+                            
+                                <div class="my-4">
+                                    <div class="content">
+                                        <p>• Orthodox two-panel interface<br />
+• Classic footer menu<br />
+• Effortless FS navigation<br />
+• Command palette<br />
+• File preview with syntax highlighting<br />
+• Vi-inspired key-bindings<br />
+• Multiple color themes<br />
+• Works in Linux and macOS<br />
+</p>
+                                    </div>
+                                </div>
+                            
+
+                            
+                        </div>
+                    
+                        <div class="column is-4 has-text-centered">
+                            
+                            <p class="title is-5">Feature rich</p>
+                            <p class="subtitle is-5">for pragmatic users</p>
+
+                            
+                                <div class="my-4">
+                                    <div class="content">
+                                        <p>• Extensive support for "remote" file systems (S3, Dropox, HDFS, FTP, WebDAV, and more)<br />
+• Read and extract archives (ZIP, TAR, LHA/LZH, RAR, MS CAB, 7-Zip, and more)<br />
+• Create compressed ZIP files<br />
+• Configurable Bookmarks<br />
+• View and Edit files<br />
+• And of course, classic file and directory operations<br />
+</p>
+                                    </div>
+                                </div>
+                            
+
+                            
+                        </div>
+                    
+                        <div class="column is-4 has-text-centered">
+                            
+                            <p class="title is-5">Open source</p>
+                            <p class="subtitle is-5">and free forever</p>
+
+                            
+                                <div class="my-4">
+                                    <div class="content">
+                                        <p>• No ads, no paid plans, free to install and use<br />
+• Made with care<br />
+• Distributed under Mozilla Public License, v. 2.0<br />
+• Contributions are welcome<br />
+</p>
+                                    </div>
+                                </div>
+                            
+
+                            
+                                <div class="my-4">
+                                    <a
+                                        href="/f2-commander/docs/install"
+                                        class="button is-primary"
+                                    >
+                                        💾 Install
+                                    </a>
+                                </div>
+                            
+                        </div>
+                    
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+        <section class="section">
+            <div class="container">
+                <div class="columns is-multiline">
+                    
+                    <div class="column is-12">
+                        
+
+                        
+    
+
+    <div class="content">
+        <p>
+</p>
+    </div>
+
+    
+        <section class="showcase">
+            <figure class="image  is-5by4 ">
+                <img src="/f2-commander/img/f2.png">
+            </figure>
+            <div class="showcase-content">
+                <div class="columns is-centered">
+                    <div class="column is-8-desktop is-12-tablet">
+                        <p class="title"></p>
+                        <p class="subtitle"></p>
+
+                        
+                            <div class="buttons is-centered my-4">
+                                <a
+                                    href="https://github.com/candidtim/f2-commander/stargazers"
+                                    class="button is-white is-small"
+                                >
+                                    <img
+                                        alt="GitHub stars"
+                                        src="https://img.shields.io/github/stars/candidtim/f2-commander?style=social"
+                                    >
+                                </a>
+                                <a
+                                    href="https://github.com/candidtim/f2-commander/network/members"
+                                    class="button is-white is-small"
+                                >
+                                    <img
+                                        alt="GitHub forks"
+                                        src="https://img.shields.io/github/forks/candidtim/f2-commander?style=social"
+                                    >
+                                </a>
+                                <a
+                                    href="https://github.com/candidtim/f2-commander/watchers"
+                                    class="button is-white is-small"
+                                >
+                                    <img
+                                        alt="GitHub watchers"
+                                        src="https://img.shields.io/github/watchers/candidtim/f2-commander?style=social"
+                                    >
+                                </a>
+                            </div>
+                        
+
+                        <div class="content">
+                            <p>
+</p>
+                        </div>
+
+                        
+
+                        
+
+                        <div class="my-4">
+                            <a href="docs/install" class="button is-primary">
+                                💾 Install
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    
+
+
+                        
+
+                        
+
+                        
+<div class="content">
+    
+
+</div>
+
+                    </div>
+                    
+                </div>
+            </div>
+        </section>
+        
+            <footer class="footer">
+    <div class="container">
+        
+            <div class="columns is-multiline">
+                
+            </div>
+        
+
+        
+
+
+        <div class="content is-small has-text-centered">
+            <p class="">Theme built by <a href="https://www.csrhymes.com">C.S. Rhymes</a></p>
+        </div>
+    </div>
+</footer>
+
+        
+        <script src="/f2-commander/assets/js/app.js" type="text/javascript"></script><!-- footer scripts -->
+</body>
+</html>
