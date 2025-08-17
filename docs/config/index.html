@@ -248,7 +248,6 @@
   <li><a href="#configuration-file">Configuration file</a>
     <ul>
       <li><a href="#location">Location</a></li>
-      <li><a href="#syntax">Syntax</a></li>
     </ul>
   </li>
   <li><a href="#bookmarks">Bookmarks</a></li>
@@ -266,9 +265,8 @@
 change it unless you explicitly need to change some of the apsects desribed
 below.</p>
 
-<p>The application may write to the configuration file (e.g., when you change the
-settings within the application itself), but will preserve other content and
-formatting.</p>
+<p>Beware, the application may write to the configuration file as you use it
+(e.g., when you change the settings within the application itself).</p>
 
 <h2 id="configuration-file">Configuration file</h2>
 
@@ -277,67 +275,36 @@ formatting.</p>
 <p>You configuration file location depends on your OS. To navigate to it, use the
 “Show the configuration directory” command from the Command Palette (<code class="language-plaintext highlighter-rouge">Ctrl+p</code>).</p>
 
-<h3 id="syntax">Syntax</h3>
-
-<div x-data="{visible: true}">
-    <div class="notification is-warning my-4" x-show.transition.duration.300ms="visible">
-        
-        <article class="media">
-            
-                <div class="media-left">
-                    <span class="icon">
-                        <i class="fas fa-exclamation-circle fa-lg"></i>
-                    </span>
-                </div>
-            
-            <div class="media-content">
-                <div class="content"><p>Configuration file syntax is admittedly
-complex. Future versions of F2 Commander will have a different configuration
-file syntax. The change won’t be backward-compatible.</p>
-</div>
-            </div>
-        </article>
-    </div>
-</div>
-
-<p>Configuration file is a simple list of key-value pairs, similar to how
-variables are declared in Bash. The syntax is
-<a href="https://saurabh-kumar.com/python-dotenv/#file-format">that of <em>.env</em> files</a>.
-Allowed are text values containing Python primitives: <code class="language-plaintext highlighter-rouge">'strings'</code>,
-numbers (including but not limited to <code class="language-plaintext highlighter-rouge">42</code>), boolean <code class="language-plaintext highlighter-rouge">True</code> and <code class="language-plaintext highlighter-rouge">False</code>
-(capitalized), and collections of these values: lists <code class="language-plaintext highlighter-rouge">[]</code> and dicts <code class="language-plaintext highlighter-rouge">{}</code>. All
-values should be quoted.</p>
-
 <h2 id="bookmarks">Bookmarks</h2>
 
-<p>Bookmarks can be defined under the <code class="language-plaintext highlighter-rouge">bookmarks</code> key as a list of paths. Every path and
-the value itself must be quoted. For example:</p>
+<p>Bookmarks are defined under <code class="language-plaintext highlighter-rouge">bookmarks.paths</code> as a plain list of local paths:</p>
 
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>bookmarks <span class="o">=</span> <span class="s2">"[
-  '~',
-  '~/Documents',
-  '~/Downloads',
-  '~/Pictures',
-  '~/Videos',
-  '~/Music',
-]"</span>
-</code></pre></div></div>
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nl">"bookmarks"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+  </span><span class="nl">"paths"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+    </span><span class="s2">"~"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"~/Documents"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"~/Downloads"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"~/Pictures"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"~/Videos"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"~/Music"</span><span class="w">
+  </span><span class="p">]</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
 
-<p>By default, bookmarks are set to the typical desktop locations, similar to the example.</p>
+<p>By default, bookmarks are set to the typical desktop locations, similar to the
+example above.</p>
 
 <h2 id="remote-file-systems">Remote file systems</h2>
 
-<p>Connection configuration for remote file systems can be persisted and accessed
-from the “Bookmarks” dialog.</p>
-
-<p>Connection configuration is defined under <code class="language-plaintext highlighter-rouge">file_systems</code> key, as a list of connection
-objects. Every connection object is a set of key-value pairs, with following keys:</p>
+<p>Connection configuration is defined under <code class="language-plaintext highlighter-rouge">file_systems</code>, as a list of connection
+objects. Each connection object defines:</p>
 
 <ul>
-  <li><code class="language-plaintext highlighter-rouge">'display_name'</code>: a title that will be shown in the bookmarks list</li>
-  <li><code class="language-plaintext highlighter-rouge">'protocol'</code>: a name of the protocol recognized by fsspec</li>
-  <li>other keys are considered to be
-<a href="https://filesystem-spec.readthedocs.io/en/latest/api.html#fsspec.filesystem">fsspec <em>storage_options</em></a></li>
+  <li><code class="language-plaintext highlighter-rouge">display_name</code>: a title that will be shown in the bookmarks list</li>
+  <li><code class="language-plaintext highlighter-rouge">protocol</code>: a name of the protocol recognized by fsspec</li>
+  <li><code class="language-plaintext highlighter-rouge">path</code>: an optional default path to navigate to upon connecting (defaults to root)</li>
+  <li>other keys are considered to be fsspec <code class="language-plaintext highlighter-rouge">storage_options</code>
+(see https://filesystem-spec.readthedocs.io/en/latest/api.html#fsspec.filesystem)</li>
 </ul>
 
 <p>Refer to the documentation of the installed additional packages for more information
@@ -345,10 +312,17 @@ about the remote file system configuration.</p>
 
 <p>For example, to connect to an ADLS Gen2 storage account:</p>
 
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>file_systems <span class="o">=</span> <span class="s2">"[
-  {'display_name': 'My BLOB storage', 'protocol': 'abfs', 'account_name': 'myaccount', 'account_key': 'mykey'},
-]"</span>
-</code></pre></div></div>
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nl">"file_systems"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+  </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"display_name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"My BLOB storage"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"protocol"</span><span class="p">:</span><span class="w"> </span><span class="s2">"abfs"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"params"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+      </span><span class="nl">"account_name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"myaccount"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"account_key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"mykey"</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">]</span><span class="w">
+</span></code></pre></div></div>
 
 <p>To connect to a remote file system you may need to install additional packages that
 provide <code class="language-plaintext highlighter-rouge">fsspec</code> implementations for the desired protocol. To find the name of the
@@ -359,10 +333,6 @@ to an S3 bucket, you need to install the <code class="language-plaintext highlig
 
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pipx inject f2-commander s3fs
 </code></pre></div></div>
-
-<p>Remote bookmarks are in “alpha” version, exposing the underlying connector
-configuration in a very generic way. Refer to the documentation of the installed
-additional packages for more information.</p>
 
 <h2 id="color-themes">Color themes</h2>
 
