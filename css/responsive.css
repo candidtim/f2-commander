@@ -1,0 +1,350 @@
+/* F2 Commander Website - Responsive Stylesheet */
+
+/* ===========================
+   Mobile First Approach
+   Base styles above are for mobile
+   =========================== */
+
+/* ===========================
+   Mobile (<768px)
+   =========================== */
+
+@media (max-width: 767px) {
+    /* Navigation */
+    .navbar-menu {
+        display: none;
+        position: absolute;
+        top: var(--navbar-height);
+        left: 0;
+        right: 0;
+        background-color: var(--color-white);
+        box-shadow: 0 4px 8px var(--color-shadow);
+        flex-direction: column;
+        padding: var(--space-md);
+        gap: var(--space-md);
+    }
+
+    .navbar-menu.is-active {
+        display: flex;
+    }
+
+    .navbar-burger {
+        display: flex;
+    }
+
+    .navbar-item {
+        width: 100%;
+        padding: var(--space-sm);
+    }
+
+    /* Hero */
+    .hero h1 {
+        font-size: 2rem;
+    }
+
+    .hero p {
+        font-size: 1rem;
+    }
+
+    .hero {
+        padding: var(--space-lg) 0;
+    }
+
+    .hero-cta {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .hero-cta .btn {
+        width: 100%;
+    }
+
+    /* Typography */
+    h1 {
+        font-size: 2rem;
+    }
+
+    h2 {
+        font-size: 1.75rem;
+    }
+
+    h3 {
+        font-size: 1.5rem;
+    }
+
+    .section-title {
+        font-size: 2rem;
+    }
+
+    .section-subtitle {
+        font-size: 1rem;
+    }
+
+    /* Sections */
+    .section {
+        padding: var(--space-md) 0;
+    }
+
+    .section-lg {
+        padding: var(--space-lg) 0;
+    }
+
+    /* Feature Grid */
+    .feature-grid {
+        grid-template-columns: 1fr;
+        gap: var(--space-md);
+    }
+
+    /* Two Column */
+    .two-column {
+        grid-template-columns: 1fr;
+        gap: var(--space-lg);
+    }
+
+    /* Documentation */
+    .docs-container {
+        grid-template-columns: 1fr;
+    }
+
+    .docs-sidebar {
+        position: static;
+        margin-bottom: var(--space-lg);
+    }
+
+    /* Footer */
+    .footer-content {
+        grid-template-columns: 1fr;
+        gap: var(--space-lg);
+    }
+
+    /* Screenshot Gallery */
+    .screenshot-gallery {
+        grid-template-columns: 1fr;
+        gap: var(--space-md);
+    }
+
+    /* Container */
+    .container {
+        padding: 0 var(--space-md);
+    }
+
+    /* Code blocks */
+    pre {
+        font-size: 0.75rem;
+    }
+
+    .installation-code {
+        font-size: 0.75rem;
+        padding: var(--space-md);
+    }
+
+    /* Scroll to top button */
+    .scroll-to-top {
+        bottom: 1rem;
+        right: 1rem;
+        width: 45px;
+        height: 45px;
+        font-size: 1rem;
+    }
+}
+
+/* ===========================
+   Tablet (768px - 1023px)
+   =========================== */
+
+@media (min-width: 768px) {
+    /* Feature Grid */
+    .feature-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    /* Two Column stays as grid */
+    .two-column {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    /* Screenshot Gallery */
+    .screenshot-gallery {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* ===========================
+   Desktop (1024px and up)
+   =========================== */
+
+@media (min-width: 1024px) {
+    /* Feature Grid */
+    .feature-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    /* Documentation layout */
+    .docs-container {
+        grid-template-columns: 250px 1fr;
+    }
+
+    /* Hero */
+    .hero h1 {
+        font-size: 3.5rem;
+    }
+
+    .hero p {
+        font-size: 1.5rem;
+    }
+}
+
+/* ===========================
+   Wide Screens (1280px and up)
+   =========================== */
+
+@media (min-width: 1280px) {
+    /* Feature Grid can go to 4 columns for very wide screens */
+    .feature-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+
+    /* Screenshot Gallery */
+    .screenshot-gallery {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+/* ===========================
+   Landscape Mobile/Small Tablet
+   =========================== */
+
+@media (max-width: 767px) and (orientation: landscape) {
+    .hero {
+        padding: var(--space-lg) 0;
+    }
+
+    .section {
+        padding: var(--space-md) 0;
+    }
+
+    .section-lg {
+        padding: var(--space-lg) 0;
+    }
+}
+
+/* ===========================
+   High DPI Displays
+   =========================== */
+
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+    /* Ensure images look sharp on retina displays */
+    img {
+        image-rendering: -webkit-optimize-contrast;
+        image-rendering: crisp-edges;
+    }
+}
+
+/* ===========================
+   Reduced Motion (Accessibility)
+   =========================== */
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+/* ===========================
+   Dark Mode Support (Optional)
+   =========================== */
+
+@media (prefers-color-scheme: dark) {
+    /*
+    Uncomment and customize if you want automatic dark mode support:
+
+    :root {
+        --color-dark: #f5f5f5;
+        --color-light: #1a1a1a;
+        --color-white: #2d2d2d;
+        --color-border: #404040;
+        --color-shadow: rgba(0, 0, 0, 0.3);
+    }
+
+    body {
+        background-color: var(--color-dark);
+        color: var(--color-white);
+    }
+
+    .card,
+    .feature-card,
+    .navbar {
+        background-color: #2d2d2d;
+        border-color: #404040;
+    }
+    */
+}
+
+/* ===========================
+   Print Optimizations
+   =========================== */
+
+@media print {
+    /* Hide interactive elements */
+    .navbar-burger,
+    .btn,
+    .hero-cta,
+    .scroll-to-top {
+        display: none !important;
+    }
+
+    /* Optimize layout for printing */
+    .hero {
+        background: none;
+        color: black;
+        padding: var(--space-md) 0;
+    }
+
+    .hero h1,
+    .hero p {
+        color: black;
+    }
+
+    .two-column {
+        grid-template-columns: 1fr;
+    }
+
+    .feature-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    /* Ensure page breaks are clean */
+    .card,
+    .feature-card,
+    .section {
+        page-break-inside: avoid;
+    }
+
+    /* Show URLs for links */
+    a[href^="http"]:after {
+        content: " (" attr(href) ")";
+        font-size: 0.8em;
+        color: #666;
+    }
+}
+
+/* ===========================
+   Container Queries (Future-proof)
+   =========================== */
+
+/* When container queries are fully supported,
+   these can make components more flexible */
+
+/* Example:
+@container (min-width: 400px) {
+    .card {
+        display: grid;
+        grid-template-columns: 150px 1fr;
+    }
+}
+*/

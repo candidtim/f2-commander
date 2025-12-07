@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Contributing to F2 Commander - Guidelines for bug reports, feature requests, and code contributions.">
+    <meta name="keywords" content="contribute, F2 Commander, open source, development, pull request">
+    <meta name="author" content="Timur Rubeko">
+
+    <title>Contributing - F2 Commander</title>
+
+    <link rel="icon" type="image/x-icon" href="img/favicon.ico">
+    <link rel="apple-touch-icon" href="img/apple-touch-icon.png">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/responsive.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-brand">
+                <a href="index.html" class="navbar-logo">
+                    <img src="img/logo.png" alt="F2 Commander Logo" class="navbar-logo-img">
+                    F2 Commander
+                </a>
+            </div>
+            <div class="navbar-menu">
+                <a href="index.html" class="navbar-item">Home</a>
+                <a href="features.html" class="navbar-item">Features</a>
+                <a href="docs.html" class="navbar-item">Documentation</a>
+                <a href="install.html" class="navbar-item">Install</a>
+                <a href="https://github.com/candidtim/f2-commander" class="navbar-item" target="_blank">
+                    <i class="fab fa-github"></i> GitHub
+                </a>
+            </div>
+            <button class="navbar-burger" aria-label="menu" aria-expanded="false">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main>
+        <section class="section">
+            <div class="container-narrow">
+                <h1>Contributing to F2 Commander</h1>
+                <p class="section-subtitle">Help make F2 Commander better</p>
+
+                <p>F2 Commander welcomes contributions from the community! Whether you're reporting bugs, suggesting features, improving documentation, or contributing code, your help is appreciated.</p>
+
+                <!-- Ways to Contribute -->
+                <section id="ways-to-contribute">
+                    <h2>Ways to Contribute</h2>
+
+                    <div class="feature-grid" style="grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));">
+                        <div class="card">
+                            <div class="card-icon">
+                                <i class="fas fa-bug"></i>
+                            </div>
+                            <h3 class="card-title">Report Bugs</h3>
+                            <p class="card-text">Found a bug? Report it on GitHub Issues with details about how to reproduce it.</p>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-icon">
+                                <i class="fas fa-lightbulb"></i>
+                            </div>
+                            <h3 class="card-title">Suggest Features</h3>
+                            <p class="card-text">Have an idea? Open a feature request to discuss new capabilities.</p>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-icon">
+                                <i class="fas fa-code"></i>
+                            </div>
+                            <h3 class="card-title">Code Contributions</h3>
+                            <p class="card-text">Submit pull requests with bug fixes, new features, or improvements.</p>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-icon">
+                                <i class="fas fa-book"></i>
+                            </div>
+                            <h3 class="card-title">Improve Documentation</h3>
+                            <p class="card-text">Help improve user guides, API documentation, or code comments.</p>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-icon">
+                                <i class="fas fa-vial"></i>
+                            </div>
+                            <h3 class="card-title">Testing</h3>
+                            <p class="card-text">Test new features, try different platforms, and report your findings.</p>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-icon">
+                                <i class="fas fa-comments"></i>
+                            </div>
+                            <h3 class="card-title">Community Support</h3>
+                            <p class="card-text">Help other users in discussions, answer questions, share tips.</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Development Setup -->
+                <section id="development-setup" class="mt-4">
+                    <h2>Development Setup</h2>
+
+                    <p>F2 Commander uses <a href="https://docs.astral.sh/uv/" target="_blank">uv</a> for development. Here's how to get started:</p>
+
+                    <h3>1. Install uv</h3>
+                    <pre><code class="language-bash">curl -LsSf https://astral.sh/uv/install.sh | sh</code></pre>
+
+                    <h3>2. Clone the repository</h3>
+                    <pre><code class="language-bash">git clone https://github.com/candidtim/f2-commander.git
+cd f2-commander</code></pre>
+
+                    <h3>3. Run F2 Commander</h3>
+                    <pre><code class="language-bash"># Run directly with uv (installs dependencies automatically)
+uv run f2</code></pre>
+
+                    <h3>4. Run tests</h3>
+                    <pre><code class="language-bash">uv run pytest</code></pre>
+
+                    <h3>5. Code quality checks</h3>
+                    <pre><code class="language-bash"># Run all checks (ruff + mypy)
+./check
+
+# Or run individually:
+uvx ruff check
+uvx mypy</code></pre>
+
+                    <h3>Development with hot reload</h3>
+                    <p>For development with Textual's dev tools:</p>
+                    <pre><code class="language-bash"># Terminal 1: Start Textual console
+uv run textual console
+
+# Terminal 2: Run F2 in dev mode
+uv run textual run --dev f2.main:main</code></pre>
+
+                    <p>This gives you live console output, DOM inspection, and hot reloading.</p>
+                </section>
+
+                <!-- Code Quality Standards -->
+                <section id="code-quality" class="mt-4">
+                    <h2>Code Quality Standards</h2>
+
+                    <p>All code contributions must meet these standards:</p>
+
+                    <h3>✓ Must pass code quality checks</h3>
+                    <pre><code class="language-bash">./check  # Runs ruff (linter) and mypy (type checker)</code></pre>
+
+                    <h3>✓ Type hints required</h3>
+                    <p>All functions and methods must have type hints:</p>
+                    <pre><code class="language-python">def copy_file(source: Path, dest: Path) -> None:
+    """Copy a file from source to destination."""
+    ...</code></pre>
+
+                    <h3>✓ Tests for new features</h3>
+                    <p>Add tests for new functionality using pytest:</p>
+                    <pre><code class="language-python">def test_copy_operation():
+    """Test that files are copied correctly."""
+    # Test implementation
+    ...</code></pre>
+
+                    <h3>✓ Follow existing patterns</h3>
+                    <ul>
+                        <li>Error handling with decorators (see <code>errors.py</code>)</li>
+                        <li>Async operations with <code>@work</code> decorator</li>
+                        <li>Pydantic models for data validation</li>
+                        <li>Immutable Node objects for filesystem entries</li>
+                    </ul>
+
+                    <h3>✓ Documentation</h3>
+                    <ul>
+                        <li>Add docstrings to public functions and classes</li>
+                        <li>Update relevant documentation files</li>
+                        <li>Include code comments for complex logic</li>
+                    </ul>
+                </section>
+
+                <!-- Pull Request Process -->
+                <section id="pull-request-process" class="mt-4">
+                    <h2>Pull Request Process</h2>
+
+                    <ol>
+                        <li>
+                            <h3>Fork the repository</h3>
+                            <p>Click the "Fork" button on the <a href="https://github.com/candidtim/f2-commander" target="_blank">GitHub repository</a>.</p>
+                        </li>
+
+                        <li>
+                            <h3>Create a feature branch</h3>
+                            <pre><code class="language-bash">git checkout -b feature/my-new-feature</code></pre>
+                        </li>
+
+                        <li>
+                            <h3>Make your changes</h3>
+                            <ul>
+                                <li>Write clean, well-documented code</li>
+                                <li>Follow existing code style</li>
+                                <li>Add tests for new functionality</li>
+                            </ul>
+                        </li>
+
+                        <li>
+                            <h3>Test your changes</h3>
+                            <pre><code class="language-bash"># Run tests
+uv run pytest
+
+# Run code quality checks
+./check
+
+# Test manually
+uv run f2</code></pre>
+                        </li>
+
+                        <li>
+                            <h3>Commit your changes</h3>
+                            <pre><code class="language-bash">git add .
+git commit -m "Add feature: description of your changes"</code></pre>
+                        </li>
+
+                        <li>
+                            <h3>Push to your fork</h3>
+                            <pre><code class="language-bash">git push origin feature/my-new-feature</code></pre>
+                        </li>
+
+                        <li>
+                            <h3>Create a Pull Request</h3>
+                            <p>Go to the original repository and click "New Pull Request". Provide:</p>
+                            <ul>
+                                <li>Clear description of what the PR does</li>
+                                <li>Reference any related issues</li>
+                                <li>Screenshots or examples if applicable</li>
+                            </ul>
+                        </li>
+
+                        <li>
+                            <h3>Add license headers</h3>
+                            <p>All new source files must include the MPL 2.0 license header:</p>
+                            <pre><code class="language-python"># This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+#
+# Copyright (c) 2024 Your Name</code></pre>
+                        </li>
+                    </ol>
+                </section>
+
+                <!-- Project Structure -->
+                <section id="project-structure" class="mt-4">
+                    <h2>Project Structure</h2>
+
+                    <p>Understanding the codebase:</p>
+
+                    <pre><code>f2/
+├── app.py              # Main application and orchestration
+├── main.py             # Entry point and CLI
+├── config.py           # Configuration management with Pydantic
+├── commands.py         # Command data structures
+├── errors.py           # Error handling decorators
+├── shell.py            # External tool detection and integration
+├── fs/
+│   ├── node.py         # Immutable filesystem node abstraction
+│   ├── util.py         # Low-level filesystem operations
+│   └── arch.py         # Archive filesystem support
+└── widgets/
+    ├── filelist.py     # File browser widget (main UI)
+    ├── preview.py      # File preview widget
+    ├── panel.py        # Panel container
+    ├── dialogs.py      # Dialog widgets
+    ├── bookmarks.py    # Bookmark management
+    ├── config.py       # Configuration dialog
+    ├── connect.py      # Remote connection dialog
+    └── help.py         # Help widget</code></pre>
+
+                    <p>If using a coding agent (Claude Code, etc.), point it to the documentation in the <code>doc/</code> directory:</p>
+                    <ul>
+                        <li><strong>PRD files</strong> - Product requirements (what features do)</li>
+                        <li><strong>ARCH files</strong> - Architecture (how systems are designed)</li>
+                        <li><strong>SOP files</strong> - Standard operating procedures (how to implement features)</li>
+                    </ul>
+                </section>
+
+                <!-- License -->
+                <section id="license" class="mt-4">
+                    <h2>License</h2>
+
+                    <p>All contributions to F2 Commander are accepted under the <a href="https://mozilla.org/MPL/2.0/" target="_blank">Mozilla Public License 2.0</a>.</p>
+
+                    <p>By submitting a pull request, you agree to license your contribution under MPL 2.0 and confirm that you have the right to do so.</p>
+
+                    <div class="alert alert-info">
+                        <strong>Why MPL 2.0?</strong>
+                        <p style="margin-bottom: 0;">The Mozilla Public License 2.0 is a weak copyleft license that allows F2 Commander to be freely used, modified, and distributed while ensuring improvements remain open source. It's compatible with proprietary software and provides patent protection.</p>
+                    </div>
+                </section>
+
+                <!-- Community Guidelines -->
+                <section id="community-guidelines" class="mt-4">
+                    <h2>Community Guidelines</h2>
+
+                    <ul>
+                        <li><strong>Be respectful</strong> - Treat everyone with respect and kindness</li>
+                        <li><strong>Be constructive</strong> - Provide helpful feedback and suggestions</li>
+                        <li><strong>Be patient</strong> - F2 Commander is maintained by volunteers</li>
+                        <li><strong>Be inclusive</strong> - Welcome newcomers and help them get started</li>
+                    </ul>
+                </section>
+
+                <!-- Project Links -->
+                <section id="project-links" class="mt-4">
+                    <h2>Project Links</h2>
+
+                    <ul>
+                        <li><strong>GitHub Repository:</strong> <a href="https://github.com/candidtim/f2-commander" target="_blank">https://github.com/candidtim/f2-commander</a></li>
+                        <li><strong>Issues:</strong> <a href="https://github.com/candidtim/f2-commander/issues" target="_blank">Report bugs and request features</a></li>
+                        <li><strong>PyPI:</strong> <a href="https://pypi.org/project/f2-commander/" target="_blank">https://pypi.org/project/f2-commander/</a></li>
+                    </ul>
+                </section>
+
+                <!-- Thank You -->
+                <section id="thank-you" class="mt-4 pt-4" style="border-top: 1px solid var(--color-border); text-align: center;">
+                    <h2>Thank You!</h2>
+                    <p>Every contribution, big or small, helps make F2 Commander better. Thank you for your interest in contributing!</p>
+
+                    <div style="display: flex; gap: var(--space-md); justify-content: center; flex-wrap: wrap; margin-top: var(--space-lg);">
+                        <a href="https://github.com/candidtim/f2-commander/issues" class="btn btn-primary">
+                            <i class="fas fa-bug"></i> Report an Issue
+                        </a>
+                        <a href="https://github.com/candidtim/f2-commander" class="btn btn-secondary">
+                            <i class="fab fa-github"></i> View on GitHub
+                        </a>
+                    </div>
+                </section>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>F2 Commander</h4>
+                    <p>An orthodox file manager for the modern world</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Documentation</h4>
+                    <ul>
+                        <li><a href="docs.html">User Guide</a></li>
+                        <li><a href="install.html">Installation</a></li>
+                        <li><a href="features.html">Features</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Links</h4>
+                    <ul>
+                        <li><a href="https://github.com/candidtim/f2-commander">GitHub Repository</a></li>
+                        <li><a href="https://pypi.org/project/f2-commander/">PyPI Package</a></li>
+                        <li><a href="https://github.com/candidtim/f2-commander/issues">Report Issues</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Community</h4>
+                    <ul>
+                        <li><a href="contributing.html">Contributing</a></li>
+                        <li><a href="https://mozilla.org/MPL/2.0/">License (MPL 2.0)</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Timur Rubeko. Licensed under Mozilla Public License 2.0.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+    <script>hljs.highlightAll();</script>
+</body>
+</html>

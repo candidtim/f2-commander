@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Install F2 Commander - Installation guide for Linux, macOS, and WSL. Multiple installation methods available.">
+    <meta name="keywords" content="install F2 Commander, installation guide, pipx, uvx, Python file manager">
+    <meta name="author" content="Timur Rubeko">
+
+    <title>Installation - F2 Commander</title>
+
+    <link rel="icon" type="image/x-icon" href="img/favicon.ico">
+    <link rel="apple-touch-icon" href="img/apple-touch-icon.png">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/responsive.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-brand">
+                <a href="index.html" class="navbar-logo">
+                    <img src="img/logo.png" alt="F2 Commander Logo" class="navbar-logo-img">
+                    F2 Commander
+                </a>
+            </div>
+            <div class="navbar-menu">
+                <a href="index.html" class="navbar-item">Home</a>
+                <a href="features.html" class="navbar-item">Features</a>
+                <a href="docs.html" class="navbar-item">Documentation</a>
+                <a href="install.html" class="navbar-item">Install</a>
+                <a href="https://github.com/candidtim/f2-commander" class="navbar-item" target="_blank">
+                    <i class="fab fa-github"></i> GitHub
+                </a>
+            </div>
+            <button class="navbar-burger" aria-label="menu" aria-expanded="false">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main>
+        <section class="section">
+            <div class="container-narrow">
+                <h1>Installation</h1>
+                <p class="section-subtitle">Get F2 Commander running on your system</p>
+
+                <!-- System Requirements -->
+                <section id="requirements">
+                    <h2>System Requirements</h2>
+                    <ul>
+                        <li><strong>Operating Systems:</strong> Linux, macOS, WSL (Windows Subsystem for Linux)</li>
+                        <li><strong>Python:</strong> Python 3.10 or later</li>
+                        <li><strong>Terminal:</strong> Any modern terminal emulator
+                            <ul>
+                                <li>For image preview: Terminal with TGP or Sixel support (e.g., iTerm2, Ghostty, Kitty)</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </section>
+
+                <!-- Quick Install -->
+                <section id="quick-install" class="mt-4">
+                    <h2>Quick Install</h2>
+                    <p>The fastest way to install F2 Commander:</p>
+
+                    <h3>Using pipx (Recommended)</h3>
+                    <pre><code class="language-bash"># Install F2 Commander
+pipx install f2-commander
+
+# Run it
+f2</code></pre>
+
+                    <h3>Using uvx</h3>
+                    <pre><code class="language-bash"># One-time run (no installation needed)
+uvx --from f2-commander f2</code></pre>
+                </section>
+
+                <!-- Method 1: pipx -->
+                <section id="method-pipx" class="mt-4">
+                    <h2>Method 1: pipx (Recommended)</h2>
+
+                    <p><code>pipx</code> installs Python applications in isolated environments, keeping your system clean.</p>
+
+                    <h3>1. Install pipx</h3>
+
+                    <h4>On macOS:</h4>
+                    <pre><code class="language-bash">brew install pipx
+pipx ensurepath</code></pre>
+
+                    <h4>On Linux (Debian/Ubuntu):</h4>
+                    <pre><code class="language-bash">sudo apt update
+sudo apt install pipx
+pipx ensurepath</code></pre>
+
+                    <h4>On Linux (Fedora):</h4>
+                    <pre><code class="language-bash">sudo dnf install pipx
+pipx ensurepath</code></pre>
+
+                    <h4>On Linux (Arch):</h4>
+                    <pre><code class="language-bash">sudo pacman -S python-pipx
+pipx ensurepath</code></pre>
+
+                    <h4>Or with pip (any platform):</h4>
+                    <pre><code class="language-bash">python3 -m pip install --user pipx
+python3 -m pipx ensurepath</code></pre>
+
+                    <h3>2. Install F2 Commander</h3>
+                    <pre><code class="language-bash">pipx install f2-commander</code></pre>
+
+                    <h3>3. Run F2 Commander</h3>
+                    <pre><code class="language-bash">f2</code></pre>
+
+                    <p>After installation, restart your terminal or run <code>source ~/.bashrc</code> (or <code>~/.zshrc</code>) to update your PATH.</p>
+                </section>
+
+                <!-- Method 2: uvx -->
+                <section id="method-uvx" class="mt-4">
+                    <h2>Method 2: uvx</h2>
+
+                    <p><code>uv</code> is a fast Python package installer and runner. You can use it to run F2 Commander without installing it permanently.</p>
+
+                    <h3>1. Install uv</h3>
+                    <pre><code class="language-bash"># On macOS and Linux:
+curl -LsSf https://astral.sh/uv/install.sh | sh
+
+# Or with pip:
+pip install uv</code></pre>
+
+                    <h3>2. Run F2 Commander</h3>
+                    <pre><code class="language-bash"># Run without installing:
+uvx --from f2-commander f2
+
+# This downloads and runs the latest version each time</code></pre>
+
+                    <p><strong>Tip:</strong> With uvx, you always get the latest version without needing to update manually!</p>
+                </section>
+
+                <!-- Method 3: From Source -->
+                <section id="method-source" class="mt-4">
+                    <h2>Method 3: From Source</h2>
+
+                    <p>For developers or if you want to run the latest development version:</p>
+
+                    <h3>1. Clone the repository</h3>
+                    <pre><code class="language-bash">git clone https://github.com/candidtim/f2-commander.git
+cd f2-commander</code></pre>
+
+                    <h3>2. Option A: Install with pipx</h3>
+                    <pre><code class="language-bash"># Build the package
+uv build
+
+# Install with pipx
+pipx install --force dist/f2_commander-*.tar.gz</code></pre>
+
+                    <h3>2. Option B: Run directly with uv</h3>
+                    <pre><code class="language-bash"># Run without installing
+uv run f2</code></pre>
+                </section>
+
+                <!-- Optional Dependencies -->
+                <section id="optional-dependencies" class="mt-4">
+                    <h2>Optional Dependencies</h2>
+
+                    <p>F2 Commander core functionality works out of the box. However, some features require additional packages:</p>
+
+                    <h3>For Remote File Systems</h3>
+
+                    <p>Different protocols require different fsspec implementation packages. Install them as needed:</p>
+
+                    <table class="protocol-table">
+                        <thead>
+                            <tr>
+                                <th>Protocol</th>
+                                <th>Package</th>
+                                <th>Install Command</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>AWS S3</td>
+                                <td><code>s3fs</code></td>
+                                <td><code>pipx inject f2-commander s3fs</code></td>
+                            </tr>
+                            <tr>
+                                <td>Google Cloud Storage</td>
+                                <td><code>gcsfs</code></td>
+                                <td><code>pipx inject f2-commander gcsfs</code></td>
+                            </tr>
+                            <tr>
+                                <td>Azure ADLS</td>
+                                <td><code>adlfs</code></td>
+                                <td><code>pipx inject f2-commander adlfs</code></td>
+                            </tr>
+                            <tr>
+                                <td>Dropbox</td>
+                                <td><code>dropboxdrivefs</code></td>
+                                <td><code>pipx inject f2-commander dropboxdrivefs</code></td>
+                            </tr>
+                            <tr>
+                                <td>Google Drive</td>
+                                <td><code>gdrivefs</code></td>
+                                <td><code>pipx inject f2-commander gdrivefs</code></td>
+                            </tr>
+                            <tr>
+                                <td>SMB/CIFS</td>
+                                <td><code>smbprotocol</code></td>
+                                <td><code>pipx inject f2-commander smbprotocol</code></td>
+                            </tr>
+                            <tr>
+                                <td>WebDAV</td>
+                                <td><code>webdavfs</code></td>
+                                <td><code>pipx inject f2-commander webdavfs</code></td>
+                            </tr>
+                            <tr>
+                                <td>HDFS</td>
+                                <td><code>fsspec[hdfs]</code></td>
+                                <td><code>pipx inject f2-commander fsspec[hdfs]</code></td>
+                            </tr>
+                            <tr>
+                                <td>FTP/FTPS</td>
+                                <td>(built-in)</td>
+                                <td>No installation needed</td>
+                            </tr>
+                            <tr>
+                                <td>SFTP</td>
+                                <td>(built-in)</td>
+                                <td>No installation needed</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <p class="mt-2"><em>Note: This list is non-exhaustive. See <a href="https://filesystem-spec.readthedocs.io/en/latest/api.html#built-in-implementations" target="_blank">fsspec documentation</a> for more protocols.</em></p>
+
+                    <p>The connection dialog in F2 Commander (<span class="key">Ctrl+T</span>) shows which package is needed for each protocol.</p>
+
+                    <h3>For Archive Support</h3>
+
+                    <p><code>libarchive</code> should be available on most systems. If not:</p>
+
+                    <h4>macOS:</h4>
+                    <pre><code class="language-bash">brew install libarchive</code></pre>
+
+                    <h4>Linux (Debian/Ubuntu):</h4>
+                    <pre><code class="language-bash">sudo apt-get install libarchive13</code></pre>
+
+                    <h4>Linux (Fedora/RHEL):</h4>
+                    <pre><code class="language-bash">sudo dnf install libarchive</code></pre>
+
+                    <h4>Linux (Arch):</h4>
+                    <pre><code class="language-bash">sudo pacman -S libarchive</code></pre>
+                </section>
+
+                <!-- Post-Installation -->
+                <section id="post-installation" class="mt-4">
+                    <h2>Post-Installation</h2>
+
+                    <h3>First Run</h3>
+                    <p>Simply run:</p>
+                    <pre><code class="language-bash">f2</code></pre>
+
+                    <h3>Getting Started</h3>
+                    <ul>
+                        <li>Press <span class="key">?</span> to see the built-in help</li>
+                        <li>Press <span class="key">Ctrl+P</span> to open the Command Palette and explore available actions</li>
+                        <li>Press <span class="key">Ctrl+,</span> to open the Configuration dialog</li>
+                        <li>Press <span class="key">q</span> to quit</li>
+                    </ul>
+
+                    <h3>Configuration</h3>
+                    <p>F2 Commander creates a configuration file on first run. The location is platform-specific:</p>
+                    <ul>
+                        <li><strong>Linux:</strong> <code>~/.config/f2commander/config.json</code></li>
+                        <li><strong>macOS:</strong> <code>~/Library/Application Support/f2commander/config.json</code></li>
+                    </ul>
+                </section>
+
+                <!-- Updating -->
+                <section id="updating" class="mt-4">
+                    <h2>Updating F2 Commander</h2>
+
+                    <h3>With pipx:</h3>
+                    <pre><code class="language-bash">pipx upgrade f2-commander</code></pre>
+
+                    <h3>With uvx:</h3>
+                    <p>No update needed! <code>uvx</code> always runs the latest version.</p>
+
+                    <h3>From source:</h3>
+                    <pre><code class="language-bash">cd f2-commander
+git pull
+uv build
+pipx install --force dist/f2_commander-*.tar.gz</code></pre>
+                </section>
+
+                <!-- Uninstallation -->
+                <section id="uninstalling" class="mt-4">
+                    <h2>Uninstalling F2 Commander</h2>
+
+                    <h3>With pipx:</h3>
+                    <pre><code class="language-bash">pipx uninstall f2-commander</code></pre>
+
+                    <p>Optionally, remove the configuration directory:</p>
+                    <pre><code class="language-bash"># Linux
+rm -rf ~/.config/f2commander
+
+# macOS
+rm -rf ~/Library/Application\ Support/f2commander</code></pre>
+                </section>
+
+                <!-- Troubleshooting -->
+                <section id="troubleshooting" class="mt-4">
+                    <h2>Troubleshooting</h2>
+
+                    <h3>Command not found: f2</h3>
+                    <p>If you get "command not found" after installation:</p>
+                    <ol>
+                        <li>Restart your terminal</li>
+                        <li>Or run: <code>source ~/.bashrc</code> (or <code>~/.zshrc</code>)</li>
+                        <li>Ensure pipx's bin directory is in your PATH (run <code>pipx ensurepath</code>)</li>
+                    </ol>
+
+                    <h3>Python version issues</h3>
+                    <p>F2 Commander requires Python 3.10 or later. Check your version:</p>
+                    <pre><code class="language-bash">python3 --version</code></pre>
+
+                    <p>If your Python version is too old, you'll need to install a newer version from <a href="https://www.python.org/downloads/" target="_blank">python.org</a> or your package manager.</p>
+
+                    <h3>Terminal compatibility</h3>
+                    <p>F2 Commander works in most terminal emulators. For best experience:</p>
+                    <ul>
+                        <li>Use a modern terminal with Unicode support</li>
+                        <li>For image preview: Use terminals with TGP or Sixel support (iTerm2, Ghostty, Kitty, etc.)</li>
+                        <li>Ensure your terminal size is at least 88x24 characters</li>
+                    </ul>
+
+                    <h3>Permission issues</h3>
+                    <p>If you encounter permission errors:</p>
+                    <ul>
+                        <li>Don't use <code>sudo</code> with pipx or uvx</li>
+                        <li>Install to user directory (pipx does this by default)</li>
+                        <li>Ensure you have write permissions to the configuration directory</li>
+                    </ul>
+
+                    <h3>Archive support not working</h3>
+                    <p>If you can't open archives, install libarchive:</p>
+                    <pre><code class="language-bash"># macOS
+brew install libarchive
+
+# Linux (Debian/Ubuntu)
+sudo apt-get install libarchive13</code></pre>
+
+                    <h3>Still having issues?</h3>
+                    <p>Report issues on <a href="https://github.com/candidtim/f2-commander/issues" target="_blank">GitHub Issues</a> with:</p>
+                    <ul>
+                        <li>Your operating system and version</li>
+                        <li>Python version (<code>python3 --version</code>)</li>
+                        <li>Installation method used</li>
+                        <li>Error message or description of the problem</li>
+                    </ul>
+                </section>
+
+                <!-- Next Steps -->
+                <section id="next-steps" class="mt-4 pt-4" style="border-top: 1px solid var(--color-border);">
+                    <h2>Next Steps</h2>
+                    <p>Now that you have F2 Commander installed:</p>
+                    <div style="display: flex; gap: var(--space-md); flex-wrap: wrap; margin-top: var(--space-lg);">
+                        <a href="docs.html" class="btn btn-primary">Read the Documentation</a>
+                        <a href="features.html" class="btn btn-secondary">Explore Features</a>
+                        <a href="https://github.com/candidtim/f2-commander" class="btn btn-secondary">
+                            <i class="fab fa-github"></i> View on GitHub
+                        </a>
+                    </div>
+                </section>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>F2 Commander</h4>
+                    <p>An orthodox file manager for the modern world</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Documentation</h4>
+                    <ul>
+                        <li><a href="docs.html">User Guide</a></li>
+                        <li><a href="install.html">Installation</a></li>
+                        <li><a href="features.html">Features</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Links</h4>
+                    <ul>
+                        <li><a href="https://github.com/candidtim/f2-commander">GitHub Repository</a></li>
+                        <li><a href="https://pypi.org/project/f2-commander/">PyPI Package</a></li>
+                        <li><a href="https://github.com/candidtim/f2-commander/issues">Report Issues</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Community</h4>
+                    <ul>
+                        <li><a href="contributing.html">Contributing</a></li>
+                        <li><a href="https://mozilla.org/MPL/2.0/">License (MPL 2.0)</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Timur Rubeko. Licensed under Mozilla Public License 2.0.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+    <script>hljs.highlightAll();</script>
+</body>
+</html>

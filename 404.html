@@ -1,187 +1,200 @@
-<!doctype html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Page not found - F2 Commander">
+    <meta name="robots" content="noindex">
 
+    <title>404 - Page Not Found | F2 Commander</title>
 
+    <link rel="icon" type="image/x-icon" href="img/favicon.ico">
+    <link rel="apple-touch-icon" href="img/apple-touch-icon.png">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/responsive.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
+    <style>
+        .error-page {
+            min-height: 70vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: var(--space-xl) var(--space-lg);
+        }
 
-<html
-    dir="ltr"
-    lang="en"
-    class="  theme-light "
->
-    <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="theme-color" content="#ffffff">
-    <link rel="stylesheet" href="/f2-commander/assets/css/app.css">
-    <link
-        rel="shortcut icon"
-        type="image/png"
-        
-            href="/f2-commander/favicon.png"
-        
-    >
-    <script defer src="https://unpkg.com/alpinejs@3.9.0/dist/cdn.min.js"></script>
-    <script
-        src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.5/dist/js.cookie.min.js"
-    ></script>
-    <link
-        rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
-        integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
-        crossorigin="anonymous"
-        referrerpolicy="no-referrer"
-    >
-    
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma-social@1/bin/bulma-social.min.css">
-    
-    <!-- Begin Jekyll SEO tag v2.8.0 -->
-<title>OSError: [Errno 2] | F2 Commander</title>
-<meta name="generator" content="Jekyll v4.3.4" />
-<meta property="og:title" content="OSError: [Errno 2]" />
-<meta property="og:locale" content="en" />
-<meta name="description" content="An orthodox file manager for the modern world" />
-<meta property="og:description" content="An orthodox file manager for the modern world" />
-<link rel="canonical" href="/f2-commander/404.html" />
-<meta property="og:url" content="/f2-commander/404.html" />
-<meta property="og:site_name" content="F2 Commander" />
-<meta property="og:type" content="website" />
-<meta name="twitter:card" content="summary" />
-<meta property="twitter:title" content="OSError: [Errno 2]" />
-<script type="application/ld+json">
-{"@context":"https://schema.org","@type":"WebPage","description":"An orthodox file manager for the modern world","headline":"OSError: [Errno 2]","url":"/f2-commander/404.html"}</script>
-<!-- End Jekyll SEO tag -->
+        .error-content {
+            max-width: 600px;
+        }
 
-    <!-- head scripts -->
+        .error-code {
+            font-size: 8rem;
+            font-weight: 700;
+            color: var(--color-primary);
+            line-height: 1;
+            margin-bottom: var(--space-lg);
+        }
+
+        .error-icon {
+            font-size: 4rem;
+            color: var(--color-primary);
+            margin-bottom: var(--space-lg);
+            opacity: 0.8;
+        }
+
+        .error-title {
+            font-size: 2rem;
+            margin-bottom: var(--space-md);
+        }
+
+        .error-description {
+            font-size: 1.125rem;
+            color: #6c757d;
+            margin-bottom: var(--space-xl);
+        }
+
+        .error-links {
+            display: flex;
+            gap: var(--space-md);
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .search-box {
+            margin-top: var(--space-xl);
+            padding-top: var(--space-xl);
+            border-top: 1px solid var(--color-border);
+        }
+
+        .search-box input {
+            width: 100%;
+            max-width: 400px;
+            padding: var(--space-md);
+            font-size: 1rem;
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-sm);
+            font-family: var(--font-body);
+        }
+
+        .search-box input:focus {
+            outline: 2px solid var(--color-primary);
+            outline-offset: 2px;
+            border-color: var(--color-primary);
+        }
+    </style>
 </head>
-
-    <body>
-        
-        <nav
-    class="navbar is-primary "
-    x-data="{ openNav: false }"
->
-    <div class="container">
-        <div class="navbar-brand">
-            <a href="/f2-commander/" class="navbar-item">
-                F2 Commander
-            </a>
-            <a
-                role="button"
-                class="navbar-burger burger"
-                aria-label="menu"
-                aria-expanded="false"
-                data-target="navMenu"
-                :class="{ 'is-active': openNav }"
-                x-on:click="openNav = !openNav"
-            >
-                <span aria-hidden="true"></span>
-                <span aria-hidden="true"></span>
-                <span aria-hidden="true"></span>
-            </a>
-        </div>
-        <div class="navbar-menu" id="navMenu" :class="{ 'is-active': openNav }">
-            <div class="navbar-start">
-                <a href="/f2-commander/" class="navbar-item ">Home</a>
-                
-                    
-                        
-                            <a
-                                href="/f2-commander/docs/install"
-                                class="navbar-item "
-                            >Documentation</a>
-                        
-                    
-                        
-                            <a
-                                href="/f2-commander/screenshots"
-                                class="navbar-item "
-                            >Screenshots</a>
-                        
-                    
-                        
-                            <a
-                                href="https://github.com/candidtim/f2-commander"
-                                class="navbar-item "
-                            >Source code on GitHub</a>
-                        
-                    
-                        
-                            <a
-                                href="/f2-commander/docs/install"
-                                class="navbar-item "
-                            >💾 INSTALL</a>
-                        
-                    
-                
-            </div>
-
-            <div class="navbar-end">
-                
-            </div>
-        </div>
-    </div>
-</nav>
-
-        
-            <section
-    class="hero  is-fullwidth  is-bold is-primary"
-    
->
-    <div class="hero-body ">
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
         <div class="container">
-            <h1 class="title is-2">OSError: [Errno 2]</h1>
-            <p class="subtitle is-3">No such file or directory</p>
-            
+            <div class="navbar-brand">
+                <a href="index.html" class="navbar-logo">
+                    <img src="img/logo.png" alt="F2 Commander Logo" class="navbar-logo-img">
+                    F2 Commander
+                </a>
+            </div>
+            <div class="navbar-menu">
+                <a href="index.html" class="navbar-item">Home</a>
+                <a href="features.html" class="navbar-item">Features</a>
+                <a href="docs.html" class="navbar-item">Documentation</a>
+                <a href="install.html" class="navbar-item">Install</a>
+                <a href="https://github.com/candidtim/f2-commander" class="navbar-item" target="_blank">
+                    <i class="fab fa-github"></i> GitHub
+                </a>
+            </div>
+            <button class="navbar-burger" aria-label="menu" aria-expanded="false">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
         </div>
-    </div>
-</section>
+    </nav>
 
-        
-        
+    <!-- Main Content -->
+    <main>
+        <div class="error-page">
+            <div class="error-content">
+                <div class="error-icon">
+                    <i class="fas fa-folder-open"></i>
+                </div>
+                <div class="error-code">404</div>
+                <h1 class="error-title">Page Not Found</h1>
+                <p class="error-description">
+                    Looks like this file doesn't exist in the filesystem. Maybe it was moved, deleted, or you followed a broken link?
+                </p>
 
-        <section class="section">
-            <div class="container">
-                <div class="columns is-multiline">
-                    
-                    <div class="column is-12">
-                        
+                <div class="error-links">
+                    <a href="index.html" class="btn btn-primary btn-lg">
+                        <i class="fas fa-home"></i> Go Home
+                    </a>
+                    <a href="docs.html" class="btn btn-secondary btn-lg">
+                        <i class="fas fa-book"></i> Documentation
+                    </a>
+                    <a href="install.html" class="btn btn-secondary btn-lg">
+                        <i class="fas fa-download"></i> Install
+                    </a>
+                </div>
 
-                        
-
-                        
-
-                        
-
-                        
-<div class="content">
-    <p>The requested page could not be found</p>
-
-</div>
-
-                    </div>
-                    
+                <div class="search-box">
+                    <p style="margin-bottom: var(--space-md); color: #6c757d;">
+                        <strong>Looking for something specific?</strong>
+                    </p>
+                    <p style="font-size: 0.875rem; color: #6c757d; margin-bottom: var(--space-lg);">
+                        Try visiting one of these pages:
+                    </p>
+                    <ul style="list-style: none; padding: 0; margin: 0;">
+                        <li style="margin-bottom: var(--space-sm);"><a href="index.html">Home</a> - Main page and quick start</li>
+                        <li style="margin-bottom: var(--space-sm);"><a href="features.html">Features</a> - Complete feature list</li>
+                        <li style="margin-bottom: var(--space-sm);"><a href="docs.html">Documentation</a> - User guide and reference</li>
+                        <li style="margin-bottom: var(--space-sm);"><a href="install.html">Installation</a> - Install instructions</li>
+                        <li style="margin-bottom: var(--space-sm);"><a href="contributing.html">Contributing</a> - Development guide</li>
+                        <li style="margin-bottom: var(--space-sm);"><a href="https://github.com/candidtim/f2-commander/issues">Report an Issue</a> - Found a broken link?</li>
+                    </ul>
                 </div>
             </div>
-        </section>
-        
-            <footer class="footer">
-    <div class="container">
-        
-            <div class="columns is-multiline">
-                
-            </div>
-        
-
-        
-
-
-        <div class="content is-small has-text-centered">
-            <p class="">Theme built by <a href="https://www.csrhymes.com">C.S. Rhymes</a></p>
         </div>
-    </div>
-</footer>
+    </main>
 
-        
-        <script src="/f2-commander/assets/js/app.js" type="text/javascript"></script><!-- footer scripts -->
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>F2 Commander</h4>
+                    <p>An orthodox file manager for the modern world</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Documentation</h4>
+                    <ul>
+                        <li><a href="docs.html">User Guide</a></li>
+                        <li><a href="install.html">Installation</a></li>
+                        <li><a href="features.html">Features</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Links</h4>
+                    <ul>
+                        <li><a href="https://github.com/candidtim/f2-commander">GitHub Repository</a></li>
+                        <li><a href="https://pypi.org/project/f2-commander/">PyPI Package</a></li>
+                        <li><a href="https://github.com/candidtim/f2-commander/issues">Report Issues</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Community</h4>
+                    <ul>
+                        <li><a href="contributing.html">Contributing</a></li>
+                        <li><a href="https://mozilla.org/MPL/2.0/">License (MPL 2.0)</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Timur Rubeko. Licensed under Mozilla Public License 2.0.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
 </body>
 </html>

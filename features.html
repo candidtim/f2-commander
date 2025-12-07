@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="F2 Commander Features - Comprehensive file manager with cloud storage, archive support, preview panel, and more.">
+    <meta name="keywords" content="file manager features, cloud storage, archives, file preview, terminal UI">
+    <meta name="author" content="Timur Rubeko">
+
+    <title>Features - F2 Commander</title>
+
+    <link rel="icon" type="image/x-icon" href="img/favicon.ico">
+    <link rel="apple-touch-icon" href="img/apple-touch-icon.png">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/responsive.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-brand">
+                <a href="index.html" class="navbar-logo">
+                    <img src="img/logo.png" alt="F2 Commander Logo" class="navbar-logo-img">
+                    F2 Commander
+                </a>
+            </div>
+            <div class="navbar-menu">
+                <a href="index.html" class="navbar-item">Home</a>
+                <a href="features.html" class="navbar-item">Features</a>
+                <a href="docs.html" class="navbar-item">Documentation</a>
+                <a href="install.html" class="navbar-item">Install</a>
+                <a href="https://github.com/candidtim/f2-commander" class="navbar-item" target="_blank">
+                    <i class="fab fa-github"></i> GitHub
+                </a>
+            </div>
+            <button class="navbar-burger" aria-label="menu" aria-expanded="false">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main>
+        <!-- Page Header -->
+        <section class="section">
+            <div class="container">
+                <div class="section-header">
+                    <h1 class="section-title">Features</h1>
+                    <p class="section-subtitle">Everything you need in a modern file manager</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Core File Management -->
+        <section class="feature-section">
+            <div class="container">
+                <h2><i class="fas fa-folder-open text-primary"></i> Core File Management</h2>
+
+                <div class="two-column mt-3">
+                    <div>
+                        <h3>Orthodox Two-Panel Interface</h3>
+                        <p>Experience the power of a traditional two-panel file manager optimized for keyboard navigation. View and compare two directories side-by-side, making file operations intuitive and efficient.</p>
+                        <ul>
+                            <li>Side-by-side directory comparison</li>
+                            <li>Switch focus with <span class="key">Tab</span></li>
+                            <li>Navigate with Vi-like keys (<span class="key">j</span>/<span class="key">k</span>) or arrow keys</li>
+                            <li>Jump to top/bottom with <span class="key">g</span>/<span class="key">G</span></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <img src="img/screenshots/listing.png" alt="Two-panel interface" class="screenshot">
+                    </div>
+                </div>
+
+                <div class="two-column mt-4">
+                    <div>
+                        <img src="img/screenshots/multiple-selection.png" alt="Multiple file selection" class="screenshot">
+                    </div>
+                    <div>
+                        <h3>Multiple File Selection</h3>
+                        <p>Select and operate on multiple files and directories simultaneously with powerful selection tools.</p>
+                        <ul>
+                            <li><span class="key">Space</span> - Toggle selection for current entry</li>
+                            <li><span class="key">Shift</span> + <span class="key">j</span>/<span class="key">k</span> - Select while moving</li>
+                            <li><span class="key">+</span> - Select all displayed entries</li>
+                            <li><span class="key">-</span> - Clear selection</li>
+                            <li><span class="key">*</span> - Invert selection</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="mt-4">
+                    <h3>File Operations</h3>
+                    <p>Comprehensive file and directory operations with cross-filesystem support:</p>
+                    <ul>
+                        <li><strong>Copy</strong> - Copy files/directories between any filesystems</li>
+                        <li><strong>Move</strong> - Move or rename files and directories</li>
+                        <li><strong>Delete</strong> - Move to trash (safe, in local file systems) or permanent deletion</li>
+                        <li><strong>Create</strong> - New directories and files</li>
+                        <li><strong>Edit</strong> - Open in your configured editor</li>
+                        <li><strong>View</strong> - View with default viewer</li>
+                    </ul>
+                    <p><strong>Works across all filesystem types:</strong> copy from S3 to local, FTP to archive, and more!</p>
+                </div>
+
+                <div class="two-column mt-4">
+                    <div>
+                        <h3>Smart Navigation</h3>
+                        <p>F2 Commander offers flexible keybinding options and powerful navigation features:</p>
+
+                        <h4>Two Keybinding Modes:</h4>
+                        <ul>
+                            <li><strong>Vi-like Mode</strong> (default) - Mnemonic-based keys perfect for modern laptop keyboards:
+                                <ul>
+                                    <li><span class="key">c</span> - Copy</li>
+                                    <li><span class="key">m</span> - Move</li>
+                                    <li><span class="key">D</span> - Delete</li>
+                                </ul>
+                            </li>
+                            <li><strong>Function Key Mode</strong> - Traditional orthodox file manager bindings:
+                                <ul>
+                                    <li><span class="key">F5</span> - Copy</li>
+                                    <li><span class="key">F6</span> - Move</li>
+                                    <li><span class="key">F8</span> - Delete</li>
+                                </ul>
+                            </li>
+                        </ul>
+
+                        <h4>Additional Navigation:</h4>
+                        <ul>
+                            <li><strong>Command Palette</strong> (<span class="key">Ctrl+P</span>) - Access all commands</li>
+                            <li><strong>Incremental Search</strong> (<span class="key">/</span>) - Fuzzy find files</li>
+                            <li><strong>Go to Path</strong> (<span class="key">Ctrl+G</span>) - Jump to any location</li>
+                            <li><strong>Bookmarks</strong> (<span class="key">b</span> or <span class="key">F2</span>) - Quick access to favorites</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <img src="img/screenshots/command-palette.png" alt="Command palette" class="screenshot">
+                        <img src="img/screenshots/incremental.png" alt="Incremental search" class="screenshot" style="margin-top: 1rem;">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Display & Preview -->
+        <section class="feature-section">
+            <div class="container">
+                <h2><i class="fas fa-eye text-primary"></i> Display & Preview</h2>
+
+                <div class="two-column mt-3">
+                    <div>
+                        <img src="img/screenshots/preview.png" alt="File preview panel" class="screenshot">
+                    </div>
+                    <div>
+                        <h3>File Preview Panel</h3>
+                        <p>Switch any panel to Preview mode to see file contents without opening them:</p>
+                        <ul>
+                            <li><strong>Text Files</strong> - With syntax highlighting for 100+ languages</li>
+                            <li><strong>Images</strong> - In terminals with TGP or Sixel support</li>
+                            <li><strong>PDF Files</strong> - Rendered preview of PDF documents</li>
+                            <li><strong>Directories</strong> - Tree view of directory structure</li>
+                        </ul>
+                        <p>Enable preview with <span class="key">Ctrl+E</span> (left panel) or <span class="key">Ctrl+R</span> (right panel).</p>
+                    </div>
+                </div>
+
+                <div class="two-column mt-4">
+                    <div>
+                        <h3>Display Control</h3>
+                        <p>Customize how files are displayed:</p>
+                        <ul>
+                            <li><span class="key">h</span> - Toggle hidden files visibility</li>
+                            <li><span class="key">n</span>/<span class="key">N</span> - Sort by name (ascending/descending)</li>
+                            <li><span class="key">s</span>/<span class="key">S</span> - Sort by size</li>
+                            <li><span class="key">t</span>/<span class="key">T</span> - Sort by modification time</li>
+                            <li><span class="key">Ctrl+Space</span> - Calculate directory size</li>
+                            <li><span class="key">R</span> - Refresh listing</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <img src="img/screenshots/themes.png" alt="Multiple themes" class="screenshot">
+                    </div>
+                </div>
+
+                <div class="mt-4">
+                    <h3>Multiple Themes</h3>
+                    <p>Choose from several built-in color themes or create your own. Themes can be changed on-the-fly via the configuration dialog (<span class="key">Ctrl+,</span>).</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Remote File Systems -->
+        <section class="feature-section">
+            <div class="container">
+                <h2><i class="fas fa-cloud text-primary"></i> Remote File Systems <span class="badge badge-warning">Preview</span></h2>
+
+                <div class="alert alert-info">
+                    <strong>Note:</strong> Remote file systems support is in <strong>preview</strong> mode. All functionality is available, but features are being actively refined. Please report any issues you encounter!
+                </div>
+
+                <div class="two-column mt-3">
+                    <div>
+                        <h3>Extensive Protocol Support</h3>
+                        <p>Connect to virtually any storage system through fsspec integration:</p>
+
+                        <h4>Cloud Storage:</h4>
+                        <ul>
+                            <li>AWS S3</li>
+                            <li>Google Cloud Storage (GCS)</li>
+                            <li>Azure Data Lake Storage (ADLS)</li>
+                            <li>Oracle Cloud Infrastructure (OCI)</li>
+                            <li>Alibaba Cloud OSS</li>
+                        </ul>
+
+                        <h4>File Transfer:</h4>
+                        <ul>
+                            <li>FTP/FTPS</li>
+                            <li>SFTP (SSH)</li>
+                            <li>SMB/CIFS</li>
+                            <li>WebDAV</li>
+                        </ul>
+
+                        <h4>Cloud Drives:</h4>
+                        <ul>
+                            <li>Dropbox</li>
+                            <li>Google Drive</li>
+                        </ul>
+
+                        <h4>Specialized Systems:</h4>
+                        <ul>
+                            <li>HDFS (Hadoop)</li>
+                            <li>DVC (Data Version Control)</li>
+                            <li>LakeFS</li>
+                            <li>Git repositories</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <img src="img/screenshots/remote.png" alt="Remote filesystem connection" class="screenshot">
+                        <img src="img/screenshots/ftp-with-preview.png" alt="FTP with preview" class="screenshot" style="margin-top: 1rem;">
+                    </div>
+                </div>
+
+                <div class="mt-4">
+                    <h3>Connection Management</h3>
+                    <p>Easily connect and manage remote filesystems:</p>
+                    <ul>
+                        <li><strong>Connection Dialog</strong> (<span class="key">Ctrl+T</span>) - Interactive connection wizard</li>
+                        <li><strong>Bookmark Connections</strong> - Save frequently used connections</li>
+                        <li><strong>Persisted Configuration</strong> - Store connection details in config file</li>
+                        <li><strong>Automatic Package Detection</strong> - Shows required packages for each protocol</li>
+                    </ul>
+
+                    <details class="feature-details">
+                        <summary>How to install protocol support</summary>
+                        <p>Most protocols require installing additional fsspec implementation packages:</p>
+                        <pre><code class="language-bash"># If you installed with pipx:
+pipx inject f2-commander s3fs        # For AWS S3
+pipx inject f2-commander gcsfs       # For Google Cloud
+pipx inject f2-commander adlfs       # For Azure
+# ... and so on</code></pre>
+                        <p>The connection dialog shows which package is needed for each protocol.</p>
+                    </details>
+                </div>
+            </div>
+        </section>
+
+        <!-- Archive Support -->
+        <section class="feature-section">
+            <div class="container">
+                <h2><i class="fas fa-file-archive text-primary"></i> Archive Support</h2>
+
+                <div class="two-column mt-3">
+                    <div>
+                        <img src="img/screenshots/archive.png" alt="Archive browsing" class="screenshot">
+                    </div>
+                    <div>
+                        <h3>Read & Write Archives</h3>
+                        <p>F2 Commander treats archives as navigable filesystems powered by libarchive:</p>
+
+                        <h4>Supported Formats:</h4>
+                        <ul>
+                            <li>ZIP</li>
+                            <li>TAR (with gz, bz2, xz compression)</li>
+                            <li>7-Zip (.7z)</li>
+                            <li>RAR</li>
+                            <li>ISO 9660 (CD/DVD images)</li>
+                            <li>MS CAB</li>
+                            <li>XAR, LHA/LZH</li>
+                            <li>cpio, ar, pax</li>
+                            <li>WARC, mtree, shar</li>
+                            <li>And more...</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="mt-4">
+                    <h3>Browse Archives</h3>
+                    <p>Navigate archive contents just like regular directories:</p>
+                    <ul>
+                        <li>Press <span class="key">Enter</span> on an archive file to open it</li>
+                        <li>Browse contents with normal navigation</li>
+                        <li>Copy files out of archives to any destination</li>
+                        <li>View file previews inside archives</li>
+                    </ul>
+                </div>
+
+                <div class="mt-4">
+                    <h3>Create Archives</h3>
+                    <p>Create new archives from selected files and directories:</p>
+                    <ol>
+                        <li>Select one or more files/directories</li>
+                        <li>Open Command Palette (<span class="key">Ctrl+P</span>)</li>
+                        <li>Choose "Create an archive"</li>
+                        <li>Enter filename with extension</li>
+                    </ol>
+
+                    <p><strong>Supported extensions:</strong></p>
+                    <code>.zip</code>, <code>.tar</code>, <code>.tar.gz</code>, <code>.tgz</code>, <code>.tar.bz2</code>, <code>.tbz2</code>, <code>.tar.xz</code>, <code>.txz</code>, <code>.7z</code>, <code>.ar</code>, <code>.cpio</code>, <code>.warc</code>
+
+                    <p class="mt-2"><em>The file extension determines the archive format and compression method.</em></p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Integration & Customization -->
+        <section class="feature-section">
+            <div class="container">
+                <h2><i class="fas fa-cog text-primary"></i> Integration & Customization</h2>
+
+                <div class="two-column mt-3">
+                    <div>
+                        <h3>External Tool Integration</h3>
+                        <ul>
+                            <li><strong>System File Manager</strong> - Open current location in Finder/Nautilus/etc. (<span class="key">o</span>)</li>
+                            <li><strong>Default Programs</strong> - Open files with system default applications</li>
+                            <li><strong>Text Editor</strong> - Configure your preferred editor (auto-detects VS Code, vim, nano, etc.)</li>
+                            <li><strong>File Viewer</strong> - Set custom viewer with <code>$VIEWER</code> environment variable</li>
+                            <li><strong>Shell Integration</strong> - Drop to shell in current directory (<span class="key">x</span> or <span class="key">F9</span>)</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <img src="img/screenshots/bookmarks.png" alt="Bookmarks" class="screenshot">
+                    </div>
+                </div>
+
+                <div class="mt-4">
+                    <h3>Bookmarks</h3>
+                    <p>Quick access to frequently used locations:</p>
+                    <ul>
+                        <li>Local directories</li>
+                        <li>Remote filesystem connections</li>
+                        <li>Network shares</li>
+                        <li>Configured via GUI or JSON file</li>
+                    </ul>
+                </div>
+
+                <div class="mt-4">
+                    <h3>Configuration</h3>
+                    <p>Customize F2 Commander to your preferences:</p>
+                    <ul>
+                        <li><strong>GUI Configuration Dialog</strong> (<span class="key">Ctrl+,</span>) - Friendly interface for all settings</li>
+                        <li><strong>JSON Configuration File</strong> - Platform-specific location for advanced customization</li>
+                        <li><strong>Auto-save</strong> - Changes save automatically</li>
+                        <li><strong>Key Mapping</strong> - Choose between Vi-like or Function key bindings</li>
+                        <li><strong>Themes</strong> - Select from built-in color schemes</li>
+                        <li><strong>External Tools</strong> - Configure editor, viewer, and other tools</li>
+                        <li><strong>Remote Connections</strong> - Store connection credentials securely</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Panel Types -->
+        <section class="feature-section">
+            <div class="container">
+                <h2><i class="fas fa-th-large text-primary"></i> Flexible Panel System</h2>
+
+                <p>F2 Commander uses a flexible panel system where each panel can display different types of content:</p>
+
+                <div class="feature-grid">
+                    <div class="card">
+                        <h3 class="card-title">Files Panel</h3>
+                        <p class="card-text">Default panel type for file system navigation and manipulation. Browse local and remote filesystems with full file manager capabilities.</p>
+                    </div>
+
+                    <div class="card">
+                        <h3 class="card-title">Preview Panel</h3>
+                        <p class="card-text">Display file contents, images, PDFs, and directory trees. Automatically updates as you navigate in the Files panel.</p>
+                    </div>
+
+                    <div class="card">
+                        <h3 class="card-title">Help Panel</h3>
+                        <p class="card-text">Built-in user manual with table of contents. Access with <span class="key">?</span> or <span class="key">F1</span>.</p>
+                    </div>
+                </div>
+
+                <p class="mt-3">Switch panel types with <span class="key">Ctrl+E</span> (left panel) and <span class="key">Ctrl+R</span> (right panel).</p>
+            </div>
+        </section>
+
+        <!-- Built-in Help -->
+        <section class="feature-section" style="background-color: var(--color-light);">
+            <div class="container">
+                <h2><i class="fas fa-question-circle text-primary"></i> Discoverable Interface</h2>
+
+                <div class="two-column">
+                    <div>
+                        <h3>Built-in Help</h3>
+                        <p>Never feel lost - comprehensive help is always one keystroke away:</p>
+                        <ul>
+                            <li><strong>Help Panel</strong> (<span class="key">?</span> or <span class="key">F1</span>) - Full user manual</li>
+                            <li><strong>Footer Menu</strong> - Shows common actions and their keys</li>
+                            <li><strong>Command Palette</strong> (<span class="key">Ctrl+P</span>) - Searchable list of all commands</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <p><strong>Everything is designed to be discoverable</strong> - you don't need to memorize commands or read documentation to get started. The interface guides you naturally.</p>
+
+                        <p>Pro tip: Start with the Command Palette (<span class="key">Ctrl+P</span>) to explore what F2 Commander can do!</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Call to Action -->
+        <section class="section-lg">
+            <div class="container text-center">
+                <h2 class="section-title">Experience These Features Yourself</h2>
+                <p class="section-subtitle" style="max-width: 600px; margin: 0 auto var(--space-xl);">
+                    Install F2 Commander now and discover the power of a modern orthodox file manager.
+                </p>
+                <div style="display: flex; gap: var(--space-md); justify-content: center; flex-wrap: wrap;">
+                    <a href="install.html" class="btn btn-primary btn-lg">Get Started</a>
+                    <a href="docs.html" class="btn btn-secondary btn-lg">Read Documentation</a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>F2 Commander</h4>
+                    <p>An orthodox file manager for the modern world</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Documentation</h4>
+                    <ul>
+                        <li><a href="docs.html">User Guide</a></li>
+                        <li><a href="install.html">Installation</a></li>
+                        <li><a href="features.html">Features</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Links</h4>
+                    <ul>
+                        <li><a href="https://github.com/candidtim/f2-commander">GitHub Repository</a></li>
+                        <li><a href="https://pypi.org/project/f2-commander/">PyPI Package</a></li>
+                        <li><a href="https://github.com/candidtim/f2-commander/issues">Report Issues</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Community</h4>
+                    <ul>
+                        <li><a href="contributing.html">Contributing</a></li>
+                        <li><a href="https://mozilla.org/MPL/2.0/">License (MPL 2.0)</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Timur Rubeko. Licensed under Mozilla Public License 2.0.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+    <script>hljs.highlightAll();</script>
+</body>
+</html>

@@ -1,1 +1,4 @@
-Sitemap: /f2-commander/sitemap.xml
+User-agent: *
+Allow: /
+
+Sitemap: https://candidtim.github.io/f2-commander/sitemap.xml

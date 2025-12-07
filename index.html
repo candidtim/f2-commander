@@ -1,345 +1,318 @@
-<!doctype html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="F2 Commander - An orthodox file manager for the modern world. Navigate local files, cloud storage, and archives with a powerful terminal interface.">
+    <meta name="keywords" content="file manager, terminal, TUI, orthodox file manager, cloud storage, S3, archives, Python, fsspec, two-panel file manager">
+    <meta name="author" content="Timur Rubeko">
 
+    <!-- Open Graph / Social Media -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://candidtim.github.io/f2-commander/">
+    <meta property="og:title" content="F2 Commander - Orthodox File Manager for the Modern World">
+    <meta property="og:description" content="Navigate local files, cloud storage, and archives with a powerful terminal interface. Two-panel file manager built with Python and Textual.">
+    <meta property="og:image" content="https://candidtim.github.io/f2-commander/img/logo.png">
 
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://candidtim.github.io/f2-commander/">
+    <meta name="twitter:title" content="F2 Commander - Orthodox File Manager">
+    <meta name="twitter:description" content="Navigate local files, cloud storage, and archives with a powerful terminal interface">
+    <meta name="twitter:image" content="https://candidtim.github.io/f2-commander/img/logo.png">
 
+    <title>F2 Commander - Orthodox File Manager for the Modern World</title>
 
-<html
-    dir="ltr"
-    lang="en"
-    class="  theme-light "
->
-    <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="theme-color" content="#ffffff">
-    <link rel="stylesheet" href="/f2-commander/assets/css/app.css">
-    <link
-        rel="shortcut icon"
-        type="image/png"
-        
-            href="/f2-commander/favicon.png"
-        
-    >
-    <script defer src="https://unpkg.com/alpinejs@3.9.0/dist/cdn.min.js"></script>
-    <script
-        src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.5/dist/js.cookie.min.js"
-    ></script>
-    <link
-        rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
-        integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
-        crossorigin="anonymous"
-        referrerpolicy="no-referrer"
-    >
-    
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma-social@1/bin/bulma-social.min.css">
-    
-    <!-- Begin Jekyll SEO tag v2.8.0 -->
-<title>F2 Commander | An orthodox file manager for the modern world</title>
-<meta name="generator" content="Jekyll v4.3.4" />
-<meta property="og:title" content="F2 Commander" />
-<meta property="og:locale" content="en" />
-<meta name="description" content="F2 Commander is an orthodox file manager for the modern world" />
-<meta property="og:description" content="F2 Commander is an orthodox file manager for the modern world" />
-<link rel="canonical" href="/f2-commander/" />
-<meta property="og:url" content="/f2-commander/" />
-<meta property="og:site_name" content="F2 Commander" />
-<meta property="og:image" content="/f2-commander/img/f2.png" />
-<meta property="og:type" content="website" />
-<meta name="twitter:card" content="summary_large_image" />
-<meta property="twitter:image" content="/f2-commander/img/f2.png" />
-<meta property="twitter:title" content="F2 Commander" />
-<script type="application/ld+json">
-{"@context":"https://schema.org","@type":"WebSite","description":"F2 Commander is an orthodox file manager for the modern world","headline":"F2 Commander","image":"/f2-commander/img/f2.png","name":"F2 Commander","url":"/f2-commander/"}</script>
-<!-- End Jekyll SEO tag -->
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="img/favicon.ico">
+    <link rel="apple-touch-icon" href="img/apple-touch-icon.png">
 
-    <!-- head scripts -->
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/responsive.css">
+
+    <!-- Syntax highlighting -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
-
-    <body>
-        
-        <nav
-    class="navbar is-primary "
-    x-data="{ openNav: false }"
->
-    <div class="container">
-        <div class="navbar-brand">
-            <a href="/f2-commander/" class="navbar-item">
-                F2 Commander
-            </a>
-            <a
-                role="button"
-                class="navbar-burger burger"
-                aria-label="menu"
-                aria-expanded="false"
-                data-target="navMenu"
-                :class="{ 'is-active': openNav }"
-                x-on:click="openNav = !openNav"
-            >
-                <span aria-hidden="true"></span>
-                <span aria-hidden="true"></span>
-                <span aria-hidden="true"></span>
-            </a>
-        </div>
-        <div class="navbar-menu" id="navMenu" :class="{ 'is-active': openNav }">
-            <div class="navbar-start">
-                <a href="/f2-commander/" class="navbar-item is-active">Home</a>
-                
-                    
-                        
-                            <a
-                                href="/f2-commander/docs/install"
-                                class="navbar-item "
-                            >Documentation</a>
-                        
-                    
-                        
-                            <a
-                                href="/f2-commander/screenshots"
-                                class="navbar-item "
-                            >Screenshots</a>
-                        
-                    
-                        
-                            <a
-                                href="https://github.com/candidtim/f2-commander"
-                                class="navbar-item "
-                            >Source code on GitHub</a>
-                        
-                    
-                        
-                            <a
-                                href="/f2-commander/docs/install"
-                                class="navbar-item "
-                            >💾 INSTALL</a>
-                        
-                    
-                
-            </div>
-
-            <div class="navbar-end">
-                
-            </div>
-        </div>
-    </div>
-</nav>
-
-        
-            <section
-    class="hero  is-fullwidth  is-bold is-primary"
-    
->
-    <div class="hero-body ">
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
         <div class="container">
-            <h1 class="title is-2">F2 Commander</h1>
-            <p class="subtitle is-3">An orthodox file manager for the modern world</p>
-            
+            <div class="navbar-brand">
+                <a href="index.html" class="navbar-logo">
+                    <img src="img/logo.png" alt="F2 Commander Logo" class="navbar-logo-img">
+                    F2 Commander
+                </a>
+            </div>
+            <div class="navbar-menu">
+                <a href="index.html" class="navbar-item">Home</a>
+                <a href="features.html" class="navbar-item">Features</a>
+                <a href="docs.html" class="navbar-item">Documentation</a>
+                <a href="install.html" class="navbar-item">Install</a>
+                <a href="https://github.com/candidtim/f2-commander" class="navbar-item" target="_blank">
+                    <i class="fab fa-github"></i> GitHub
+                </a>
+            </div>
+            <!-- Mobile menu toggle -->
+            <button class="navbar-burger" aria-label="menu" aria-expanded="false">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
         </div>
-    </div>
-</section>
+    </nav>
 
-        
-        
-    
-    <section class="hero  is-fullwidth  is-light">
-        <div class="hero-body">
+    <!-- Main Content -->
+    <main>
+        <!-- Hero Section -->
+        <section class="hero">
             <div class="container">
-                <div class="columns is-multiline is-centered">
-                    
-                        <div class="column is-4 has-text-centered">
-                            
-                            <p class="title is-5">Classic user experience</p>
-                            <p class="subtitle is-5">for a modern OS</p>
+                <h1>F2 Commander</h1>
+                <p>An orthodox file manager for the modern world</p>
+                <p style="font-size: 1.125rem; opacity: 0.9;">Navigate anything. Local files, cloud storage, archives – all in one terminal interface.</p>
 
-                            
-                                <div class="my-4">
-                                    <div class="content">
-                                        <p>• Orthodox two-panel interface<br />
-• Classic footer menu<br />
-• Effortless FS navigation<br />
-• Command palette<br />
-• File preview (syntax highlighting, images)<br />
-• Vi-inspired key-bindings<br />
-• Multiple color themes<br />
-• Works in Linux and macOS<br />
-</p>
-                                    </div>
-                                </div>
-                            
+                <div class="hero-cta">
+                    <a href="install.html" class="btn btn-white btn-lg">Get Started</a>
+                    <a href="docs.html" class="btn btn-outline-white btn-lg">View Documentation</a>
+                </div>
 
-                            
-                        </div>
-                    
-                        <div class="column is-4 has-text-centered">
-                            
-                            <p class="title is-5">Feature rich</p>
-                            <p class="subtitle is-5">for pragmatic users</p>
+                <div class="hero-image">
+                    <img src="img/f2.png" alt="F2 Commander Screenshot" class="screenshot">
+                </div>
 
-                            
-                                <div class="my-4">
-                                    <div class="content">
-                                        <p>• Extensive support for "remote" file systems (S3, Dropox, HDFS, FTP, WebDAV, and more)<br />
-• Read and extract archives (ZIP, TAR, LHA/LZH, RAR, MS CAB, 7-Zip, and more)<br />
-• Create compressed ZIP files<br />
-• Configurable Bookmarks<br />
-• View and Edit files<br />
-• And of course, classic file and directory operations<br />
-</p>
-                                    </div>
-                                </div>
-                            
-
-                            
-                        </div>
-                    
-                        <div class="column is-4 has-text-centered">
-                            
-                            <p class="title is-5">Open source</p>
-                            <p class="subtitle is-5">and free forever</p>
-
-                            
-                                <div class="my-4">
-                                    <div class="content">
-                                        <p>• No ads, no paid plans, free to install and use<br />
-• Made with care<br />
-• Distributed under Mozilla Public License, v. 2.0<br />
-• Contributions are welcome<br />
-</p>
-                                    </div>
-                                </div>
-                            
-
-                            
-                                <div class="my-4">
-                                    <a
-                                        href="/f2-commander/docs/install"
-                                        class="button is-primary"
-                                    >
-                                        💾 Install
-                                    </a>
-                                </div>
-                            
-                        </div>
-                    
+                <div class="hero-links">
+                    <a href="https://github.com/candidtim/f2-commander">
+                        <i class="fab fa-github"></i> GitHub
+                    </a>
+                    <a href="https://pypi.org/project/f2-commander/">
+                        <i class="fab fa-python"></i> PyPI
+                    </a>
+                    <a href="https://github.com/candidtim/f2-commander/issues">
+                        <i class="fas fa-bug"></i> Report Issues
+                    </a>
+                    <span class="badge badge-info">MPL 2.0 License</span>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-
+        <!-- Quick Feature Highlights -->
         <section class="section">
             <div class="container">
-                <div class="columns is-multiline">
-                    
-                    <div class="column is-12">
-                        
+                <div class="section-header">
+                    <h2 class="section-title">Key Features</h2>
+                    <p class="section-subtitle">Everything you need in a modern file manager</p>
+                </div>
 
-                        
-    
-
-    <div class="content">
-        <p>
-</p>
-    </div>
-
-    
-        <section class="showcase">
-            <figure class="image  is-5by4 ">
-                <img src="/f2-commander/img/f2.png">
-            </figure>
-            <div class="showcase-content">
-                <div class="columns is-centered">
-                    <div class="column is-8-desktop is-12-tablet">
-                        <p class="title"></p>
-                        <p class="subtitle"></p>
-
-                        
-                            <div class="buttons is-centered my-4">
-                                <a
-                                    href="https://github.com/candidtim/f2-commander/stargazers"
-                                    class="button is-white is-small"
-                                >
-                                    <img
-                                        alt="GitHub stars"
-                                        src="https://img.shields.io/github/stars/candidtim/f2-commander?style=social"
-                                    >
-                                </a>
-                                <a
-                                    href="https://github.com/candidtim/f2-commander/network/members"
-                                    class="button is-white is-small"
-                                >
-                                    <img
-                                        alt="GitHub forks"
-                                        src="https://img.shields.io/github/forks/candidtim/f2-commander?style=social"
-                                    >
-                                </a>
-                                <a
-                                    href="https://github.com/candidtim/f2-commander/watchers"
-                                    class="button is-white is-small"
-                                >
-                                    <img
-                                        alt="GitHub watchers"
-                                        src="https://img.shields.io/github/watchers/candidtim/f2-commander?style=social"
-                                    >
-                                </a>
-                            </div>
-                        
-
-                        <div class="content">
-                            <p>
-</p>
+                <div class="feature-grid">
+                    <!-- Feature 1: Universal File Systems -->
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-cloud"></i>
                         </div>
+                        <h3 class="feature-title">Universal File Systems</h3>
+                        <p class="feature-description">Navigate local disks, cloud storage (S3, GCS, ADLS), FTP, SFTP, and more – all the same way.</p>
+                        <img src="img/screenshots/remote.png" alt="Remote filesystem support" class="screenshot">
+                    </div>
 
-                        
-
-                        
-
-                        <div class="my-4">
-                            <a href="docs/install" class="button is-primary">
-                                💾 Install
-                            </a>
+                    <!-- Feature 2: Archive Support -->
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-file-archive"></i>
                         </div>
+                        <h3 class="feature-title">Archive Support</h3>
+                        <p class="feature-description">Browse and extract ZIP, TAR, 7-Zip, RAR, ISO, and 20+ archive formats with libarchive.</p>
+                        <img src="img/screenshots/archive.png" alt="Archive browsing" class="screenshot">
+                    </div>
+
+                    <!-- Feature 3: Modern Terminal UI -->
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-terminal"></i>
+                        </div>
+                        <h3 class="feature-title">Modern Terminal UI</h3>
+                        <p class="feature-description">Rich TUI with file preview, syntax highlighting, image display, and multiple themes.</p>
+                        <img src="img/screenshots/preview.png" alt="File preview panel" class="screenshot">
+                    </div>
+
+                    <!-- Feature 4: Discoverable Interface -->
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-keyboard"></i>
+                        </div>
+                        <h3 class="feature-title">Discoverable Interface</h3>
+                        <p class="feature-description">Command palette, built-in help, Vi-like or Fn-key bindings, incremental search.</p>
+                        <img src="img/screenshots/command-palette.png" alt="Command palette" class="screenshot">
                     </div>
                 </div>
             </div>
         </section>
-    
 
+        <!-- Installation Quick Start -->
+        <section class="installation-section">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">Quick Start</h2>
+                    <p class="section-subtitle">Get F2 Commander running in seconds</p>
+                </div>
 
-                        
+                <div style="max-width: 700px; margin: 0 auto;">
+                    <pre class="no-copy"><code class="language-bash"># Using pipx (recommended)
+pipx install f2-commander
 
-                        
+# Or using uvx
+uvx --from f2-commander f2
 
-                        
-<div class="content">
-    
+# Run it
+f2</code></pre>
 
-</div>
+                    <p class="text-center mt-3">
+                        <strong>System requirements:</strong> Works on Linux, macOS, and WSL
+                    </p>
 
-                    </div>
-                    
+                    <p class="text-center mt-2">
+                        <a href="install.html" class="btn btn-primary">Full Installation Guide</a>
+                    </p>
                 </div>
             </div>
         </section>
-        
-            <footer class="footer">
-    <div class="container">
-        
-            <div class="columns is-multiline">
-                
+
+        <!-- Why F2 Commander -->
+        <section class="section-lg">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">Why F2 Commander?</h2>
+                </div>
+
+                <div class="two-column">
+                    <div>
+                        <h3>Orthodox File Manager Heritage</h3>
+                        <p>F2 Commander brings the tried-and-true two-panel interface of classic file managers into the modern era. Navigate with keyboard shortcuts, compare directories side-by-side, copy and move files across local and remote file systems.</p>
+
+                        <h3>Everything is a Filesystem</h3>
+                        <p>Whether it's your local disk, an S3 bucket, an FTP server, or a ZIP archive, F2 Commander treats them all the same. Navigate, copy, move, and manage files across any storage system with a unified interface.</p>
+
+                        <h3>Discoverable & Easy to Use</h3>
+                        <p>Built-in help, command palette, and intuitive keybindings make F2 Commander approachable for newcomers while remaining powerful for experts.</p>
+
+                        <h3>Modern Python Implementation</h3>
+                        <p>Built with <a href="https://textual.textualize.io/" target="_blank">Textual</a> framework and <a href="https://filesystem-spec.readthedocs.io/" target="_blank">fsspec</a> for universal filesystem support. Clean, maintainable code. Contributions are welcome.</p>
+                    </div>
+                    <div>
+                        <img src="img/screenshots/listing.png" alt="F2 Commander main interface" class="screenshot">
+                        <img src="img/screenshots/themes.png" alt="Multiple themes" class="screenshot" style="margin-top: 2rem;">
+                    </div>
+                </div>
             </div>
-        
+        </section>
 
-        
+        <!-- Screenshot Gallery -->
+        <section class="section" style="background-color: var(--color-light);">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">See It in Action</h2>
+                    <p class="section-subtitle">Click on any screenshot to view full size</p>
+                </div>
 
+                <div class="screenshot-gallery">
+                    <div class="screenshot-item">
+                        <img src="img/screenshots/listing.png" alt="Main file listing interface" class="screenshot">
+                        <p class="screenshot-caption">Two-panel file browsing</p>
+                    </div>
+                    <div class="screenshot-item">
+                        <img src="img/screenshots/ftp-with-preview.png" alt="FTP with preview panel" class="screenshot">
+                        <p class="screenshot-caption">Remote FTP with preview</p>
+                    </div>
+                    <div class="screenshot-item">
+                        <img src="img/screenshots/incremental.png" alt="Incremental search" class="screenshot">
+                        <p class="screenshot-caption">Incremental fuzzy search</p>
+                    </div>
+                    <div class="screenshot-item">
+                        <img src="img/screenshots/bookmarks.png" alt="Bookmarks" class="screenshot">
+                        <p class="screenshot-caption">Bookmark management</p>
+                    </div>
+                    <div class="screenshot-item">
+                        <img src="img/screenshots/multiple-selection.png" alt="Multiple file selection" class="screenshot">
+                        <p class="screenshot-caption">Multiple file selection</p>
+                    </div>
+                    <div class="screenshot-item">
+                        <img src="img/screenshots/themes.png" alt="Theme selection" class="screenshot">
+                        <p class="screenshot-caption">Multiple built-in themes</p>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-        <div class="content is-small has-text-centered">
-            <p class="">Theme built by <a href="https://www.csrhymes.com">C.S. Rhymes</a></p>
+        <!-- Call to Action -->
+        <section class="section-lg">
+            <div class="container text-center">
+                <h2 class="section-title">Ready to Get Started?</h2>
+                <p class="section-subtitle" style="max-width: 600px; margin: 0 auto var(--space-xl);">
+                    Install F2 Commander now and experience a modern take on the classic orthodox file manager.
+                </p>
+                <div style="display: flex; gap: var(--space-md); justify-content: center; flex-wrap: wrap;">
+                    <a href="install.html" class="btn btn-primary btn-lg">Install Now</a>
+                    <a href="features.html" class="btn btn-secondary btn-lg">Explore Features</a>
+                    <a href="https://github.com/candidtim/f2-commander" class="btn btn-secondary btn-lg">
+                        <i class="fab fa-github"></i> View on GitHub
+                    </a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>F2 Commander</h4>
+                    <p>An orthodox file manager for the modern world</p>
+                    <p style="margin-top: 1rem;">
+                        <a href="https://github.com/candidtim/f2-commander">
+                            <i class="fab fa-github" style="font-size: 1.5rem;"></i>
+                        </a>
+                    </p>
+                </div>
+                <div class="footer-section">
+                    <h4>Documentation</h4>
+                    <ul>
+                        <li><a href="docs.html">User Guide</a></li>
+                        <li><a href="install.html">Installation</a></li>
+                        <li><a href="features.html">Features</a></li>
+                        <li><a href="docs.html#keyboard-reference">Keyboard Reference</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Links</h4>
+                    <ul>
+                        <li><a href="https://github.com/candidtim/f2-commander">GitHub Repository</a></li>
+                        <li><a href="https://pypi.org/project/f2-commander/">PyPI Package</a></li>
+                        <li><a href="https://github.com/candidtim/f2-commander/issues">Report Issues</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Community</h4>
+                    <ul>
+                        <li><a href="contributing.html">Contributing</a></li>
+                        <li><a href="https://mozilla.org/MPL/2.0/">License (MPL 2.0)</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Timur Rubeko. Licensed under Mozilla Public License 2.0.</p>
+            </div>
         </div>
-    </div>
-</footer>
+    </footer>
 
-        
-        <script src="/f2-commander/assets/js/app.js" type="text/javascript"></script><!-- footer scripts -->
+    <!-- Scripts -->
+    <script src="js/main.js"></script>
+    <!-- Syntax highlighting -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+    <script>hljs.highlightAll();</script>
 </body>
 </html>
