@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# tox/nox in 4 lines of code; granted, much more simplistic
+
 set -x
 
 for version in 3.10 3.11 3.12 3.13 3.14; do

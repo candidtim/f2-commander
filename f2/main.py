@@ -22,20 +22,33 @@ from .update import current_version
     "config_path",
     type=click.Path(file_okay=True, dir_okay=False, readable=True, path_type=Path),
     default=user_config_path(),
-    show_default=True,
-    help="Configuraiton file path, will be created if does not exist",
+    help="Configuration file path (created if doesn't exist).",
+)
+@click.option(
+    "--dir-left",
+    "work_dir_left",
+    type=click.Path(file_okay=False, dir_okay=True, path_type=Path),
+    default=Path.home(),
+    help="Start left panel in this directory.",
+)
+@click.option(
+    "--dir-right",
+    "work_dir_right",
+    type=click.Path(file_okay=False, dir_okay=True, path_type=Path),
+    default=Path.cwd(),
+    help="Start right panel in this directory.",
 )
 @click.option(
     "--debug",
     is_flag=True,
-    help=f"Enable local file logging [logs directory: {log_dir()}]",
+    help=f"Enable local file logging; logs directory: {log_dir()}",
 )
 @click.option(
     "--version",
     is_flag=True,
-    help="Print the application version and exit",
+    help="Print the application version and exit.",
 )
-def main(config_path, debug, version):
+def main(config_path, work_dir_left, work_dir_right, debug, version):
     if version:
         click.echo(current_version())
         sys.exit(0)
@@ -47,7 +60,12 @@ def main(config_path, debug, version):
             (),
             {"_BINDINGS": BINDINGS_VI if config.keymap == "vi" else BINDINGS_FN},
         )
-        app = app_type(config=config, debug=debug)
+        app = app_type(
+            config=config,
+            debug=debug,
+            work_dir_left=work_dir_left,
+            work_dir_right=work_dir_right,
+        )
         app.run()
     except ConfigError as err:
         click.echo("Application could not start because of malformed configuration:")

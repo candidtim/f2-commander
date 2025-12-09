@@ -19,10 +19,11 @@ from textual.app import ComposeResult
 from textual.containers import Horizontal
 from textual.reactive import reactive
 from textual.widget import Widget
-from textual.widgets import Static
+from textual.widgets import LoadingIndicator, Static
 from textual_image._terminal import get_cell_size
 from textual_image.widget import Image as TextualImage
 
+from f2.fs.arch import open_archive
 from f2.fs.node import Node
 from f2.fs.util import (
     breadth_first_walk,
@@ -59,6 +60,7 @@ class Preview(Static):
 
     def compose(self) -> ComposeResult:
         with Horizontal(id="preview-container"):
+            yield LoadingIndicator(id="loading-indicator")
             yield TextualImage(None, id="image-preview")
             yield Static("", id="text-preview")
 
@@ -69,9 +71,10 @@ class Preview(Static):
     def on_other_panel_selected(self, node: Node):
         self.node = node
 
-    @work(exclusive=True)
+    @work(exclusive=True, thread=True)
     async def watch_node(self, old: Node, new: Node):
         parent: Widget = self.parent  # type: ignore
+        loading_indicator = self.query_one("#loading-indicator")
         image_preview = self.query_one("#image-preview")
         text_preview = self.query_one("#text-preview")
 
@@ -82,7 +85,9 @@ class Preview(Static):
         parent.border_subtitle = None
 
         # update content:
+        loading_indicator.remove_class("hidden")
         text, image = await self._format(self.node)
+        loading_indicator.add_class("hidden")
         self._preview_content = text if text is not None else image
 
         if text is not None:
@@ -130,10 +135,19 @@ class Preview(Static):
         elif node.is_dir:
             return self._dir_tree(node), None
 
+        elif node.is_archive and node.is_local:
+            archive_fs = open_archive(node.path)
+            archive_node = Node.from_path(archive_fs, "")
+            return self._dir_tree(archive_node), None
+
         elif node.is_file and is_text_file(node.path):
             try:
                 return (
-                    Syntax(code=self._head(node), lexer=Syntax.guess_lexer(node.path)),
+                    Syntax(
+                        code=self._head(node),
+                        lexer=Syntax.guess_lexer(node.path),
+                        theme=self._syntax_theme(),
+                    ),
                     None,
                 )
             except UnicodeDecodeError:
@@ -158,6 +172,19 @@ class Preview(Static):
         else:
             # TODO: leave a user a possibility to force the preview?
             return "Cannot preview: not a text or an image file", None
+
+    def _syntax_theme(self):
+        mapping = {
+            "catppuccin-latte": "xcode",
+            "catppuccin-mocha": "github-dark",
+            "flexoki": "ansi_dark",
+            "gruvbox": "gruvbox-dark",
+            "textual-ansi": "ansi_light",
+            "textual-dark": "ansi_dark",
+            "textual-light": "default",
+            "tokyo-night": "github-dark",
+        }
+        return mapping.get(self.app.theme, self.app.theme)
 
     @property
     def _height(self):

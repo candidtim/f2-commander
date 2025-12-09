@@ -41,9 +41,10 @@ HELP = f"""
 
  - `Tab ⭾` switches focus between the left and right panels
  - `j`/`k` and `⇧`/`⇩` navigate the file list up and down, one entry at a time
- - `g` navigates to the top of the list
- - `G` navigates to the bottom of the list
- - `Ctrl+f`/`Ctrl+b`, `Ctrl+d`/`Ctrl+u`, `Page Up`/`Page Down` paginate the list
+ - `g`/`Home` navigates to the top of the list
+ - `G`/`End` navigates to the bottom of the list
+ - `Ctrl+f`/`Ctrl+b`, `Page Down`/`Page Up` scroll a page down and up
+ - `Ctrl+d`/`Ctrl+u` scroll half a page down and up
  - `Enter ⮐` enters the directory or opens the file with the system default program
  - `Backspace ⌫` (or `Enter ⮐` on the `..`) navigates to the parent directory
  - `b`/`F2` go to a bookmarked location (bookmarks are configurable)

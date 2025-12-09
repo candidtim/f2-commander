@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# Runs all code quality controls
+
 set -x
 
 # format code:

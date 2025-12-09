@@ -27,10 +27,10 @@ from textual.css.query import NoMatches
 from textual.reactive import reactive
 from textual.theme import Theme
 from textual.widget import Widget
-from textual.widgets import Footer
+from textual.widgets import Footer, Label
 
 from .commands import Command
-from .config import FileSystem
+from .config import FileSystem, config_root
 from .errors import error_handler_async, with_error_handler
 from .fs.arch import is_archive, open_archive, write_archive
 from .fs.node import Node
@@ -163,6 +163,11 @@ class F2Commander(App):
             "ctrl+comma",
         ),
         Command(
+            "navigate_to_config",
+            "Show the configuration directory",
+            "Open the user's configuration directory in the file list",
+        ),
+        Command(
             "check_for_updates",
             "Check for updates",
             "Check if a newer version is available in PyPI",
@@ -180,9 +185,17 @@ class F2Commander(App):
     order_case_sensitive = reactive(False, init=False)
     swapped = reactive(False, init=False)
 
-    def __init__(self, config, debug: bool = False):
+    def __init__(
+        self,
+        config,
+        work_dir_left: Path,
+        work_dir_right: Path,
+        debug: bool = False,
+    ):
         super().__init__()
         self.config = config
+        self.cwd_left = Node.from_url(str(work_dir_left))
+        self.cwd_right = Node.from_url(str(work_dir_right))
         self.f2_app_debug = debug  # avoid confusion with Textual's debug property
 
     def compose(self) -> ComposeResult:
@@ -192,7 +205,20 @@ class F2Commander(App):
         with self.panels_container:
             yield self.panel_left
             yield self.panel_right
+        if self.f2_app_debug:
+            self.debug_info = Label(id="debug-info")
+            self.debug_info.border_title = "Debug info"
+            yield self.debug_info
         yield Footer()
+
+    def _info(self, *args):
+        """
+        Set a message to the "Debug info" area.
+        Only visiable with the --debug flag enabled.
+        """
+        if self.f2_app_debug:
+            msg = " ".join([str(arg) for arg in args])
+            self.debug_info.update(msg)
 
     @property
     def theme_(self) -> Theme:
@@ -292,11 +318,27 @@ class F2Commander(App):
         if self.config.startup.check_for_updates:
             self.action_check_for_updates(auto=True)
 
+    def get_cwd(self, for_list: Optional[FileList]) -> Node:
+        if for_list is None:
+            for_list = self.active_filelist
+
+        if for_list == self.left:
+            return self.cwd_left
+        else:
+            return self.cwd_right
+
     def reload_config(self):
         self.show_hidden = self.config.display.show_hidden
         self.dirs_first = self.config.display.dirs_first
         self.order_case_sensitive = self.config.display.order_case_sensitive
         self.theme = self.config.display.theme
+
+    @on(FileList.Navigated)
+    def on_dir_navigated(self, event: FileList.Navigated):
+        if event.control == self.left:
+            self.cwd_left = event.node
+        else:
+            self.cwd_right = event.node
 
     @on(FileList.Selected)
     def on_file_selected(self, event: FileList.Selected):
@@ -887,6 +929,11 @@ class F2Commander(App):
         )
         async with error_handler_async(self):
             self._on_go_to(location)
+
+    @work
+    async def action_navigate_to_config(self):
+        async with error_handler_async(self):
+            self._on_go_to(str(config_root()))
 
     @work
     async def action_connect(self):

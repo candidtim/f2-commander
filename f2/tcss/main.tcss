@@ -184,3 +184,10 @@ ConfigDialog .buttons {
 ConfigDialog InputWithLabel {
   margin-left: 1;
 }
+
+/* Debug */
+#debug-info {
+  height: 3;
+  width: 100%;
+  border: yellow double;
+}

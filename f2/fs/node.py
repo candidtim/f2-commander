@@ -95,6 +95,14 @@ class Node:
             Node.from_path(self.fs, parent_path) if parent_path != self.path else None
         )
 
+    @property
+    def basename(self) -> str:
+        """
+        Node name extracted from its path. Can be different from the value in the `name`
+        attribute, which can be assigned a different display name.
+        """
+        return posixpath.basename(self.path)
+
     def list(self) -> list["Node"]:
         if not self.is_dir:
             raise ValueError(f"Node is not a directory: {self}")

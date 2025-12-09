@@ -103,9 +103,6 @@ class FileList(Static):
         ),
     ]
     BINDINGS = [  # type: ignore
-        Binding("j", "cursor_down", show=False),
-        Binding("k", "cursor_up", show=False),
-    ] + [
         Binding(cmd.binding_key, cmd.action, cmd.description, show=False)
         for cmd in BINDINGS_AND_COMMANDS
         if cmd.binding_key is not None
@@ -114,6 +111,16 @@ class FileList(Static):
     COLUMN_PADDING = 2  # a column uses this many chars more to render
     SCROLLBAR_SIZE = 2
     TIME_FORMAT = "%b %d %H:%M"
+
+    class Navigated(Message):
+        def __init__(self, node: Node, control: "FileList"):
+            self.node = node
+            self._control = control
+            super().__init__()
+
+        @property
+        def contol(self) -> "FileList":
+            return self._control
 
     class Selected(Message):
         def __init__(self, node: Node, control: "FileList"):
@@ -138,7 +145,7 @@ class FileList(Static):
     # FIMXE: do all these need to be reactive?
 
     # primary model:
-    node: reactive[Node] = reactive(Node.cwd())
+    node: reactive[Node] = reactive(Node.cwd(), init=False)
     cursor_node: reactive[Node] = reactive(Node.cwd())
 
     # state:
@@ -168,6 +175,7 @@ class FileList(Static):
 
     def on_mount(self) -> None:
         self._add_columns()
+        self.node = self.app.get_cwd(self)
 
     def _add_columns(self):
         self.table.add_column("Name", key="name")
@@ -175,11 +183,14 @@ class FileList(Static):
         self.table.add_column("Modified", key="mtime")
 
     @work
-    async def on_resize(self):
+    async def on_resize(self, event):
         self.table.clear(columns=True)
         self._add_columns()
         self.update_listing()
         self.watch_sort_options(None, self.sort_options)
+        # FIXME: calling internal API here (_update_dimensions) to avoid
+        #        narrow columns when the parent window is resized:
+        self.table._update_dimensions(self.table.rows)
 
     @property
     def selection(self) -> list[Node]:
@@ -439,7 +450,7 @@ class FileList(Static):
 
         # if nvaigated to a file, select it:
         if not new_node.is_dir:
-            self.scroll_to_entry(new_node.name)
+            self.scroll_to_entry(new_node.basename)
 
     def watch_show_hidden(self, old: bool, new: bool):
         if not new:  # if some files will be not shown anymore, better be safe:
@@ -471,6 +482,10 @@ class FileList(Static):
         if self.sort_options == new_sort_options:
             new_sort_options = SortOptions(key, not reverse)
         self.sort_options = new_sort_options
+
+    def on_data_table_header_selected(self, event):
+        key = event.column_key.value
+        self.action_order(key, False)
 
     def action_search(self):
         self.search_mode = True
@@ -509,7 +524,10 @@ class FileList(Static):
         node_name: str = event.row_key.value  # type: ignore
         nodes = [n for n in self.listing if n.name == node_name]
         if len(nodes) == 1 and nodes[0]:
-            self.node = nodes[0]
+            node = nodes[0]
+            if node.is_dir or node.is_archive:
+                self.node = node
+                self.post_message(self.Navigated(self.node, self))
 
     def action_open(self):
         # "open" is handled separately from "table.row_selected" to distinguish
@@ -528,10 +546,10 @@ class FileList(Static):
             self.app.subprocess_run(open_cmd, self.node.path)
             self.app.refresh()
 
-    @work
+    @work(thread=True)
     async def action_calc_dir_size(self):
         node = self.cursor_node  # hold on to the requsted node
-        self.action_cursor_down()  # and move the cursor
+        self.table.action_cursor_down()  # and move the cursor
 
         if not node.is_dir:
             return
@@ -546,14 +564,6 @@ class FileList(Static):
         size = self.node.fs.du(node.path, total=True, withdirs=True)
         size_text = Text(naturalsize(size), style=style, justify="right")
         self.table.update_cell(node.name, "size", size_text)
-
-    def action_cursor_down(self):
-        new_coord = (self.table.cursor_coordinate[0] + 1, 0)
-        self.table.cursor_coordinate = new_coord  # type: ignore
-
-    def action_cursor_up(self):
-        new_coord = (self.table.cursor_coordinate[0] - 1, 0)
-        self.table.cursor_coordinate = new_coord  # type: ignore
 
     def on_data_table_row_highlighted(self, event: DataTable.RowHighlighted):
         name: str = event.row_key.value  # type: ignore
@@ -582,13 +592,25 @@ class FileList(Static):
 
     def on_key_normal_mode(self, event: events.Key) -> None:
         # FIXME: refactor to use actions?
-        if event.key == "g":
+        if event.key == "j":
+            self.table.action_cursor_down()
+        elif event.key == "k":
+            self.table.action_cursor_up()
+        elif event.key in ("g", "home"):
             self.table.action_scroll_top()
-        elif event.key == "G":
+        elif event.key in ("G", "end"):
             self.table.action_scroll_bottom()
-        elif event.key in ("ctrl+f", "ctrl+d"):
+        elif event.key in ("ctrl+d"):
+            scroll_height = (self.table.scrollable_content_region.height - 2) // 2
+            for i in range(scroll_height):
+                self.table.action_cursor_down()
+        elif event.key in ("ctrl+u"):
+            scroll_height = (self.table.scrollable_content_region.height - 2) // 2
+            for i in range(scroll_height):
+                self.table.action_cursor_up()
+        elif event.key in ("ctrl+f"):
             self.table.action_page_down()
-        elif event.key in ("ctrl+b", "ctrl+u"):
+        elif event.key in ("ctrl+b"):
             self.table.action_page_up()
         elif event.key == "backspace":
             if self.node.parent:
@@ -600,11 +622,11 @@ class FileList(Static):
         elif event.key in ("space", "J", "shift+down"):
             self.toggle_selection(self.cursor_node)
             self.update_listing()
-            self.action_cursor_down()
+            self.table.action_cursor_down()
         elif event.key in ("K", "shift+up"):
             self.toggle_selection(self.cursor_node)
             self.update_listing()
-            self.action_cursor_up()
+            self.table.action_cursor_up()
         elif event.key == "minus":
             self.reset_selection()
             self.update_listing()
