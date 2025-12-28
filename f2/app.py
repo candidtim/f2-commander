@@ -38,6 +38,7 @@ from .fs.util import copy, copy_final_path, delete, mkdir, mkfile, move, rename
 from .shell import default_editor, default_shell, default_viewer, native_open
 from .update import check_for_updates
 from .widgets.bookmarks import GoToBookmarkDialog
+from .widgets.cmdline import CmdLine
 from .widgets.config import ConfigDialog
 from .widgets.connect import ConnectToRemoteDialog
 from .widgets.dialogs import InputDialog, StaticDialog, StaticDialogR, Style
@@ -209,6 +210,7 @@ class F2Commander(App):
             self.debug_info = Label(id="debug-info")
             self.debug_info.border_title = "Debug info"
             yield self.debug_info
+        yield CmdLine(self.size.width, self.size.height // 2)
         yield Footer()
 
     def _info(self, *args):

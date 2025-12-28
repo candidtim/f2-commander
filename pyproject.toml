@@ -33,6 +33,7 @@ dependencies = [
     "textual-image[textual]>=0.8.4,<1",
     "pillow>=12.0,<13",
     "pymupdf>=1.26.6",
+    "pyte>=0.8.2",
 ]
 
 [project.urls]
