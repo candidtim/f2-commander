@@ -13,7 +13,6 @@ import termios
 
 import pyte
 from rich.text import Text
-from textual import work
 from textual.widgets import Static
 
 from f2.shell import default_shell
@@ -26,7 +25,6 @@ TODO:
     - bi-directional cwd follow (from panel to cmd line and reverse)
     - disable command palette in CmdLine widget to allow using ctrl+p
     - allow using arrow keys
-    - do not render cursor if the widget is not focused
 """
 
 
@@ -43,6 +41,7 @@ class RichScreen:
     def __init__(self, columns, lines, height):
         self.clear(columns, lines)
         self.height = height
+        self.focused = False
 
     def clear(self, columns, lines):
         self.screen = pyte.Screen(columns, lines)
@@ -50,15 +49,30 @@ class RichScreen:
         self.output = [""] * lines
 
     def update(self, data: bytes):
+        """Feed more data into from the shell output."""
         self.stream.feed(data)
         for line_number in self.screen.dirty:
-            raw_line = self.screen.display[line_number]
-            rich_line = Text.from_ansi(raw_line)
-            # highlight cursor:
-            if self.screen.cursor.y == line_number:
-                pos = self.screen.cursor.x
-                rich_line.stylize("reverse", pos, pos + 1)
-            self.output[line_number] = rich_line
+            line = Text.from_ansi(self.screen.display[line_number])
+            if self.focused and self.screen.cursor.y == line_number:
+                line = self._highlight_cursor(line, self.screen.cursor.x)
+            self.output[line_number] = line
+
+    def focus(self):
+        self.focused = True
+        cursor = self.screen.cursor
+        line = Text.from_ansi(self.screen.display[cursor.y])
+        self.output[cursor.y] = self._highlight_cursor(line, cursor.x)
+
+    def blur(self):
+        self.focused = False
+        cursor = self.screen.cursor
+        line = Text.from_ansi(self.screen.display[cursor.y])
+        self.output[cursor.y] = line
+
+    @classmethod
+    def _highlight_cursor(cls, line: Text, pos: int) -> Text:
+        line.stylize("reverse", pos, pos + 1)
+        return line
 
     def __rich_console__(self, console, options):
         if self.height < len(self.output):
@@ -141,6 +155,14 @@ class CmdLine(Static, can_focus=True):
         # TODO: need to restart reliably (implementation below does not work)
         # except OSError:
         #     self.refresh(recompose=True)
+
+    def on_focus(self):
+        self.renderable.focus()
+        self.update(self.renderable)
+
+    def on_blur(self):
+        self.renderable.blur()
+        self.update(self.renderable)
 
     def update_output(self):
         # TODO: process OSError:
