@@ -35,7 +35,7 @@ from .errors import error_handler_async, with_error_handler
 from .fs.arch import is_archive, open_archive, write_archive
 from .fs.node import Node
 from .fs.util import copy, copy_final_path, delete, mkdir, mkfile, move, rename
-from .shell import default_editor, default_shell, default_viewer, native_open
+from .shell import default_editor, default_viewer, native_open
 from .update import check_for_updates
 from .widgets.bookmarks import GoToBookmarkDialog
 from .widgets.cmdline import CmdLine
@@ -181,6 +181,14 @@ class F2Commander(App):
     ]
     COMMANDS = {F2AppCommands}
 
+    # A hack to disable ctrl+p by default and toggle the command palette
+    # by this app's own keyboard event processing. This is needed to pass
+    # thtough ^p in CmdLine (a.k.a. "previous commnad" in most shells).
+    # Textual seems to have no option to enable the command palette without
+    # assigning a key binding to toggle it (this binding cannot be None),
+    # => it is set to a keybinding that is unlikely to be used elsewhere.
+    COMMAND_PALETTE_BINDING = "ctrl+shift+alt+backslash"
+
     show_hidden = reactive(False, init=False)
     dirs_first = reactive(False, init=False)
     order_case_sensitive = reactive(False, init=False)
@@ -199,6 +207,12 @@ class F2Commander(App):
         self.cwd_right = Node.from_url(str(work_dir_right))
         self.f2_app_debug = debug  # avoid confusion with Textual's debug property
 
+        self.panels_container = None
+        self.panel_left = None
+        self.panel_right = None
+        self.cmd_line = None
+        self.debug_info = None
+
     def compose(self) -> ComposeResult:
         self.panels_container = Horizontal()
         self.panel_left = Panel("left", id="left")
@@ -206,12 +220,16 @@ class F2Commander(App):
         with self.panels_container:
             yield self.panel_left
             yield self.panel_right
+
+        self.cmd_line = CmdLine(self.size.width, self.size.height // 2)
+        yield self.cmd_line
+
         if self.f2_app_debug:
             self.debug_info = Label(id="debug-info")
             self.debug_info.border_title = "Debug info"
             yield self.debug_info
-        yield CmdLine(self.size.width, self.size.height // 2)
-        yield Footer()
+
+        yield Footer(show_command_palette=False)
 
     def _info(self, *args):
         """
@@ -815,22 +833,6 @@ class F2Commander(App):
         self.active_filelist.update_listing()
         self.active_filelist.scroll_to_entry(new_name)
 
-    def action_shell(self):
-        node = self.active_filelist.node
-        cwd = node.path if node.is_local else Path.cwd()
-
-        shell_cmd = self.app.config.system.shell or default_shell()
-        if shell_cmd is not None:
-            exit_code = self.subprocess_run(shell_cmd, cwd=cwd)
-            self.refresh()
-            self.active_filelist.update_listing()
-            self.inactive_filelist.update_listing()
-            if exit_code != 0:
-                msg = f"Shell exited with an error ({exit_code})"
-                self.push_screen(StaticDialog.warning("Warning", msg))
-        else:
-            self.push_screen(StaticDialog.error("Error", "No shell found!"))
-
     @work
     async def action_archive(self):
         if not self.active_filelist.selection:
@@ -1031,3 +1033,18 @@ class F2Commander(App):
                 return True
         else:
             return True
+
+    def focus_next_panel(self):
+        if self.app.inactive_filelist is not None:
+            self.inactive_filelist.table.focus()
+
+    def on_key(self, event):
+        if event.key == "ctrl+p":
+            self.action_command_palette()
+        elif event.key == "ctrl+z":
+            self.action_suspend_process()
+        elif event.key == "shift+tab":
+            if self.cmd_line.has_focus:
+                self.focus_next_panel()
+            else:
+                self.cmd_line.focus()

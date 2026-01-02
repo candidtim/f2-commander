@@ -277,6 +277,7 @@ class Help(Static):
 
     def action_close(self):
         self.parent.panel_type = "file_list"  # type: ignore
+        self.app.focus_next_panel()
 
     def on_key(self, event):
         if event.key == "j":

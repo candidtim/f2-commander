@@ -15,7 +15,6 @@ BINDINGS_VI = [
     Binding("m", "move", "Move"),
     Binding("ctrl+n", "mkdir", "MkDir"),
     Binding("D", "delete", "Delete"),
-    Binding("x", "shell", "Shell"),
     Binding("q", "quit", "Quit"),
 ]
 
@@ -28,6 +27,5 @@ BINDINGS_FN = [
     Binding("f6", "move", "Move"),
     Binding("f7", "mkdir", "MkDir"),
     Binding("f8", "delete", "Delete"),
-    Binding("f9", "shell", "Shell"),
     Binding("f10", "quit", "Quit"),
 ]

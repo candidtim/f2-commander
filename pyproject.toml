@@ -22,7 +22,7 @@ classifiers = [
 ]
 requires-python = ">=3.10,<3.15"
 dependencies = [
-    "textual>=6.7.1,<7",
+    "textual>=6.11.0,<7",
     "humanize>=4.14.0,<5",
     "send2trash>=1.8.3,<2",
     "platformdirs>=4.5.1,<5",

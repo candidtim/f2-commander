@@ -570,6 +570,9 @@ class FileList(Static):
         self.cursor_node = next(n for n in self.listing if n.name == name)
         self.post_message(self.Selected(self.cursor_node, self))
 
+    def focus(self):
+        self.table.focus()
+
     def on_descendant_focus(self, event):
         self.active = True
         self.add_class("focused")
@@ -591,8 +594,10 @@ class FileList(Static):
             self.dismiss_search()
 
     def on_key_normal_mode(self, event: events.Key) -> None:
-        # FIXME: refactor to use actions?
-        if event.key == "j":
+        if event.key == "tab":
+            self.app.focus_next_panel()
+            event.stop()
+        elif event.key == "j":
             self.table.action_cursor_down()
         elif event.key == "k":
             self.table.action_cursor_up()

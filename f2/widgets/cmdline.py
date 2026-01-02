@@ -20,10 +20,8 @@ from f2.shell import default_shell
 """
 TODO:
     - restart if forked process ends
-    - do not focus with Tab
     - resize when parent resizes
     - bi-directional cwd follow (from panel to cmd line and reverse)
-    - disable command palette in CmdLine widget to allow using ctrl+p
     - allow using arrow keys
 """
 
@@ -142,11 +140,6 @@ class CmdLine(Static, can_focus=True):
     def on_key(self, event):
         if event.key == "ctrl+o":
             self.toggle()
-
-        elif event.key == "tab":
-            # FIXME: better API to "focus next""?
-            # FIXME: allow tab, find another hotkey to focus out
-            self.app.left.focus()
 
         elif event.character is not None:
             event.stop()
