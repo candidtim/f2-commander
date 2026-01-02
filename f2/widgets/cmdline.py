@@ -21,7 +21,6 @@ from f2.shell import default_shell
 TODO:
 - resize when parent resizes
 - bi-directional cwd follow (from panel to cmd line and reverse)
-- allow using arrow keys
 """
 
 
@@ -30,6 +29,42 @@ TODO:
 # Empirically, anything above ~4KB (e.g., 120x40) gets way too slow
 MAX_COLUMNS = 80
 MAX_LINES = 24
+
+
+# Control sequences related to user input for TERM=linux
+# Obtained with `infocmp -L linux | grep key`
+CONTROL_KEYS = {
+    "f1": "\x1b[[A",
+    "f2": "\x1b[[B",
+    "f3": "\x1b[[C",
+    "f4": "\x1b[[D",
+    "f5": "\x1b[[E",
+    "f6": "\x1b[17~",
+    "f7": "\x1b[18~",
+    "f8": "\x1b[19~",
+    "f9": "\x1b[20~",
+    "f10": "\x1b[21~",
+    "f11": "\x1b[23~",
+    "f12": "\x1b[24~",
+    "f13": "\x1b[25~",
+    "f14": "\x1b[26~",
+    "f15": "\x1b[28~",
+    "f16": "\x1b[29~",
+    "f17": "\x1b[31~",
+    "f18": "\x1b[32~",
+    "f19": "\x1b[33~",
+    "f20": "\x1b[34~",
+    "up": "\x1b[A",
+    "down": "\x1b[B",
+    "right": "\x1b[C",
+    "left": "\x1b[D",
+    "home": "\x1b[1~",
+    "insert": "\x1b[2~",
+    "delete": "\x1b[3~",
+    "end": "\x1b[4~",
+    "pageup": "\x1b[5~",
+    "pagedown": "\x1b[6~",
+}
 
 
 class RichScreen:
@@ -169,6 +204,9 @@ class CmdLine(Static, can_focus=True):
         elif event.character is not None:
             event.stop()
             self.send_input(event.character)
+        elif event.key in CONTROL_KEYS:
+            event.stop()
+            self.send_input(CONTROL_KEYS[event.key])
 
     def on_focus(self):
         self.renderable.focus()
