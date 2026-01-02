@@ -19,10 +19,9 @@ from f2.shell import default_shell
 
 """
 TODO:
-    - restart if forked process ends
-    - resize when parent resizes
-    - bi-directional cwd follow (from panel to cmd line and reverse)
-    - allow using arrow keys
+- resize when parent resizes
+- bi-directional cwd follow (from panel to cmd line and reverse)
+- allow using arrow keys
 """
 
 
@@ -90,13 +89,25 @@ class CmdLine(Static, can_focus=True):
         self.renderable = RichScreen(self.columns, self.lines, height=1)
 
     def on_mount(self):
+        self.start()
+
+    #
+    # Fork:
+    #
+
+    def start(self):
+        """Start the termainal emulator."""
         pid, self.fd = pty.fork()
         if pid == 0:
             # in the forked process:
             self.start_shell()
         else:
             # in the main process:
-            self.on_fork()
+            self.setup_io()
+
+    def restart(self):
+        self.tear_down_io()
+        self.start()
 
     def start_shell(self):
         """Start a shell in a forked process."""
@@ -114,40 +125,50 @@ class CmdLine(Static, can_focus=True):
         shell_cmd = self.app.config.system.shell or default_shell()
         os.execlp(shell_cmd, shell_cmd)
 
-    def on_fork(self):
+    #
+    # IO with a forked process:
+    #
+
+    def setup_io(self):
         # prepare the pipe for stdin-stdout/err and start reading the output:
         self.pipe = os.fdopen(self.fd, "w+b", 0)
         loop = asyncio.get_running_loop()
-        loop.add_reader(self.pipe, self.update_output)
+        loop.add_reader(self.pipe, self.read_output)
         # set the screen size:
-        self._resize()
+        self.resize()
 
-    def _resize(self):
+    def tear_down_io(self):
+        loop = asyncio.get_running_loop()
+        loop.remove_reader(self.pipe)
+
+    def resize(self):
         winsize = struct.pack("HHHH", self.lines, self.columns, 0, 0)
         fcntl.ioctl(self.fd, termios.TIOCSWINSZ, winsize)
 
-    def _chdir(self, path):
-        # disable echo:
-        old_attrs = termios.tcgetattr(self.fd)
-        new_attrs = old_attrs[:]
-        new_attrs[3] &= ~termios.ECHO
-        termios.tcsetattr(self.fd, termios.TCSANOW, new_attrs)
-        # cd:
-        self.pipe.write(f"cd {path}\n".encode())
-        # enable echo:
-        termios.tcsetattr(self.fd, termios.TCSANOW, old_attrs)
+    def read_output(self):
+        try:
+            shell_output = self.pipe.read(self.lines * self.columns)
+            self.renderable.update(shell_output)
+            self.update(self.renderable)
+        except OSError:
+            self.restart()
+
+    def send_input(self, s: str):
+        try:
+            self.pipe.write(s.encode())
+        except OSError:
+            self.restart()
+
+    #
+    # Textual event processing:
+    #
 
     def on_key(self, event):
         if event.key == "ctrl+o":
-            self.toggle()
-
+            self.toggle_size()
         elif event.character is not None:
             event.stop()
-            self.pipe.write(event.character.encode())
-
-        # TODO: need to restart reliably (implementation below does not work)
-        # except OSError:
-        #     self.refresh(recompose=True)
+            self.send_input(event.character)
 
     def on_focus(self):
         self.renderable.focus()
@@ -157,22 +178,27 @@ class CmdLine(Static, can_focus=True):
         self.renderable.blur()
         self.update(self.renderable)
 
-    def update_output(self):
-        # TODO: process OSError:
-        shell_output = self.pipe.read(self.lines * self.columns)
-        self.renderable.update(shell_output)
-        self.update(self.renderable)
+    # def on_resize(self, event):
+    #     # FIXME: duplicate code from `F2Commander.compose`
+    #     self.columns = min(self.app.size.width, MAX_COLUMNS)
+    #     self.lines = min(self.app.size.height // 2, MAX_LINES)
+    #     self.renderable.clear(self.columns, self.lines)
+    #     self.resize()
 
-    def toggle(self):
+    def toggle_size(self):
         if self.renderable.height == 1:
             self.renderable.height = self.lines
         else:
             self.renderable.height = 1
         self.refresh(layout=True)
 
-    # def on_resize(self, event):
-    #     # FIXME: duplicate code from `F2Commander.compose`
-    #     self.columns = min(self.app.size.width, MAX_COLUMNS)
-    #     self.lines = min(self.app.size.height // 2, MAX_LINES)
-    #     self.renderable.clear(self.columns, self.lines)
-    #     self._resize()
+    def chdir(self, path):
+        # disable echo:
+        old_attrs = termios.tcgetattr(self.fd)
+        new_attrs = old_attrs[:]
+        new_attrs[3] &= ~termios.ECHO
+        termios.tcsetattr(self.fd, termios.TCSANOW, new_attrs)
+        # cd:
+        self.pipe.write(f"cd {path}\n".encode())
+        # enable echo:
+        termios.tcsetattr(self.fd, termios.TCSANOW, old_attrs)
