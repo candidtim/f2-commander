@@ -19,7 +19,6 @@ from f2.shell import default_shell
 
 """
 TODO:
-- bi-directional cwd follow (from panel to cmd line and reverse)
 - support TERM=linux colors (8 colors)
 """
 
@@ -199,17 +198,25 @@ class CmdLine(Static, can_focus=True):
 
     def on_key(self, event):
         # let the app handle some keys:
-        bubble_up = ("ctrl+o", "ctrl+z", "shift-tab")
+        bubble_up = ("ctrl+o", "ctrl+z", "shift+tab")
         if event.key in bubble_up:
             return
 
+        event.stop()
+
+        # CmdLine specific key bindings:
+        if event.key == "ctrl+f":
+            self.send_input(self.app.last_active_filelist.node.path)
+        elif event.key == "ctrl+end":
+            self.send_input(self.app.last_active_filelist.cursor_node.name)
+        elif event.key == "ctrl+shift+end":
+            self.send_input(self.app.last_active_filelist.cursor_node.path)
+
         # all else is passed to the command line, if possible:
-        if event.character is not None:
-            event.stop()
-            self.send_input(event.character)
         elif event.key in CONTROL_KEYS:
-            event.stop()
             self.send_input(CONTROL_KEYS[event.key])
+        elif event.character is not None:
+            self.send_input(event.character)
 
     def on_focus(self):
         self.renderable.focus()
@@ -218,12 +225,6 @@ class CmdLine(Static, can_focus=True):
     def on_blur(self):
         self.renderable.blur()
         self.update(self.renderable)
-
-    def _max_width(self):
-        return self.app.size.width - 2  # border left, border right
-
-    def _max_height(self):
-        return self.app.size.height - 3  # border top, border bottom, footer
 
     def on_resize(self, event):
         # adjust built-in terminal size to the app size, if changed:
@@ -235,13 +236,8 @@ class CmdLine(Static, can_focus=True):
         self.renderable.resize(self.columns, self.lines, self.size.height)
         self.update(self.renderable)
 
-    def chdir(self, path):
-        # disable echo:
-        old_attrs = termios.tcgetattr(self.fd)
-        new_attrs = old_attrs[:]
-        new_attrs[3] &= ~termios.ECHO
-        termios.tcsetattr(self.fd, termios.TCSANOW, new_attrs)
-        # cd:
-        self.pipe.write(f"cd {path}\n".encode())
-        # enable echo:
-        termios.tcsetattr(self.fd, termios.TCSANOW, old_attrs)
+    def _max_width(self):
+        return self.app.size.width - 2  # border left, border right
+
+    def _max_height(self):
+        return self.app.size.height - 3  # border top, border bottom, footer

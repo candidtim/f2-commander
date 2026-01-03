@@ -40,6 +40,7 @@ class Panel(Static):
     def action_change_panel(self):
         def on_select(value: str):
             self.panel_type = value
+            self.app.focus_next_panel()
 
         self.app.push_screen(
             SelectDialog(

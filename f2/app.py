@@ -50,9 +50,12 @@ class F2AppCommands(Provider):
     @property
     def all_commands(self):
         app_commands = [(self.app, cmd) for cmd in self.app.BINDINGS_AND_COMMANDS]
-        flist = self.app.active_filelist
-        flist_commands = [(flist, cmd) for cmd in flist.BINDINGS_AND_COMMANDS]
-        return app_commands + flist_commands
+        if self.app.active_filelist:
+            flist = self.app.active_filelist
+            flist_commands = [(flist, cmd) for cmd in flist.BINDINGS_AND_COMMANDS]
+            return app_commands + flist_commands
+        else:
+            return app_commands
 
     def _fmt_name(self, cmd, text: Optional[Content] = None):
         t = text or Text(cmd.name)
@@ -183,7 +186,7 @@ class F2Commander(App):
 
     # A hack to disable ctrl+p by default and toggle the command palette
     # by this app's own keyboard event processing. This is needed to pass
-    # thtough ^p in CmdLine (a.k.a. "previous commnad" in most shells).
+    # through ^p in CmdLine (a.k.a. "previous commnad" in most shells).
     # Textual seems to have no option to enable the command palette without
     # assigning a key binding to toggle it (this binding cannot be None),
     # => it is set to a keybinding that is unlikely to be used elsewhere.
@@ -292,7 +295,8 @@ class F2Commander(App):
             self.panels_container.move_child(self.panel_left, before=self.panel_right)
 
     def action_same_location(self):
-        self.inactive_filelist.node = self.active_filelist.node
+        if self.active_filelist and self.inactive_filelist:
+            self.inactive_filelist.node = self.active_filelist.node
 
     @work
     async def action_change_left_panel(self):
@@ -329,6 +333,10 @@ class F2Commander(App):
             if isinstance(panel, FileList) and not panel.active:
                 return panel
         return None
+
+    def on_descendant_focus(self, event):
+        if self.active_filelist is not None:
+            self.last_active_filelist = self.active_filelist
 
     @work
     async def on_mount(self, event):
@@ -1049,6 +1057,6 @@ class F2Commander(App):
             self.cmd_line.focus()
         elif event.key == "shift+tab":
             if self.cmd_line.has_focus:
-                self.focus_next_panel()
+                self.last_active_filelist.focus()
             else:
                 self.cmd_line.focus()

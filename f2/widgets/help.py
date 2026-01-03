@@ -94,11 +94,20 @@ Some actions, such as copy, move and delete, can be performed on multiple entrie
  - `+` selects all displayed entries
  - `*` inverts the selection
 
-### Shell
+### Built-in command line
 
- - `x`/`F9` starts (forks) a subprocess with a new shell in the current location.
-   Quit the shell to return back to the F2 Commander (e.g., `Ctrl+d` or type and
-   execute `exit`).
+Built-in command line runs a simplified terminal emulator. It emulates most
+of "linux" terminal features and runs your default interactive shell.
+
+ - `Shift+Tab ⭾` switch to and from (out of) the built-in command line
+   (or use mouse click to focus on it)
+
+In the command line:
+
+ - `Ctrl+o` toggle between full screen and one-line modes
+ - `Ctrl+f` insert last used file listing directory path
+ - `Ctrl+End` insert last used file list highlighted file name
+ - `Ctrl+Shift+End` insert last used file list highlighted file path
 
 ## Remote (FTP, S3, etc.)
 
@@ -270,7 +279,7 @@ class Help(Static):
 
     def on_mount(self, event):
         # switch focus to the Help panel:
-        self.app.screen.focus_next()
+        self.viewer.document.focus()
 
     def action_toggle_toc(self):
         self.viewer.show_table_of_contents = not self.viewer.show_table_of_contents

@@ -49,7 +49,6 @@ class Preview(Static):
         height: 100%;
     }
     """
-    # FIXME: use "real" image size, only dezoom when need to fit
 
     node = reactive(Node.cwd())
 
