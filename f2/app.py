@@ -221,7 +221,7 @@ class F2Commander(App):
             yield self.panel_left
             yield self.panel_right
 
-        self.cmd_line = CmdLine(self.size.width, self.size.height // 2)
+        self.cmd_line = CmdLine(self.size.width, self.size.height - 2)
         yield self.cmd_line
 
         if self.f2_app_debug:

@@ -24,13 +24,6 @@ TODO:
 """
 
 
-# TODO: improve rendering performance
-# For performance reasons, embedded terminal is limited in size
-# Empirically, anything above ~4KB (e.g., 120x40) gets way too slow
-MAX_COLUMNS = 80
-MAX_LINES = 24
-
-
 # Control sequences related to user input for TERM=linux
 # Obtained with `infocmp -L linux | grep key`
 CONTROL_KEYS = {
@@ -78,16 +71,16 @@ class RichScreen:
     def clear(self, columns, lines):
         self.screen = pyte.Screen(columns, lines)
         self.stream = pyte.ByteStream(self.screen)
-        self.output = [""] * lines
+        self.output = [Text("") for _ in range(lines)]
 
     def update(self, data: bytes):
         """Feed more data into from the shell output."""
         self.stream.feed(data)
-        for line_number in self.screen.dirty:
-            line = Text.from_ansi(self.screen.display[line_number])
+        for line_number, line in enumerate(self.screen.display):
+            rich_line = Text.from_ansi(line)
             if self.focused and self.screen.cursor.y == line_number:
-                line = self._highlight_cursor(line, self.screen.cursor.x)
-            self.output[line_number] = line
+                rich_line = self._highlight_cursor(rich_line, self.screen.cursor.x)
+            self.output[line_number] = rich_line
 
     def focus(self):
         self.focused = True
@@ -117,8 +110,8 @@ class RichScreen:
 class CmdLine(Static, can_focus=True):
     def __init__(self, columns, lines):
         super().__init__()
-        self.columns = min(columns, MAX_COLUMNS)
-        self.lines = min(lines, MAX_LINES)
+        self.columns = columns
+        self.lines = lines
         self.fd = None
         self.pipe = None
         self.renderable = RichScreen(self.columns, self.lines, height=1)
@@ -218,8 +211,8 @@ class CmdLine(Static, can_focus=True):
 
     # def on_resize(self, event):
     #     # FIXME: duplicate code from `F2Commander.compose`
-    #     self.columns = min(self.app.size.width, MAX_COLUMNS)
-    #     self.lines = min(self.app.size.height // 2, MAX_LINES)
+    #     self.columns = self.app.size.width
+    #     self.lines = self.app.size.height
     #     self.renderable.clear(self.columns, self.lines)
     #     self.resize()
 
