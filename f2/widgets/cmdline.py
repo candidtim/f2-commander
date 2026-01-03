@@ -19,8 +19,8 @@ from f2.shell import default_shell
 
 """
 TODO:
-- resize when parent resizes
 - bi-directional cwd follow (from panel to cmd line and reverse)
+- support TERM=linux colors (8 colors)
 """
 
 
@@ -64,23 +64,29 @@ class RichScreen:
     """A Rich renederable for `pyte.Screen`."""
 
     def __init__(self, columns, lines, height):
-        self.clear(columns, lines)
-        self.height = height
-        self.focused = False
-
-    def clear(self, columns, lines):
         self.screen = pyte.Screen(columns, lines)
         self.stream = pyte.ByteStream(self.screen)
         self.output = [Text("") for _ in range(lines)]
+        self.height = height
+        self.focused = False
 
     def update(self, data: bytes):
         """Feed more data into from the shell output."""
         self.stream.feed(data)
+        updated_output = []
         for line_number, line in enumerate(self.screen.display):
             rich_line = Text.from_ansi(line)
             if self.focused and self.screen.cursor.y == line_number:
                 rich_line = self._highlight_cursor(rich_line, self.screen.cursor.x)
-            self.output[line_number] = rich_line
+            updated_output.append(rich_line)
+        self.output = updated_output
+
+    def resize(self, columns, lines, height):
+        self.screen.resize(lines, columns)
+        self.screen.ensure_hbounds()
+        self.screen.ensure_vbounds()
+        self.height = height
+        self.update(b"")
 
     def focus(self):
         self.focused = True
@@ -108,13 +114,13 @@ class RichScreen:
 
 
 class CmdLine(Static, can_focus=True):
-    def __init__(self, columns, lines):
+    def __init__(self):
         super().__init__()
-        self.columns = columns
-        self.lines = lines
+        self.columns = self._max_width()
+        self.lines = self._max_height()
         self.fd = None
         self.pipe = None
-        self.renderable = RichScreen(self.columns, self.lines, height=1)
+        self.renderable = RichScreen(self.columns, self.lines, self.size.height)
 
     def on_mount(self):
         self.start()
@@ -163,13 +169,13 @@ class CmdLine(Static, can_focus=True):
         loop = asyncio.get_running_loop()
         loop.add_reader(self.pipe, self.read_output)
         # set the screen size:
-        self.resize()
+        self.resize_terminal()
 
     def tear_down_io(self):
         loop = asyncio.get_running_loop()
         loop.remove_reader(self.pipe)
 
-    def resize(self):
+    def resize_terminal(self):
         winsize = struct.pack("HHHH", self.lines, self.columns, 0, 0)
         fcntl.ioctl(self.fd, termios.TIOCSWINSZ, winsize)
 
@@ -192,9 +198,13 @@ class CmdLine(Static, can_focus=True):
     #
 
     def on_key(self, event):
-        if event.key == "ctrl+o":
-            self.toggle_size()
-        elif event.character is not None:
+        # let the app handle some keys:
+        bubble_up = ("ctrl+o", "ctrl+z", "shift-tab")
+        if event.key in bubble_up:
+            return
+
+        # all else is passed to the command line, if possible:
+        if event.character is not None:
             event.stop()
             self.send_input(event.character)
         elif event.key in CONTROL_KEYS:
@@ -209,19 +219,21 @@ class CmdLine(Static, can_focus=True):
         self.renderable.blur()
         self.update(self.renderable)
 
-    # def on_resize(self, event):
-    #     # FIXME: duplicate code from `F2Commander.compose`
-    #     self.columns = self.app.size.width
-    #     self.lines = self.app.size.height
-    #     self.renderable.clear(self.columns, self.lines)
-    #     self.resize()
+    def _max_width(self):
+        return self.app.size.width - 2  # border left, border right
 
-    def toggle_size(self):
-        if self.renderable.height == 1:
-            self.renderable.height = self.lines
-        else:
-            self.renderable.height = 1
-        self.refresh(layout=True)
+    def _max_height(self):
+        return self.app.size.height - 3  # border top, border bottom, footer
+
+    def on_resize(self, event):
+        # adjust built-in terminal size to the app size, if changed:
+        if self.columns != self._max_width() or self.lines != self._max_height():
+            self.columns = self._max_width()
+            self.lines = self._max_height()
+            self.resize_terminal()
+        # render as many last lines as currently visible:
+        self.renderable.resize(self.columns, self.lines, self.size.height)
+        self.update(self.renderable)
 
     def chdir(self, path):
         # disable echo:

@@ -124,6 +124,12 @@ ModalScreen {
   overflow-y: auto;
 }
 
+.fullscreen {
+  border: $border double;
+  height: 1fr !important;
+  width: 1fr !important;
+}
+
 
 /* Form controls */
 
@@ -185,7 +191,15 @@ ConfigDialog InputWithLabel {
   margin-left: 1;
 }
 
+/* CmdLine */
+
+CmdLine {
+  height: 1;
+  overflow-y: hidden;
+}
+
 /* Debug */
+
 #debug-info {
   height: 3;
   width: 100%;

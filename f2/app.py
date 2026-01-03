@@ -221,7 +221,7 @@ class F2Commander(App):
             yield self.panel_left
             yield self.panel_right
 
-        self.cmd_line = CmdLine(self.size.width, self.size.height - 2)
+        self.cmd_line = CmdLine()
         yield self.cmd_line
 
         if self.f2_app_debug:
@@ -1043,6 +1043,10 @@ class F2Commander(App):
             self.action_command_palette()
         elif event.key == "ctrl+z":
             self.action_suspend_process()
+        elif event.key == "ctrl+o":
+            self.panels_container.toggle_class("hidden")
+            self.cmd_line.toggle_class("fullscreen")
+            self.cmd_line.focus()
         elif event.key == "shift+tab":
             if self.cmd_line.has_focus:
                 self.focus_next_panel()
