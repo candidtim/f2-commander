@@ -10,18 +10,15 @@ import os
 import pty
 import struct
 import termios
+from functools import lru_cache
+from typing import Iterator, Tuple
 
 import pyte
+from rich.style import Style
 from rich.text import Text
 from textual.widgets import Static
 
 from f2.shell import default_shell
-
-"""
-TODO:
-- support TERM=linux colors (8 colors)
-"""
-
 
 # Control sequences related to user input for TERM=linux
 # Obtained with `infocmp -L linux | grep key`
@@ -58,27 +55,106 @@ CONTROL_KEYS = {
     "pagedown": "\x1b[6~",
 }
 
+ANSI_COLORS = set(["black", "red", "green", "blue", "magenta", "cyan", "white"])
+
 
 class RichScreen:
     """A Rich renederable for `pyte.Screen`."""
 
-    def __init__(self, columns, lines, height):
+    def __init__(self, columns, lines, height, theme):
         self.screen = pyte.Screen(columns, lines)
         self.stream = pyte.ByteStream(self.screen)
         self.output = [Text("") for _ in range(lines)]
+        self.cursor_line = 0
         self.height = height
         self.focused = False
+        self.theme = theme
 
     def update(self, data: bytes):
         """Feed more data into from the shell output."""
         self.stream.feed(data)
-        updated_output = []
-        for line_number, line in enumerate(self.screen.display):
-            rich_line = Text.from_ansi(line)
-            if self.focused and self.screen.cursor.y == line_number:
-                rich_line = self._highlight_cursor(rich_line, self.screen.cursor.x)
-            updated_output.append(rich_line)
+
+        if len(self.screen.dirty) > self.screen.lines * 0.2:
+            # too many changes, refresh the full screen:
+            updated_output = []
+            for line_number in range(self.screen.lines):
+                rich_line = self._render_line(line_number)
+                updated_output.append(rich_line)
+        else:
+            # only update changed lines:
+            updated_output = self.output[:]
+            for line_number in self.screen.dirty | {
+                self.cursor_line,
+                self.screen.cursor.y,
+            }:
+                rich_line = self._render_line(line_number)
+                updated_output[line_number] = rich_line
         self.output = updated_output
+        self.screen.dirty.clear()
+        self.cursor_line = self.screen.cursor.y
+
+    def _render_line(self, line_number: int) -> Text:
+        # FIXME: review for performance improvements
+        pyte_line = self.screen.buffer[line_number]
+        rich_line = Text()
+        style_start, rich_style, pyte_style = None, None, None
+        for i in range(self.screen.columns):
+            char = pyte_line[i]
+            rich_line.append(char.data)
+            new_pyte_style = (
+                char.fg,
+                char.bg,
+                char.bold,
+                char.italics,
+                char.underscore,
+                char.strikethrough,
+                char.blink,
+            )
+            if pyte_style != new_pyte_style:
+                if rich_style is not None:
+                    rich_line.stylize(rich_style, style_start, i)
+                style_start = i
+                rich_style = self._to_rich_style(*new_pyte_style)
+                pyte_style = new_pyte_style
+        rich_line.stylize(rich_style, style_start, i)
+        cursor = self.screen.cursor
+        if self.focused and cursor.y == line_number:
+            rich_line.stylize("reverse", cursor.x, cursor.x + 1)
+        return rich_line
+
+    @lru_cache(maxsize=4096)
+    def _to_rich_style(
+        self,
+        fg: str,
+        bg: str,
+        bold: bool,
+        italics: bool,
+        underscore: bool,
+        strikethrough: bool,
+        blink: bool,
+    ) -> Style:
+        return Style(
+            color=self._to_rich_color(fg, True),
+            bgcolor=self._to_rich_color(bg, False),
+            bold=bold,
+            italic=italics,
+            underline=underscore,
+            strike=strikethrough,
+            blink=blink,
+        )
+
+    @lru_cache(maxsize=1024)
+    def _to_rich_color(self, pyte_color: str, fg: bool) -> str:
+        if pyte_color == "default" and fg:
+            return self.theme.foreground
+        elif pyte_color == "default" and not fg:
+            return self.theme.background
+        elif pyte_color == "brown":
+            return "yellow"
+        elif pyte_color in ANSI_COLORS:
+            return pyte_color
+        else:
+            return f"#{pyte_color}"
 
     def resize(self, columns, lines, height):
         self.screen.resize(lines, columns)
@@ -90,19 +166,15 @@ class RichScreen:
     def focus(self):
         self.focused = True
         cursor = self.screen.cursor
-        line = Text.from_ansi(self.screen.display[cursor.y])
-        self.output[cursor.y] = self._highlight_cursor(line, cursor.x)
+        line = self._render_line(cursor.y)
+        line.stylize("reverse", cursor.x, cursor.x + 1)
+        self.output[cursor.y] = line
 
     def blur(self):
         self.focused = False
         cursor = self.screen.cursor
-        line = Text.from_ansi(self.screen.display[cursor.y])
+        line = self._render_line(cursor.y)
         self.output[cursor.y] = line
-
-    @classmethod
-    def _highlight_cursor(cls, line: Text, pos: int) -> Text:
-        line.stylize("reverse", pos, pos + 1)
-        return line
 
     def __rich_console__(self, console, options):
         if self.height < len(self.output):
@@ -119,7 +191,9 @@ class CmdLine(Static, can_focus=True):
         self.lines = self._max_height()
         self.fd = None
         self.pipe = None
-        self.renderable = RichScreen(self.columns, self.lines, self.size.height)
+        self.renderable = RichScreen(
+            self.columns, self.lines, self.size.height, self.app.theme_
+        )
 
     def on_mount(self):
         self.start()
@@ -152,8 +226,6 @@ class CmdLine(Static, can_focus=True):
         # dumbify:
         # ( see also: https://www.man7.org/linux/man-pages/man7/term.7.html )
         os.environ["TERM"] = "linux"  # simplest and most generic among PC consoles
-        os.unsetenv("LS_COLORS")  # TERM=linux has colors, hinting to disable
-        os.unsetenv("COLORTERM")
         # replace the executable by a new interactive shell, inherit env:
         shell_cmd = self.app.config.system.shell or default_shell()
         os.execlp(shell_cmd, shell_cmd)
