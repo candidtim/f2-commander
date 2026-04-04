@@ -105,7 +105,12 @@ def create_app():
     config.startup.license_accepted = True
 
     app_type = F2CommanderMeta("F2Commander", (), {"_BINDINGS": BINDINGS_VI})
-    app = app_type(config=config, debug=False)
+    app = app_type(
+        config=config,
+        debug=False,
+        work_dir_left=Path.cwd(),
+        work_dir_right=Path.cwd(),
+    )
     return app
 
 

@@ -600,17 +600,17 @@ class FileList(Static):
             self.table.action_scroll_top()
         elif event.key in ("G", "end"):
             self.table.action_scroll_bottom()
-        elif event.key in ("ctrl+d"):
+        elif event.key in ("ctrl+d",):
             scroll_height = (self.table.scrollable_content_region.height - 2) // 2
             for i in range(scroll_height):
                 self.table.action_cursor_down()
-        elif event.key in ("ctrl+u"):
+        elif event.key in ("ctrl+u",):
             scroll_height = (self.table.scrollable_content_region.height - 2) // 2
             for i in range(scroll_height):
                 self.table.action_cursor_up()
-        elif event.key in ("ctrl+f"):
+        elif event.key in ("ctrl+f",):
             self.table.action_page_down()
-        elif event.key in ("ctrl+b"):
+        elif event.key in ("ctrl+b",):
             self.table.action_page_up()
         elif event.key == "backspace":
             if self.node.parent:
