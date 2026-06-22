@@ -95,19 +95,13 @@ conventional, use as usual:
 
     uv run f2
 
-Static code analysis and type checks (ruff, mypy) can be ran with `uvx`. For
-example:
+Static code analysis, type checks and tests can be ran with prek:
 
-    uvx ruff check
-    uvx mypy
+    uv run prek run [--all-files]
 
-Tests use pytest, installed with the dev dependencies:
+To run tests:
 
     uv run pytest
-
-To run all code quality controls:
-
-    ./check
 
 To run the application with dev tools:
 
@@ -160,7 +154,7 @@ Bug reports, feature requests and pull requests are welcome.
 If you plan to contribute to the source code, see the "Development environment"
 above and, please, note that:
 
- - contributed source code must pass the `./check`,
+ - contributed source code must pass the pre-commit (prek) checks
  - in this repository, contributed source code is only accepted under Mozilla
    Public License 2.0 and should include according file headers.
 

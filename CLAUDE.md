@@ -198,7 +198,7 @@ uv run f2
 uv run pytest
 
 # Run code quality checks
-./check  # Runs ruff and mypy
+uv run prek [--all-files]  # Runs ruff, ty and other static code analyses
 
 # Development with hot reload
 uv run textual console  # Terminal 1
@@ -211,7 +211,7 @@ uvx nox  # Runs tests in Python 3.9, 3.10, 3.11, 3.12, 3.13
 ```
 
 ### Before Committing
-1. Run `./check` to ensure code quality
+1. Run `uv run prek` to ensure code quality
 2. Run `uv run pytest` to ensure tests pass
 3. Test manually with `uv run f2`
 4. Update documentation if needed
@@ -322,7 +322,7 @@ F2 Commander welcomes contributions! Before contributing:
 
 2. **Run code quality checks:**
    ```bash
-   ./check  # ruff + mypy
+   uv run prek # ruff + ty
    ```
 
 3. **Write tests:**

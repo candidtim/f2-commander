@@ -624,7 +624,7 @@ uv run pytest tests/features/test_go_to.py -v
 **Code Quality Checks:**
 ```bash
 uvx ruff check f2/widgets/filelist.py
-uvx mypy f2/widgets/filelist.py
+uvx ty verify f2/widgets/filelist.py
 ```
 
 ## Testing Methodology for Bug Fixes
@@ -772,9 +772,9 @@ def update_listing(self):
 
 ### Type Checking
 
-**Run mypy to catch type issues:**
+**Run ty to catch type issues:**
 ```bash
-uvx mypy f2/widgets/filelist.py
+uvx ty verify f2/widgets/filelist.py
 ```
 
 **Common Issues:**
@@ -1030,7 +1030,7 @@ uvx ruff check f2/widgets/filelist.py
 - [ ] Regression test written
 - [ ] Test passes with fix
 - [ ] Existing tests still pass
-- [ ] Code quality checks pass (ruff, mypy)
+- [ ] Code quality checks pass (ruff, ty)
 - [ ] Manual testing completed
 - [ ] Edge cases considered
 - [ ] No side effects observed

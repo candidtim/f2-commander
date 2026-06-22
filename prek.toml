@@ -1,0 +1,26 @@
+[[repos]]
+repo = "builtin"
+hooks = [
+  { id = "trailing-whitespace" },
+  { id = "end-of-file-fixer" },
+  { id = "check-toml" },
+  { id = "check-added-large-files" },
+  { id = "detect-private-key" },
+  { id = "check-shebang-scripts-are-executable" },
+  { id = "check-executables-have-shebangs" },
+]
+
+[[repos]]
+repo = "https://github.com/astral-sh/ruff-pre-commit"
+rev = "v0.15.18"
+hooks = [
+  { id = "ruff-check", args = ["--extend-select=I", "--fix"], types_or = ["python", "pyi"] },
+  { id = "ruff-format", types_or = ["python", "pyi"] },
+]
+
+# [[repos]]
+# repo = "https://github.com/astral-sh/ty-pre-commit"
+# rev = "v0.0.51"
+# hooks = [
+#   { id = "ty" },
+# ]
