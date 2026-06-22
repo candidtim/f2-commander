@@ -6,7 +6,7 @@
 
 import re
 from enum import Enum
-from typing import Optional, Tuple, Union
+from typing import Any, Optional
 
 from rich.markup import escape as rich_escape
 from rich.text import Text
@@ -37,7 +37,10 @@ class Style(Enum):
     DANGER = "danger"
 
 
-class StaticDialog(ModalScreen[bool]):
+# FIXME: merge StaticDialogR into StaticDialog, enable "remember option" with a flag
+
+
+class StaticDialog(ModalScreen[Any]):
     """StaticDialog can show static content and optional buttons."""
 
     BINDINGS = [
@@ -98,20 +101,26 @@ class StaticDialog(ModalScreen[bool]):
     @classmethod
     def info(cls, *args, **kwargs):
         """Simple info message dialog"""
-        return cls(btn_cancel=None, style=Style.INFO, *args, **kwargs)
+        kwargs["btn_cancel"] = None
+        kwargs["style"] = Style.INFO
+        return cls(*args, **kwargs)
 
     @classmethod
     def warning(cls, *args, **kwargs):
         """Simple warning message dialog"""
-        return cls(btn_cancel=None, style=Style.WARNING, *args, **kwargs)
+        kwargs["btn_cancel"] = None
+        kwargs["style"] = Style.WARNING
+        return cls(*args, **kwargs)
 
     @classmethod
     def error(cls, *args, **kwargs):
         """Simple error message dialog"""
-        return cls(btn_cancel=None, style=Style.DANGER, *args, **kwargs)
+        kwargs["btn_cancel"] = None
+        kwargs["style"] = Style.DANGER
+        return cls(*args, **kwargs)
 
 
-class StaticDialogR(StaticDialog, ModalScreen[Tuple[bool, bool]]):
+class StaticDialogR(StaticDialog):
     """
     Same as StaticDialog, but with a checkbox to remember the choice.
     Remembering the choice and acting on it is done by the caller.
@@ -128,9 +137,9 @@ class StaticDialogR(StaticDialog, ModalScreen[Tuple[bool, bool]]):
         super().on_mount()
         self.query_one("#remember").can_focus = False
 
-    def dismiss(self, value: Optional[Union[bool, Tuple[bool, bool]]]) -> None:
+    def dismiss(self, result: Any = None) -> Any:
         remember_value = self.query_one("#remember", Checkbox).value
-        super().dismiss((value, remember_value))
+        return super().dismiss((result, remember_value))
 
 
 class InputDialog(ModalScreen[Optional[str]]):
@@ -159,7 +168,7 @@ class InputDialog(ModalScreen[Optional[str]]):
 
     def compose(self) -> ComposeResult:
         with Vertical(id="dialog", classes=f"large {self.style.value}"):
-            yield Label(self.title, id="title")  # type: ignore
+            yield Label(self.title, id="title")
             yield self.input
             with Horizontal(id="buttons"):
                 yield Button(self.btn_ok, variant="primary", id="ok")
@@ -206,5 +215,5 @@ class SelectDialog(ModalScreen):
             return
         self.dismiss(event.value)
 
-    def action_dismiss(self):
+    async def action_dismiss(self, result: Any = None) -> None:
         self.dismiss(self.select.value)

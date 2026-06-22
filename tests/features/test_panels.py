@@ -25,7 +25,7 @@ async def test_panel_switcher_opens(app, key, side):
         assert app.screen.title is not None
         assert app.screen.title == f"Change the {side} panel to:"
 
-        selector: Select = app.screen.query_one("#select")  # type: ignore
+        selector: Select = app.screen.query_one("#select")
         assert selector.value == "file_list"
 
 
@@ -45,7 +45,7 @@ async def test_panel_switch(app, key, side):
         await pilot.press(key)
 
         assert isinstance(app.right if side == "right" else app.left, FileList)
-        selector: Select = app.screen.query_one("#select")  # type: ignore
+        selector: Select = app.screen.query_one("#select")
         selector.value = "preview"
         await pilot.press("enter")
         assert not isinstance(app.screen, SelectDialog)
@@ -59,7 +59,7 @@ async def test_switch_changes_focused_panel(app):
 
         # now, change its type to something non-interactive
         await pilot.press("ctrl+e")
-        selector: Select = app.screen.query_one("#select")  # type: ignore
+        selector: Select = app.screen.query_one("#select")
         selector.value = "preview"
         await pilot.press("enter")
 

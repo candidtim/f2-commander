@@ -113,15 +113,13 @@ def _has_hidden_attribute(statinfo: os.stat_result) -> bool:
         return False
     if not hasattr(stat, "FILE_ATTRIBUTE_HIDDEN"):
         return False
-    return bool(
-        statinfo.st_file_attributes & stat.FILE_ATTRIBUTE_HIDDEN  # type: ignore
-    )
+    return bool(statinfo.st_file_attributes & stat.FILE_ATTRIBUTE_HIDDEN)
 
 
 def _has_hidden_flag(statinfo: os.stat_result) -> bool:
     if not hasattr(stat, "UF_HIDDEN") or not hasattr(statinfo, "st_flags"):
         return False
-    return bool(statinfo.st_flags & stat.UF_HIDDEN)  # type: ignore
+    return bool(statinfo.st_flags & stat.UF_HIDDEN)
 
 
 def is_executable(statinfo: dict[str, Any]) -> bool:

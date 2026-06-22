@@ -20,6 +20,6 @@ async def test_startup():
         filelist = app.active_filelist
         assert filelist.node.path == os.getcwd()
 
-        names: list[str] = [key.value for key in filelist.table.rows]  # type: ignore
+        names: list[str] = [key.value for key in filelist.table.rows]
         assert ".." in names
         assert len(names) > 1

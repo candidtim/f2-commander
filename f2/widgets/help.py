@@ -257,15 +257,11 @@ class Help(Static):
         Binding("q", "close", show=False),
     ]
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.viewer = None
-
     def compose(self) -> ComposeResult:
         parent: Widget = self.parent  # type: ignore
         parent.border_title = "Help"
         parent.border_subtitle = None
-        self.viewer = MarkdownViewer(HELP, show_table_of_contents=False)
+        self.viewer: MarkdownViewer = MarkdownViewer(HELP, show_table_of_contents=False)
         yield self.viewer
 
     def on_mount(self, event):

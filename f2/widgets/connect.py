@@ -6,7 +6,7 @@
 
 import ast
 import inspect
-from typing import get_type_hints
+from typing import Any, Literal, Optional, Type, get_type_hints
 
 import fsspec
 from textual import on
@@ -16,6 +16,8 @@ from textual.containers import Horizontal, Vertical
 from textual.reactive import reactive
 from textual.screen import ModalScreen
 from textual.widgets import Button, Checkbox, Input, Label, Select
+
+InputType = Literal["integer", "number", "text"]
 
 SUPPORTED_IMPLEMENTATIONS = [
     "abfs",
@@ -66,7 +68,7 @@ class ConnectToRemoteDialog(ModalScreen):
 
     def __init__(self):
         super().__init__()
-        self.cls = None
+        self.cls: Optional[Type[Any]] = None
 
     def compose(self) -> ComposeResult:
         with Vertical(id="dialog", classes="large"):
@@ -100,8 +102,11 @@ class ConnectToRemoteDialog(ModalScreen):
                 yield Button("Connect", variant="primary", id="connect")
                 yield Button("Cancel", variant="default", id="cancel")
 
-    def _guess_type(self, param: inspect.Parameter, cls: type):
+    def _guess_type(self, param: inspect.Parameter, cls: Optional[Type[Any]]):
         """Guess the type of a given function parameter"""
+        if cls is None:
+            return None
+
         try:
             type_hint = cls.__annotations__[param.name]
             return type_hint
@@ -109,7 +114,7 @@ class ConnectToRemoteDialog(ModalScreen):
             pass
 
         try:
-            type_hint = get_type_hints(cls.__init__)[param.name]  # type: ignore
+            type_hint = get_type_hints(cls.__init__)[param.name]
             return type_hint
         except (KeyError, AttributeError):
             pass
@@ -139,11 +144,11 @@ class ConnectToRemoteDialog(ModalScreen):
             yield Checkbox(title, default, id=f"param_{param.name}", classes="param")
 
         elif field_type in (str, int, float):
-            input_type = {
+            input_type: InputType = {
                 str: "text",
                 int: "integer",
                 float: "number",
-            }[field_type]
+            }[field_type]  # type: ignore
             if param.default is inspect.Parameter.empty:
                 yield Input(
                     id=f"param_{param.name}",
@@ -178,6 +183,7 @@ class ConnectToRemoteDialog(ModalScreen):
         try:
             self.cls = fsspec.get_filesystem_class(event.value)
         except (ImportError, ValueError) as err:
+            self.cls = None
             self.doc = str(err)
             self.params = []
         else:

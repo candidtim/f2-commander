@@ -90,6 +90,10 @@ even better!
 
 ## Development environment
 
+This project provides a devcontainer, and it is recommended to use for tests.
+Tests may be unsatble in other OSes due to minor variations in the OS behavior
+(e.g., how file sizes are computed).
+
 This project uses [uv](https://docs.astral.sh/uv/). The configuration is
 conventional, use as usual:
 
@@ -107,6 +111,8 @@ To run the application with dev tools:
 
     uv run textual console [-v -x SYSTEM -x EVENT -x DEBUG -x INFO]  # this first!
     uv run textual run --dev f2.main:main
+
+Above, `-x NAME` excludes the named type of message from the output.
 
 To run tests in all target Python versions (typically before a release):
 

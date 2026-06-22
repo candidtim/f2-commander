@@ -41,7 +41,7 @@ class Panel(Static):
         def on_select(value: str):
             self.panel_type = value
 
-        self.app.push_screen(
+        self.app.push_screen(  # type: ignore
             SelectDialog(
                 title=f"Change the {self.display_name} panel to:",
                 options=PANEL_OPTIONS,

@@ -8,7 +8,7 @@ import dataclasses
 import functools
 import time
 from dataclasses import dataclass
-from typing import Optional, Tuple
+from typing import TYPE_CHECKING, Optional, Tuple, cast
 
 from humanize import naturalsize
 from rich.text import Text
@@ -26,6 +26,11 @@ from f2.commands import Command
 from f2.fs.node import Node
 from f2.fs.util import shorten
 from f2.shell import native_open
+
+from .types import WithF2App
+
+if TYPE_CHECKING:
+    from .panel import Panel
 
 
 class TextAndValue(Text):
@@ -45,7 +50,7 @@ class SortOptions:
     reverse: bool = False  # ascending by default, descending if True
 
 
-class FileList(Static):
+class FileList(Static, WithF2App):
     BINDINGS_AND_COMMANDS = [
         Command(
             "order('name', False)",
@@ -102,7 +107,7 @@ class FileList(Static):
             "ctrl+@",  # this is `ctrl+space`
         ),
     ]
-    BINDINGS = [  # type: ignore
+    BINDINGS = [
         Binding(cmd.binding_key, cmd.action, cmd.description, show=False)
         for cmd in BINDINGS_AND_COMMANDS
         if cmd.binding_key is not None
@@ -156,7 +161,7 @@ class FileList(Static):
     show_hidden = reactive(False, init=False)
     dirs_first = reactive(False, init=False)
     order_case_sensitive = reactive(False, init=False)
-    search_mode = reactive(None)
+    search_mode = reactive(False)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -175,7 +180,7 @@ class FileList(Static):
 
     def on_mount(self) -> None:
         self._add_columns()
-        self.node = self.app.get_cwd(self)
+        self.node = self.app_.get_cwd(self)
 
     def _add_columns(self):
         self.table.add_column("Name", key="name")
@@ -198,7 +203,7 @@ class FileList(Static):
             nodes = list([TextAndValue(node, node.name) for node in self._selection])
             ordered = sorted(nodes, key=self.sort_key)
             if self.sort_options.reverse:
-                ordered = reversed(ordered)  # type: ignore
+                ordered = reversed(ordered)
             return [c.value for c in ordered]
         elif self.cursor_node != self.node.parent:
             return [self.cursor_node]
@@ -419,17 +424,18 @@ class FileList(Static):
             self.cursor_node = self.listing[0]
 
         # top border: "current" path
+        parent = cast("Panel", self.parent)
         if self.node.is_local:
-            self.parent.border_title = shorten(
+            parent.border_title = shorten(
                 self.node.path,
                 width_target=self.table.size.width - 4,
                 method="slice",
                 unexpand_home=self.node.is_local,
             )
         elif self.node.is_archive:
-            self.parent.border_title = self.node.path
+            parent.border_title = self.node.path
         else:
-            self.parent.border_title = self.node.fs.unstrip_protocol(self.node.path)
+            parent.border_title = self.node.fs.unstrip_protocol(self.node.path)
 
         # bottom border: add information about the directory:
         total_size = naturalsize(sum(node.size for node in ls if node.name != ".."))
@@ -438,7 +444,7 @@ class FileList(Static):
             1 for node in ls if node.is_dir and not node.is_link and node.name != ".."
         )
         subtitle = f"{total_size} in {file_count} files | {dir_count} dirs"
-        self.parent.border_subtitle = subtitle
+        parent.border_subtitle = subtitle
 
     def watch_node(self, old_node: Node, new_node: Node):
         # if trying to navigate to a file, navigate to its parent dir:
@@ -467,7 +473,7 @@ class FileList(Static):
     def watch_order_case_sensitive(self, old: bool, new: bool):
         self.update_listing()
 
-    def watch_sort_options(self, old: SortOptions, new: SortOptions):
+    def watch_sort_options(self, old: Optional[SortOptions], new: SortOptions):
         self.update_listing()
         # remove sort label from the previously sorted column:
         if old is not None:
@@ -547,7 +553,7 @@ class FileList(Static):
         # FIXME: the rest of code does not belong to the action implementation?
         open_cmd = native_open()
         if open_cmd is not None:
-            self.app.subprocess_run(open_cmd, self.node.path)
+            self.app_.subprocess_run(open_cmd, self.node.path)
             self.app.refresh()
 
     @work(thread=True)

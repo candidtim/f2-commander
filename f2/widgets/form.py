@@ -41,7 +41,7 @@ class InputWithLabel(Static):
     ):
         super().__init__()
         self._title = title
-        self._placeholder = placeholder
+        self._placeholder = placeholder or ""
         self._value_id = value_id
         self._value = value
 

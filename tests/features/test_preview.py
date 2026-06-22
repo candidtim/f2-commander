@@ -7,6 +7,7 @@
 """Test Preview panel"""
 
 from PIL import Image as PillowImage
+from rich.syntax import Syntax
 
 from f2.widgets.dialogs import SelectDialog
 from f2.widgets.preview import Preview
@@ -65,6 +66,20 @@ DOCUMENTS_DIR_TREE = """
 """.strip()
 
 
+def get_text_content(preview: Preview) -> str:
+    """Get preview content as string (for directory previews etc.)"""
+    content = preview._preview_content
+    assert isinstance(content, str), f"Expected str, got {type(content)}"
+    return content
+
+
+def get_syntax_content(preview: Preview) -> Syntax:
+    """Get preview content as Syntax (for syntax-highlighted file previews)."""
+    content = preview._preview_content
+    assert isinstance(content, Syntax), f"Expected Syntax, got {type(content)}"
+    return content
+
+
 async def open_preview(pilot) -> Preview:
     await pilot.press("ctrl+r")
     assert isinstance(pilot.app.screen, SelectDialog)
@@ -77,7 +92,7 @@ async def test_preview_opens(sample_fs):
     async with run_test(cwd=sample_fs) as (pilot, f2pilot):
         preview = await open_preview(pilot)
         assert preview.node.path == str(sample_fs.parent)
-        assert str(sample_fs.parent.absolute()) in preview._preview_content
+        assert str(sample_fs.parent.absolute()) in get_text_content(preview)
 
 
 async def test_preview_opens_on_selected_path():
@@ -85,7 +100,7 @@ async def test_preview_opens_on_selected_path():
         await f2pilot.select("todo.md")
         preview = await open_preview(pilot)
         assert preview.node.name == "todo.md"
-        assert SAMPLE_CONTENT.decode() == preview._preview_content.code
+        assert SAMPLE_CONTENT.decode() == get_syntax_content(preview).code
 
 
 async def test_preview_follows_cursor():
@@ -100,7 +115,7 @@ async def test_preview_follows_cursor():
             ):
                 break
         assert preview.node.name == "todo.md"
-        assert SAMPLE_CONTENT.decode() == preview._preview_content.code
+        assert SAMPLE_CONTENT.decode() == get_syntax_content(preview).code
 
 
 async def test_preview_file_head(sample_fs):
@@ -109,8 +124,8 @@ async def test_preview_file_head(sample_fs):
         await f2pilot.select("big_file.txt")
         preview = await open_preview(pilot)
         # 80 is default terminal size and lexer adds a new line:
-        assert len(preview._preview_content.code.split("\n")) == 81
-        assert preview._preview_content.code.startswith(LOREM_IPSUM)
+        assert len(get_syntax_content(preview).code.split("\n")) == 81
+        assert get_syntax_content(preview).code.startswith(LOREM_IPSUM)
 
 
 async def test_preview_file_syntax(sample_fs):
@@ -118,7 +133,7 @@ async def test_preview_file_syntax(sample_fs):
     async with run_test(cwd=sample_fs) as (pilot, f2pilot):
         await f2pilot.select("sum.py")
         preview = await open_preview(pilot)
-        content = preview._preview_content
+        content = get_syntax_content(preview)
         assert content.highlight(content.code).markup == PYTHON_MARKUP
 
 
@@ -159,14 +174,14 @@ async def test_preview_dir(sample_fs):
     async with run_test(cwd=sample_fs) as (pilot, f2pilot):
         await f2pilot.select("Documents")
         preview = await open_preview(pilot)
-        assert DOCUMENTS_DIR_TREE in preview._preview_content
+        assert DOCUMENTS_DIR_TREE in get_text_content(preview)
 
 
 async def test_preview_dir_up(sample_fs):
     async with run_test(cwd=sample_fs) as (pilot, f2pilot):
         await f2pilot.select("..")
         preview = await open_preview(pilot)
-        assert "┣" in preview._preview_content  # shows some directory tree
+        assert "┣" in get_text_content(preview)  # shows some directory tree
 
 
 async def test_preview_deeply_nested_dir(sample_fs):
@@ -183,12 +198,13 @@ async def test_preview_deeply_nested_dir(sample_fs):
     async with run_test(cwd=sample_fs) as (pilot, f2pilot):
         await f2pilot.select("deeply-nested")
         preview = await open_preview(pilot)
-        assert "subdir_00/" in preview._preview_content
-        assert "subdir_24/" in preview._preview_content
-        assert "subdir_24/sub-sub/" in preview._preview_content
-        assert "subdir_24/foo.md" in preview._preview_content
-        assert "subdir_26/" in preview._preview_content
-        assert "subdir_26/sub-sub/" not in preview._preview_content
+        text = get_text_content(preview)
+        assert "subdir_00/" in text
+        assert "subdir_24/" in text
+        assert "subdir_24/sub-sub/" in text
+        assert "subdir_24/foo.md" in text
+        assert "subdir_26/" in text
+        assert "subdir_26/sub-sub/" not in text
 
 
 async def test_preview_link(sample_fs):
@@ -197,4 +213,4 @@ async def test_preview_link(sample_fs):
         await f2pilot.select("todo_link.md")
         preview = await open_preview(pilot)
         assert preview.node.name == "todo_link.md"
-        assert SAMPLE_CONTENT.decode() == preview._preview_content.code
+        assert SAMPLE_CONTENT.decode() == get_syntax_content(preview).code

@@ -43,14 +43,17 @@ from .widgets.connect import ConnectToRemoteDialog
 from .widgets.dialogs import InputDialog, StaticDialog, StaticDialogR, Style
 from .widgets.filelist import FileList
 from .widgets.panel import Panel
+from .widgets.types import WithF2App
 
 
-class F2AppCommands(Provider):
+class F2AppCommands(Provider, WithF2App):
     @property
     def all_commands(self):
-        app_commands = [(self.app, cmd) for cmd in self.app.BINDINGS_AND_COMMANDS]
-        flist = self.app.active_filelist
-        flist_commands = [(flist, cmd) for cmd in flist.BINDINGS_AND_COMMANDS]
+        app_commands = [(self.app_, cmd) for cmd in self.app_.BINDINGS_AND_COMMANDS]
+        flist = self.app_.active_filelist
+        flist_commands = (
+            [(flist, cmd) for cmd in flist.BINDINGS_AND_COMMANDS] if flist else []
+        )
         return app_commands + flist_commands
 
     def _fmt_name(self, cmd, text: Optional[Content] = None):
@@ -272,6 +275,8 @@ class F2Commander(App):
             self.panels_container.move_child(self.panel_left, before=self.panel_right)
 
     def action_same_location(self):
+        if not self.active_filelist or not self.inactive_filelist:
+            return
         self.inactive_filelist.node = self.active_filelist.node
 
     @work
@@ -344,7 +349,7 @@ class F2Commander(App):
     def on_file_selected(self, event: FileList.Selected):
         for c in self.query("Panel > *"):
             if hasattr(c, "on_other_panel_selected"):
-                c.on_other_panel_selected(event.node)
+                c.on_other_panel_selected(event.node)  # type: ignore
 
     def subprocess_run(self, cmd: str, *args, **kwargs) -> Optional[int]:
         """Run a command in a subprocess and return its exit code, if it was executed."""
@@ -449,13 +454,15 @@ class F2Commander(App):
         )
 
     def action_view(self):
+        if not self.active_filelist:
+            return
         node = self.active_filelist.cursor_node
 
         if not node.is_file:
             return
 
         def _view(path: str):
-            viewer_cmd = self.app.config.system.viewer or default_viewer(or_editor=True)
+            viewer_cmd = self.config.system.viewer or default_viewer(or_editor=True)
             if viewer_cmd is not None:
                 exit_code = self.subprocess_run(viewer_cmd, path)
                 self.refresh()
@@ -477,13 +484,15 @@ class F2Commander(App):
             self._download(node, cont_fn=_view_temp)
 
     def action_edit(self):
+        if not self.active_filelist:
+            return
         node = self.active_filelist.cursor_node
 
         if not node.is_file:
             return
 
         def _edit(path: str):
-            editor_cmd = self.app.config.system.editor or default_editor()
+            editor_cmd = self.config.system.editor or default_editor()
             if editor_cmd is not None:
                 exit_code = self.subprocess_run(editor_cmd, path)
                 self.refresh()
@@ -507,6 +516,9 @@ class F2Commander(App):
 
     @work
     async def action_copy(self):
+        if not self.active_filelist or not self.inactive_filelist:
+            return
+
         if not self.active_filelist.selection:
             return
 
@@ -615,6 +627,9 @@ class F2Commander(App):
 
     @work
     async def action_move(self):
+        if not self.active_filelist or not self.inactive_filelist:
+            return
+
         if not self.active_filelist.selection:
             return
 
@@ -722,6 +737,9 @@ class F2Commander(App):
 
     @work
     async def action_rename(self):
+        if not self.active_filelist:
+            return
+
         if len(self.active_filelist.selection) != 1:
             return
 
@@ -751,6 +769,9 @@ class F2Commander(App):
 
     @work
     async def action_delete(self):
+        if not self.active_filelist:
+            return
+
         if not self.active_filelist.selection:
             return
 
@@ -778,6 +799,9 @@ class F2Commander(App):
 
     @work
     async def action_mkdir(self):
+        if not self.active_filelist:
+            return
+
         node = self.active_filelist.node
 
         new_name = await self.push_screen_wait(
@@ -794,6 +818,9 @@ class F2Commander(App):
 
     @work
     async def action_mkfile(self):
+        if not self.active_filelist:
+            return
+
         node = self.active_filelist.node
 
         new_name = await self.push_screen_wait(InputDialog("New file", btn_ok="Create"))
@@ -814,15 +841,19 @@ class F2Commander(App):
         self.active_filelist.scroll_to_entry(new_name)
 
     def action_shell(self):
+        if not self.active_filelist:
+            return
+
         node = self.active_filelist.node
         cwd = node.path if node.is_local else Path.cwd()
 
-        shell_cmd = self.app.config.system.shell or default_shell()
+        shell_cmd = self.config.system.shell or default_shell()
         if shell_cmd is not None:
             exit_code = self.subprocess_run(shell_cmd, cwd=cwd)
             self.refresh()
             self.active_filelist.update_listing()
-            self.inactive_filelist.update_listing()
+            if self.inactive_filelist:
+                self.inactive_filelist.update_listing()
             if exit_code != 0:
                 msg = f"Shell exited with an error ({exit_code})"
                 self.push_screen(StaticDialog.warning("Warning", msg))
@@ -831,6 +862,9 @@ class F2Commander(App):
 
     @work
     async def action_archive(self):
+        if not self.active_filelist:
+            return
+
         if not self.active_filelist.selection:
             return
 
@@ -894,6 +928,9 @@ class F2Commander(App):
         if location is None:
             return
 
+        if not self.active_filelist:
+            return
+
         if isinstance(location, str):
             try:
                 node = Node.from_url(location)
@@ -903,7 +940,7 @@ class F2Commander(App):
                 err_msg = str(err)
 
             if node and node.is_dir:
-                self.active_filelist.node = node  # type: ignore
+                self.active_filelist.node = node
             else:
                 self.push_screen(
                     StaticDialog.info(f"Cannot navigate to {location}", err_msg)
@@ -914,7 +951,7 @@ class F2Commander(App):
             path = location.path
             fs = fsspec.filesystem(protocol, **location.params)
             node = Node.from_path(fs, path or "/")
-            self.active_filelist.node = node  # type: ignore
+            self.active_filelist.node = node
 
     @work
     async def action_go_to_bookmark(self):
@@ -924,6 +961,9 @@ class F2Commander(App):
 
     @work
     async def action_go_to_path(self):
+        if not self.active_filelist:
+            return
+
         location = await self.push_screen_wait(
             InputDialog("Jump to...", value=self.active_filelist.node.path, btn_ok="Go")
         )
@@ -937,6 +977,9 @@ class F2Commander(App):
 
     @work
     async def action_connect(self):
+        if not self.active_filelist:
+            return
+
         connection_params = await self.push_screen_wait(ConnectToRemoteDialog())
         if connection_params is None:
             return
@@ -1015,7 +1058,7 @@ class F2Commander(App):
             "You can find a copy of the license at https://mozilla.org/MPL/2.0/"
         )
         await self.push_screen_wait(StaticDialog.info(title, msg))
-        with self.app.config.autosave() as conf:
+        with self.config.autosave() as conf:
             conf.startup.license_accepted = True
 
     def action_help(self):

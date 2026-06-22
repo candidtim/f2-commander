@@ -5,6 +5,7 @@
 # Copyright (c) 2024 Timur Rubeko
 
 from pathlib import Path
+from typing import Union
 from urllib.parse import urlparse
 
 from rich.text import Text
@@ -18,8 +19,10 @@ from textual.widgets.option_list import Option
 
 from f2.config import FileSystem
 
+from .types import WithF2App
 
-class GoToBookmarkDialog(ModalScreen):
+
+class GoToBookmarkDialog(ModalScreen[Union[str, FileSystem, None]], WithF2App):
     BINDINGS = [
         Binding("escape", "dismiss", show=False),
         Binding("backspace", "dismiss", show=False),
@@ -30,15 +33,15 @@ class GoToBookmarkDialog(ModalScreen):
         super().__init__()
         options = [
             self._url_to_option(idx, url)
-            for idx, url in enumerate(self.app.config.bookmarks.paths)
+            for idx, url in enumerate(self.app_.config.bookmarks.paths)
         ]
-        if self.app.config.file_systems:
-            options.append(None)
+        if self.app_.config.file_systems:
+            options.append(None)  # type: ignore (docs allow None for a separator)
             options.append(Option("Remote file systems:", disabled=True))
             options.extend(
                 [
                     self._remote_fs_to_option(fs_conf)
-                    for fs_conf in self.app.config.file_systems
+                    for fs_conf in self.app_.config.file_systems
                 ]
             )
         self.option_list = OptionList(*options, id="options")
@@ -49,14 +52,14 @@ class GoToBookmarkDialog(ModalScreen):
         is_url = urlparse(url).scheme != ""
         is_dir = Path(url).expanduser().is_dir() if not is_url else False
         return Option(
-            Text.assemble(prefix, " ", url),  # type: ignore
+            Text.assemble(prefix, " ", url),
             disabled=not is_url and not is_dir,
         )
 
     def _remote_fs_to_option(self, fs_conf: FileSystem) -> Option:
         prefix = (" - ", "grey50")
         return Option(
-            Text.assemble(prefix, " ", fs_conf.display_name),  # type: ignore
+            Text.assemble(prefix, " ", fs_conf.display_name),
         )
 
     def compose(self) -> ComposeResult:
@@ -85,11 +88,11 @@ class GoToBookmarkDialog(ModalScreen):
             self.option_list.action_cursor_up()
 
     def on_index_selected(self, idx):
-        if idx < len(self.app.config.bookmarks.paths):
-            value = self.app.config.bookmarks.paths[idx]
+        if idx < len(self.app_.config.bookmarks.paths):
+            value = self.app_.config.bookmarks.paths[idx]
             self.dismiss(value)
         else:
-            fs_conf = self.app.config.file_systems[
-                idx - len(self.app.config.bookmarks.paths) - 1
+            fs_conf = self.app_.config.file_systems[
+                idx - len(self.app_.config.bookmarks.paths) - 1
             ]
             self.dismiss(fs_conf)

@@ -33,8 +33,10 @@ from f2.fs.util import (
     shorten,
 )
 
+from .types import WithF2App
 
-class Preview(Static):
+
+class Preview(Static, WithF2App):
     DEFAULT_CSS = """
     #preview-container {
         align: center middle;
@@ -65,7 +67,9 @@ class Preview(Static):
             yield Static("", id="text-preview")
 
     def on_mount(self):
-        self.node = self.app.active_filelist.cursor_node
+        # FIXME: this should never be mounted with no active file list, raise here?
+        active_filelist = self.app_.active_filelist
+        self.node = active_filelist.cursor_node if active_filelist else Node.cwd()
 
     # FIXME: push_message (in)directy to the "other" panel only?
     def on_other_panel_selected(self, node: Node):
@@ -76,7 +80,7 @@ class Preview(Static):
         parent: Widget = self.parent  # type: ignore
         loading_indicator = self.query_one("#loading-indicator")
         image_preview = self.query_one("#image-preview")
-        text_preview = self.query_one("#text-preview")
+        text_preview = self.query_one("#text-preview", Static)
 
         # set title:
         parent.border_title = shorten(
@@ -211,9 +215,13 @@ class Preview(Static):
         recursively as long as the output fits the screen."""
 
         # collect paths to show, breadth-first, but at most a screenful:
-        collected_paths = []  # type: ignore
+        collected_paths: list[str] = []
         for i, p in enumerate(
-            breadth_first_walk(node.fs, node.path, self.app.config.display.show_hidden)
+            breadth_first_walk(
+                node.fs,
+                node.path,
+                self.app_.config.display.show_hidden,
+            )
         ):
             if i > self._height:
                 break
