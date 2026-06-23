@@ -7,9 +7,9 @@ dist/
 
 # Development Environment
 .venv/
-.nox/
 .pytest_cache/
 .mypy_cache/
+.tmp/
 debug.log
 
 # MacOS

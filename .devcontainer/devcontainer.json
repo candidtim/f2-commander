@@ -1,0 +1,10 @@
+{
+  "name": "f2-commander",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+  "postCreateCommand": "uv sync",
+  "containerEnv": {
+    "TERM": "xterm-256color"
+  }
+}
