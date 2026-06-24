@@ -414,6 +414,10 @@ class FileList(Static):
         if self.node == prev_cursor_node.parent:
             self.scroll_to_entry(prev_cursor_node.name)
 
+        # if cursor_node is now stale (moved to another directory):
+        if self.cursor_node not in self.listing:
+            self.cursor_node = self.listing[0]
+
         # top border: "current" path
         if self.node.is_local:
             self.parent.border_title = shorten(

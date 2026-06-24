@@ -77,7 +77,12 @@ class ConnectToRemoteDialog(ModalScreen):
                 for p in fsspec.available_protocols()
                 if p in SUPPORTED_IMPLEMENTATIONS
             ]
-            yield Select(protocols, id="protcol", value=self.protocol or Select.BLANK)
+            yield Select(
+                protocols,
+                id="protcol",
+                value=self.protocol if self.protocol is not None else Select.NULL,
+                allow_blank=True,
+            )
             yield Label(self.doc, id="message")
 
             if self.protocol is not None:

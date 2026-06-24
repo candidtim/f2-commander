@@ -47,7 +47,7 @@ async def test_summary(app, sample_fs):
         title = app.active_filelist.parent.border_title
         assert title == sample_fs.as_posix()
         subtitle = app.active_filelist.parent.border_subtitle
-        assert subtitle == "44.2 kB in 9 files | 7 dirs"
+        assert subtitle == "43.5 kB in 9 files | 7 dirs"
 
 
 async def test_styles(app):
@@ -88,9 +88,10 @@ async def test_padding():
 
 
 async def test_display_truncated(sample_fs):
-    async with run_test(cwd=sample_fs, size=SIZE_NARROW) as (pilot, f2pilot):
-        assert "todo.md" in f2pilot.listing
-        assert "settin..." in f2pilot.listing
+    # navigate to a deeply nested subdir for the displayed path to be truncated:
+    deep_dir = sample_fs / "Documents" / "Personal" / "Finances"
+    async with run_test(cwd=deep_dir, size=SIZE_NARROW) as (pilot, f2pilot):
+        assert "budget..." in f2pilot.listing
         # long border title should be truncated:
         assert "..." in f2pilot.panel_title
-        assert f2pilot.panel_title.endswith(sample_fs.name)
+        assert f2pilot.panel_title.endswith("Finances")

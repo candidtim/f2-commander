@@ -41,11 +41,11 @@ def sum(n, m):
     return n + m
 """.strip()
 
-# expected markup for PYTHON_CODE above
+# expected markup for PYTHON_CODE above (ansi_dark theme)
 PYTHON_MARKUP = """
-[on #272822][not bold not italic not underline #66d9ef on #272822]def[not bold not italic not underline #f8f8f2 on #272822][/not bold not italic not underline #66d9ef on #272822] [not bold not italic not underline #a6e22e on #272822][/not bold not italic not underline #f8f8f2 on #272822]sum[not bold not italic not underline #f8f8f2 on #272822][/not bold not italic not underline #a6e22e on #272822]([not bold not italic not underline #f8f8f2 on #272822][/not bold not italic not underline #f8f8f2 on #272822]n[not bold not italic not underline #f8f8f2 on #272822][/not bold not italic not underline #f8f8f2 on #272822],[not bold not italic not underline #f8f8f2 on #272822][/not bold not italic not underline #f8f8f2 on #272822] [not bold not italic not underline #f8f8f2 on #272822][/not bold not italic not underline #f8f8f2 on #272822]m[not bold not italic not underline #f8f8f2 on #272822][/not bold not italic not underline #f8f8f2 on #272822])[not bold not italic not underline #f8f8f2 on #272822][/not bold not italic not underline #f8f8f2 on #272822]:[not bold not italic not underline #f8f8f2 on #272822][/not bold not italic not underline #f8f8f2 on #272822]
-[not bold not italic not underline #f8f8f2 on #272822][/not bold not italic not underline #f8f8f2 on #272822]    [not bold not italic not underline #66d9ef on #272822][/not bold not italic not underline #f8f8f2 on #272822]return[not bold not italic not underline #f8f8f2 on #272822][/not bold not italic not underline #66d9ef on #272822] [not bold not italic not underline #f8f8f2 on #272822][/not bold not italic not underline #f8f8f2 on #272822]n[not bold not italic not underline #f8f8f2 on #272822][/not bold not italic not underline #f8f8f2 on #272822] [not bold not italic not underline #ff4689 on #272822][/not bold not italic not underline #f8f8f2 on #272822]+[not bold not italic not underline #f8f8f2 on #272822][/not bold not italic not underline #ff4689 on #272822] [not bold not italic not underline #f8f8f2 on #272822][/not bold not italic not underline #f8f8f2 on #272822]m[not bold not italic not underline #f8f8f2 on #272822][/not bold not italic not underline #f8f8f2 on #272822]
-[/not bold not italic not underline #f8f8f2 on #272822][/on #272822]
+[bright_blue]def[bright_black][/bright_blue] [bright_green][/bright_black]sum[/bright_green](n, m):[bright_black]
+[/bright_black]    [bright_blue]return[/bright_blue] n + m[bright_black]
+[/bright_black]
 """.strip()
 
 GIF_BLACK_PIXEL = (
@@ -92,6 +92,13 @@ async def test_preview_follows_cursor():
     async with run_test() as (pilot, f2pilot):
         preview = await open_preview(pilot)
         await f2pilot.select("todo.md")
+        # Wait for the background thread to update preview content:
+        for _ in range(100):
+            await pilot.pause()
+            if preview._preview_content is not None and hasattr(
+                preview._preview_content, "code"
+            ):
+                break
         assert preview.node.name == "todo.md"
         assert SAMPLE_CONTENT.decode() == preview._preview_content.code
 

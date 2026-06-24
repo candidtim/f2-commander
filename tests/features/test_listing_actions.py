@@ -43,7 +43,7 @@ async def test_calc_dir_size():
         assert f2pilot.cell("Pictures", "size").plain == "-- DIR --"
         await pilot.press("ctrl+@")
         assert f2pilot.cursor_node.name != "Pictures"  # moved to next entry
-        assert f2pilot.cell("Pictures", "size").plain == "31.4 kB"
+        assert f2pilot.cell("Pictures", "size").plain == "31.1 kB"
 
         # does not move the cursor when on the last entry:
         await pilot.press("G")

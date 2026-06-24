@@ -150,7 +150,7 @@ def is_text_file(path: str) -> bool:
     if Path(path).is_file():
         try:
             mime_type = subprocess.check_output(
-                ["file", "--brief", "--mime-type", path]
+                ["file", "-L", "--brief", "--mime-type", path]
             ).decode("utf-8")
         except subprocess.SubprocessError:
             pass

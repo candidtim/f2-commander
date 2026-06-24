@@ -137,8 +137,10 @@ class Preview(Static):
 
         elif node.is_archive and node.is_local:
             archive_fs = open_archive(node.path)
-            archive_node = Node.from_path(archive_fs, "")
-            return self._dir_tree(archive_node), None
+            if archive_fs is not None:
+                archive_node = Node.from_path(archive_fs, "")
+                return self._dir_tree(archive_node), None
+            return None, None
 
         elif node.is_file and is_text_file(node.path):
             try:

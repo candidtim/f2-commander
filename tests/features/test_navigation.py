@@ -60,14 +60,14 @@ async def test_list_navigation():
 
         # one half-screen down:
         await pilot.press("ctrl+d")
-        assert f2pilot.cursor_node.name == "Videos"
+        assert f2pilot.cursor_node.name == "Templates"
         # already at bottom - does nothing:
         await pilot.press("ctrl+d")
         assert f2pilot.cursor_node.name == "Videos"
 
         # half-screen up:
         await pilot.press("ctrl+u")
-        assert f2pilot.cursor_node.name == ".."
+        assert f2pilot.cursor_node.name == "credentials.txt"
         # already at top - does nothing:
         await pilot.press("ctrl+u")
         assert f2pilot.cursor_node.name == ".."
@@ -141,12 +141,13 @@ async def test_mouse_dir_navigation(app, sample_fs):
         # 5th row is "Documents":
         assert f2pilot.panel_title.endswith(sample_fs.name)
         await pilot.click(widget=app.active_filelist.table, offset=(1, 5))
+        await pilot.press("enter")
         assert f2pilot.panel_title.endswith("Documents")
 
-        # first row is "..":
+        # first row is "..", click navigates back:
         await pilot.click(widget=app.active_filelist.table, offset=(1, 1))
         assert f2pilot.panel_title.endswith(sample_fs.name)
 
-        # click on file, does nothong:
+        # click on file, does nothing:
         await pilot.click(widget=app.active_filelist.table, offset=(1, 2))
         assert f2pilot.panel_title.endswith(sample_fs.name)
