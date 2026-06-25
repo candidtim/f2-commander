@@ -118,8 +118,7 @@ To run tests in all target Python versions (typically before a release):
 
     ./mox
 
-To run the latter, you need to have locally installed Python interpreters to test
-with. See the `mox` implementation for a list of Python versions. Match it with
+See the `mox` implementation for a list of Python versions. Match it with
 currenly supported Python versions, and update `pyproject.toml` classifiers.
 `mox` is short for "my nox"; this project no longer uses nox because installing
 envs with uv is so fast I don't see the point in nox anymore.
@@ -132,6 +131,7 @@ envs with uv is so fast I don't see the point in nox anymore.
 4. Build: `uv build`
 5. Test the pacakge: `pipx install --force dist/*.whl` and run it
 6. Publish: `uv publish`
+7. Tag in git and push the tags.
 
 ## About (continued)
 

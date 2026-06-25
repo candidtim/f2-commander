@@ -1,6 +1,6 @@
 [project]
 name = "f2-commander"
-version = "0.8.0"
+version = "0.8.1"
 description = "F2 Commander is an orthodox file manager for the modern world."
 license = "MPL-2.0"
 license-files = ["LICENSE"]
@@ -10,8 +10,6 @@ keywords = ["file", "manager", "commander"]
 classifiers = [
     "Development Status :: 5 - Production/Stable",
     "Intended Audience :: End Users/Desktop",
-    "Programming Language :: Python :: 3.10",
-    "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
     "Programming Language :: Python :: 3.14",
